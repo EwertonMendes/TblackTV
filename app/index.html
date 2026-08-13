@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>TblackTV</title>
 
   <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
@@ -52,13 +52,27 @@
       </footer>
     </main>
 
-    <section id="player-screen" class="screen screen--player is-hidden" aria-label="Player ao vivo">
+    <section id="player-screen" class="screen screen--player is-hidden" aria-label="Player ao vivo" tabindex="-1">
       <object id="av-player" class="av-player" type="application/avplayer"></object>
       <video id="html5-player" class="html5-player" playsinline></video>
+      <iframe
+        id="iframe-player"
+        class="iframe-player"
+        title="Player incorporado"
+        frameborder="0"
+        sandbox="allow-scripts allow-same-origin allow-presentation"
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        allowfullscreen
+        tabindex="-1"></iframe>
 
       <div id="player-loading" class="player-loading">
         <div class="spinner" aria-hidden="true"></div>
         <p id="player-loading-text">Conectando ao canal…</p>
+      </div>
+
+      <div id="interaction-banner" class="interaction-banner is-hidden" role="status" aria-live="polite">
+        <span class="interaction-banner__indicator" aria-hidden="true"></span>
+        <span id="interaction-banner-text">Acione o Play — controle do TblackTV retorna em 6 segundos</span>
       </div>
 
       <div id="player-overlay" class="player-overlay">
@@ -68,7 +82,10 @@
             <h2 id="player-channel-name">Canal</h2>
             <p id="player-source-name">Fonte</p>
           </div>
-          <div class="player-overlay__hint">Channel ± troca de canal</div>
+          <div class="player-overlay__hints">
+            <div>← → troca de fonte</div>
+            <div>Channel ± troca de canal</div>
+          </div>
         </div>
 
         <div class="player-overlay__bottom">
@@ -88,16 +105,30 @@
           </div>
         </div>
       </div>
+
+      <div id="activation-dialog" class="activation-dialog is-hidden" role="dialog" aria-modal="true">
+        <div class="activation-dialog__card">
+          <div class="activation-dialog__icon">&#9654;</div>
+          <h3>Confirmação necessária</h3>
+          <p id="activation-message">OK para iniciar esta fonte</p>
+          <div class="activation-dialog__actions">
+            <span><kbd>OK</kbd> iniciar</span>
+            <span><kbd>Return</kbd> voltar</span>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
   <script src="js/bootstrap.js"></script>
-  <script src="js/config/channels.js"></script>
   <script src="js/core/EventBus.js"></script>
   <script src="js/core/AppState.js"></script>
   <script src="js/core/SpatialNavigation.js"></script>
   <script src="js/services/adapters/AvPlayAdapter.js"></script>
   <script src="js/services/adapters/Html5VideoAdapter.js"></script>
+  <script src="js/services/adapters/IframePlayerAdapter.js"></script>
+  <script src="js/services/CatalogService.js"></script>
+  <script src="js/services/SourceResolver.js"></script>
   <script src="js/services/PlayerFactory.js"></script>
   <script src="js/services/PlaybackService.js"></script>
   <script src="js/ui/ChannelGridView.js"></script>

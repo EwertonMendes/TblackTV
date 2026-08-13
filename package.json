@@ -5,6 +5,9 @@
   "packageType": "app",
   "appName": "TblackTV",
   "appPath": "app/index.html",
+  "scripts": {
+    "test": "node tests/autoplay.test.js"
+  },
   "keys": [
     "MediaPlay",
     "MediaPause",

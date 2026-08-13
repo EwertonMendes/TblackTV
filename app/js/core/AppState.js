@@ -9,6 +9,8 @@
     this.screen = 'home';
     this.isPlaying = false;
     this.hasError = false;
+    this.requiresUserAction = false;
+    this.iframeInteractionActive = false;
   }
 
   AppState.prototype.getFocusedChannel = function getFocusedChannel() {
@@ -27,6 +29,8 @@
     this.currentSourceIndex = 0;
     this.screen = 'player';
     this.hasError = false;
+    this.requiresUserAction = false;
+    this.iframeInteractionActive = false;
   };
 
   AppState.prototype.focusChannel = function focusChannel(index) {
@@ -46,6 +50,17 @@
     this.focusedChannelIndex = this.currentChannelIndex;
     this.currentSourceIndex = 0;
     this.hasError = false;
+    this.requiresUserAction = false;
+    this.iframeInteractionActive = false;
+  };
+
+  AppState.prototype.selectSource = function selectSource(index) {
+    var channel = this.getCurrentChannel();
+    var sourceCount = channel && channel.sources ? channel.sources.length : 0;
+
+    if (index >= 0 && index < sourceCount) {
+      this.currentSourceIndex = index;
+    }
   };
 
   namespace.core.AppState = AppState;

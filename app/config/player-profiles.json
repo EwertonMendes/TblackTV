@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "youtube-postmessage",
+      "kind": "iframe",
+      "startup": {
+        "postMessageFormat": "json",
+        "urlParams": {
+          "autoplay": "1",
+          "enablejsapi": "1",
+          "playsinline": "1"
+        },
+        "postMessages": [
+          {
+            "message": {
+              "event": "listening"
+            },
+            "delaysMs": [0, 500]
+          },
+          {
+            "message": {
+              "event": "command",
+              "func": "addEventListener",
+              "args": ["onStateChange"]
+            },
+            "delaysMs": [50, 550]
+          },
+          {
+            "message": {
+              "event": "command",
+              "func": "playVideo",
+              "args": []
+            },
+            "delaysMs": [100, 700, 1600]
+          }
+        ],
+        "verification": {
+          "type": "postMessage",
+          "origin": "https://www.youtube.com",
+          "eventField": "event",
+          "eventValue": "onStateChange",
+          "stateField": "info",
+          "playingValues": [1]
+        },
+        "timeoutMs": 6000,
+        "manualFallback": "postMessage"
+      },
+      "controls": {
+        "strategy": "postMessage",
+        "targetOrigin": "https://www.youtube.com",
+        "play": {
+          "event": "command",
+          "func": "playVideo",
+          "args": []
+        },
+        "pause": {
+          "event": "command",
+          "func": "pauseVideo",
+          "args": []
+        }
+      }
+    },
+    {
+      "id": "same-origin-html5",
+      "kind": "iframe",
+      "startup": {
+        "sameOrigin": {
+          "mediaSelector": "video",
+          "playSelector": "[data-action=play], .vjs-big-play-button, .plyr__control--overlaid"
+        },
+        "verification": {
+          "type": "sameOriginMedia",
+          "mediaSelector": "video"
+        },
+        "timeoutMs": 5000,
+        "manualFallback": "sameOrigin"
+      }
+    },
+    {
+      "id": "opaque-iframe",
+      "kind": "iframe",
+      "startup": {
+        "securityMode": "interaction-shield",
+        "urlParams": {
+          "autoplay": "1",
+          "playsinline": "1"
+        },
+        "verification": {
+          "type": "none"
+        },
+        "timeoutMs": 5000,
+        "manualFallback": "timedInteraction",
+        "interactionWindowMs": 6000,
+        "manualCompletion": "assume-playing"
+      }
+    }
+  ]
+}

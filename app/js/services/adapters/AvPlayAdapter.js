@@ -11,8 +11,9 @@
     return !!(window.webapis && window.webapis.avplay);
   };
 
-  AvPlayAdapter.prototype.load = function load(url, callbacks) {
+  AvPlayAdapter.prototype.load = function load(source, callbacks) {
     var self = this;
+    var url = source.url;
 
     this.callbacks = callbacks || {};
     this.prepared = false;
@@ -95,6 +96,18 @@
 
   AvPlayAdapter.prototype.getName = function getName() {
     return 'Samsung AVPlay';
+  };
+
+  AvPlayAdapter.prototype.canToggle = function canToggle() {
+    return true;
+  };
+
+  AvPlayAdapter.prototype.canActivateFromUserGesture = function canActivateFromUserGesture() {
+    return false;
+  };
+
+  AvPlayAdapter.prototype.activateFromUserGesture = function activateFromUserGesture() {
+    return false;
   };
 
   function createListener(adapter) {

@@ -39,11 +39,31 @@
 
     this.eventBus.on('playback:loading', function onLoading(payload) {
       self.state.hasError = false;
-      self.playerView.show(payload.channel, payload.source);
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.state.selectSource(payload.sourceIndex);
+      self.playerView.show(payload.channel, payload.source, payload.sourceIndex, payload.sourceCount, payload.canToggle, payload.canReopenInteraction);
+      self.playerView.showLoading(payload.statusText);
     });
 
-    this.eventBus.on('playback:ready', function onReady() {
+    this.eventBus.on('playback:resolving', function onResolving(payload) {
+      self.state.hasError = false;
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.state.selectSource(payload.sourceIndex);
+      self.playerView.show(payload.channel, payload.source, payload.sourceIndex, payload.sourceCount, false);
+      self.playerView.showLoading(payload.statusText);
+    });
+
+    this.eventBus.on('playback:ready', function onReady(payload) {
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.playerView.hideActivation();
       self.playerView.hideLoading();
+      self.playerView.hideInteractionMode();
+      if (payload.canReopenInteraction) {
+        self.playerView.setRetryInteractionAvailable();
+      }
     });
 
     this.eventBus.on('playback:buffering', function onBuffering(isBuffering) {
@@ -65,11 +85,56 @@
 
     this.eventBus.on('playback:error', function onError(message) {
       self.state.hasError = true;
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
       self.playerView.showError(message);
+    });
+
+    this.eventBus.on('playback:userActionRequired', function onUserActionRequired(payload) {
+      self.state.hasError = false;
+      self.state.requiresUserAction = true;
+      self.playerView.showActivation(payload.message);
+    });
+
+    this.eventBus.on('playback:activationStarted', function onActivationStarted(payload) {
+      self.state.requiresUserAction = false;
+      self.playerView.hideActivation();
+      if (!payload.interactive) {
+        self.playerView.showLoading(payload.message);
+      }
+    });
+
+    this.eventBus.on('playback:manualInteraction', function onManualInteraction(message) {
+      self.state.requiresUserAction = false;
+      self.playerView.hideActivation();
+      self.playerView.hideLoading();
+      self.playerView.showNotice(message);
+    });
+
+    this.eventBus.on('playback:interactionStarted', function onInteractionStarted(payload) {
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = true;
+      self.playerView.showInteractionMode(payload.durationMs);
+    });
+
+    this.eventBus.on('playback:interactionEnded', function onInteractionEnded(payload) {
+      self.state.iframeInteractionActive = false;
+      self.playerView.hideInteractionMode();
+      if (payload.reason === 'timeout' || payload.reason === 'focus-lost') {
+        self.playerView.setRetryInteractionAvailable();
+      }
+    });
+
+    this.eventBus.on('playback:notice', function onNotice(message) {
+      self.playerView.showNotice(message);
     });
   };
 
   AppController.prototype.onKeyDown = function onKeyDown(event) {
+    if (isApplicationKey(event.keyCode)) {
+      event.preventDefault();
+    }
+
     if (this.state.screen === 'home') {
       this.handleHomeKey(event.keyCode);
       return;
@@ -95,6 +160,43 @@
   };
 
   AppController.prototype.handlePlayerKey = function handlePlayerKey(keyCode) {
+    if (this.state.iframeInteractionActive) {
+      if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
+        this.playbackService.endInteractionWindow('navigation');
+        this.closePlayer();
+      } else if (keyCode === KEY.CHANNEL_UP) {
+        this.playbackService.endInteractionWindow('navigation');
+        this.switchChannel(1);
+      } else if (keyCode === KEY.CHANNEL_DOWN) {
+        this.playbackService.endInteractionWindow('navigation');
+        this.switchChannel(-1);
+      } else if (keyCode === KEY.LEFT) {
+        this.playbackService.endInteractionWindow('navigation');
+        this.switchSource(-1);
+      } else if (keyCode === KEY.RIGHT) {
+        this.playbackService.endInteractionWindow('navigation');
+        this.switchSource(1);
+      }
+      return;
+    }
+
+    if (this.state.requiresUserAction) {
+      if (keyCode === KEY.ENTER) {
+        this.playbackService.activateCurrentSource();
+      } else if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
+        this.closePlayer();
+      } else if (keyCode === KEY.CHANNEL_UP) {
+        this.switchChannel(1);
+      } else if (keyCode === KEY.CHANNEL_DOWN) {
+        this.switchChannel(-1);
+      } else if (keyCode === KEY.LEFT) {
+        this.switchSource(-1);
+      } else if (keyCode === KEY.RIGHT) {
+        this.switchSource(1);
+      }
+      return;
+    }
+
     if (this.state.hasError) {
       if (keyCode === KEY.ENTER) {
         this.state.hasError = false;
@@ -114,6 +216,10 @@
       this.switchChannel(1);
     } else if (keyCode === KEY.CHANNEL_DOWN) {
       this.switchChannel(-1);
+    } else if (keyCode === KEY.LEFT) {
+      this.switchSource(-1);
+    } else if (keyCode === KEY.RIGHT) {
+      this.switchSource(1);
     } else {
       this.playerView.showOverlay();
     }
@@ -143,10 +249,16 @@
     this.playCurrentChannel();
   };
 
+  AppController.prototype.switchSource = function switchSource(delta) {
+    this.playbackService.moveSource(delta);
+  };
+
   AppController.prototype.closePlayer = function closePlayer() {
     this.playbackService.stop();
     this.state.screen = 'home';
     this.state.hasError = false;
+    this.state.requiresUserAction = false;
+    this.state.iframeInteractionActive = false;
     this.state.isPlaying = false;
     this.navigation.setIndex(this.state.focusedChannelIndex);
     this.gridView.focus(this.state.focusedChannelIndex);
@@ -183,6 +295,17 @@
     updateClock();
     window.setInterval(updateClock, 30000);
   };
+
+  function isApplicationKey(keyCode) {
+    var keyName;
+
+    for (keyName in KEY) {
+      if (Object.prototype.hasOwnProperty.call(KEY, keyName) && KEY[keyName] === keyCode) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   namespace.controllers.AppController = AppController;
 }(window.TblackTV));

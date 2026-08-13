@@ -6,8 +6,8 @@ html, body {
 
 .app-shell,
 .screen {
-  width: 1920px;
-  height: 1080px;
+  width: 100%;
+  height: 100%;
 }
 
 .screen--home {
@@ -76,6 +76,13 @@ html, body {
   flex-wrap: wrap;
   gap: 26px;
   align-items: stretch;
+}
+
+.channel-grid--error {
+  display: block;
+  color: #ff9bad;
+  font-size: 20px;
+  line-height: 1.5;
 }
 
 .helpbar {
