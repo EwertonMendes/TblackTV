@@ -650,14 +650,18 @@ test('synchronous player failures become playback errors without escaping the se
 
 test('TV entry point fixes the logical viewport and versions every local asset', function () {
   var packageDocument = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
-  var html = fs.readFileSync(path.join(projectRoot, 'app/index.html'), 'utf8');
+  var html = fs.readFileSync(path.join(projectRoot, packageDocument.appPath), 'utf8');
+  var canonicalHtml = fs.readFileSync(path.join(projectRoot, 'app/index.html'), 'utf8');
   var assetPattern = /(?:src|href)="((?:css|js)\/[^\"]+)"/g;
   var match;
   var assets = [];
 
   assert.strictEqual(html.indexOf('content="width=1920,') >= 0, true);
+  assert.strictEqual(packageDocument.appPath, 'app/index-test-2.html');
+  assert.strictEqual(html, canonicalHtml);
   assert.strictEqual(html.indexOf('id="test-build-number"') >= 0, true);
-  assert.strictEqual(html.indexOf('Número de teste: 1') >= 0, true);
+  assert.strictEqual(html.indexOf('Número de teste: 2') >= 0, true);
+  assert.strictEqual(html.indexOf('defer src="$WEBAPIS/webapis/webapis.js"') >= 0, true);
   while ((match = assetPattern.exec(html))) {
     assets.push(match[1]);
   }
