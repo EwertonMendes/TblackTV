@@ -197,6 +197,34 @@ test('iframe load does not report ready and postMessage validates window and ori
   assert.strictEqual(adapter.getState(), 'playing');
 });
 
+test('iframe DNS hang times out without loading and releases keyboard focus', function () {
+  var runtime = createRuntime();
+  var iframe = createIframe();
+  var errors = [];
+  var Adapter;
+  var adapter;
+
+  loadScript(runtime.context, 'app/js/services/adapters/IframePlayerAdapter.js');
+  Adapter = runtime.window.TblackTV.adapters.IframePlayerAdapter;
+  adapter = new Adapter(iframe, iframeProfile());
+  adapter.load({ url: 'https://dns-hang.example/embed' }, {
+    onError: function onError(message) { errors.push(message); }
+  });
+
+  assert.strictEqual(iframe.style.visibility, 'hidden');
+  assert.strictEqual(iframe.style.pointerEvents, 'none');
+  assert.strictEqual(iframe.attributes.tabindex, '-1');
+  runtime.runTimersThrough(999);
+  assert.strictEqual(errors.length, 0);
+  runtime.runTimersThrough(1000);
+  assert.strictEqual(errors.length, 1);
+  assert.strictEqual(adapter.getState(), 'error');
+  runtime.documentListeners.focusin({ target: iframe });
+  assert.strictEqual(iframe.parentNode.focusCalls > 0, true);
+  adapter.release();
+  assert.strictEqual(runtime.documentListeners.focusin, undefined);
+});
+
 test('same-origin profile confirms playback only from the media playing event', function () {
   var runtime = createRuntime();
   var mediaListeners = {};
@@ -445,6 +473,56 @@ test('PlaybackService falls back, restores the last activatable source and promp
   assert.strictEqual(createdPlayers[2].released, true);
 });
 
+test('manual source selection reports its own failure instead of auto-fallback', function () {
+  var runtime = createRuntime();
+  var created = [];
+  var factory = {
+    create: function create(source) {
+      created.push(source.id);
+      return {
+        load: function load(unused, callbacks) {
+          if (source.id === 'second') {
+            callbacks.onError('second failed');
+          } else {
+            callbacks.onReady();
+          }
+        },
+        release: function release() {},
+        canActivateFromUserGesture: function canActivate() { return false; },
+        canToggle: function canToggle() { return false; },
+        getName: function getName() { return 'fake'; }
+      };
+    }
+  };
+  var resolver = {
+    resolve: function resolve(source, callbacks) {
+      callbacks.onSuccess([source]);
+      return function cancel() {};
+    }
+  };
+  var events = [];
+  var Service;
+  var service;
+
+  loadScript(runtime.context, 'app/js/services/PlaybackService.js');
+  Service = runtime.window.TblackTV.services.PlaybackService;
+  service = new Service(factory, resolver, {
+    emit: function emit(name, payload) { events.push({ name: name, payload: payload }); }
+  });
+  service.playChannel({ sources: [
+    { id: 'first', type: 'hls', url: 'https://first.example/live.m3u8' },
+    { id: 'second', type: 'iframe', url: 'https://second.example/embed' },
+    { id: 'third', type: 'hls', url: 'https://third.example/live.m3u8' }
+  ] }, 0);
+  service.moveSource(1);
+
+  assert.deepStrictEqual(created, ['first', 'second']);
+  assert.strictEqual(events.filter(function isError(event) {
+    return event.name === 'playback:error';
+  }).length, 1);
+  assert.strictEqual(service.sourceIndex, 1);
+});
+
 test('manual activation failure becomes an error instead of reopening the prompt', function () {
   var runtime = createRuntime();
   var callbacks;
@@ -653,10 +731,10 @@ test('TV entry point bundles all local CSS and JavaScript', function () {
   var html = fs.readFileSync(path.join(projectRoot, packageDocument.appPath), 'utf8');
 
   assert.strictEqual(html.indexOf('content="width=1920,') >= 0, true);
-  assert.strictEqual(packageDocument.appPath, 'app/index-test-3.html');
-  assert.strictEqual(packageDocument.testBuild, 3);
+  assert.strictEqual(packageDocument.appPath, 'app/index-test-4.html');
+  assert.strictEqual(packageDocument.testBuild, 4);
   assert.strictEqual(html.indexOf('id="test-build-number"') >= 0, true);
-  assert.strictEqual(html.indexOf('Número de teste: 3') >= 0, true);
+  assert.strictEqual(html.indexOf('Número de teste: 4') >= 0, true);
   assert.strictEqual(html.indexOf('id="tblacktv-bundled-styles"') >= 0, true);
   assert.strictEqual(html.indexOf('<link rel="stylesheet"') >= 0, false);
   assert.strictEqual(html.indexOf('.screen--player') >= 0, true);

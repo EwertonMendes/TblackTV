@@ -22,6 +22,7 @@
     this.manualActivationInProgress = false;
     this.interactionActive = false;
     this.lastFailureMessage = '';
+    this.automaticFallback = true;
   }
 
   PlaybackService.prototype.playChannel = function playChannel(channel, preferredSourceIndex) {
@@ -34,6 +35,7 @@
     this.manualActivationInProgress = false;
     this.interactionActive = false;
     this.lastFailureMessage = '';
+    this.automaticFallback = true;
     this.tryConfiguredSource();
   };
 
@@ -235,7 +237,7 @@
 
     this.lastFailureMessage = message || this.lastFailureMessage;
     this.sourcesTried += 1;
-    if (this.sourcesTried < sources.length) {
+    if (this.automaticFallback && this.sourcesTried < sources.length) {
       this.sourceIndex = normalizeIndex(this.sourceIndex + 1, sources.length);
       this.eventBus.emit('playback:fallback', {
         sourceIndex: this.sourceIndex,
@@ -313,6 +315,7 @@
     this.resetActivePlayback();
     this.sourceIndex = nextIndex;
     this.sourcesTried = 0;
+    this.automaticFallback = false;
     this.manualCandidate = null;
     this.restoringManualCandidate = false;
     this.tryConfiguredSource();
@@ -321,6 +324,7 @@
   PlaybackService.prototype.retry = function retry() {
     this.resetActivePlayback();
     this.sourcesTried = 0;
+    this.automaticFallback = false;
     this.manualCandidate = null;
     this.restoringManualCandidate = false;
     this.tryConfiguredSource();

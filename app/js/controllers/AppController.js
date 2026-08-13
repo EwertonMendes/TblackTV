@@ -173,39 +173,38 @@
   };
 
   AppController.prototype.handlePlayerKey = function handlePlayerKey(keyCode) {
-    if (this.state.iframeInteractionActive) {
-      if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
+    // Navigation belongs to TblackTV in every player state. Handle it before
+    // loading, activation and error-specific actions so a source can never
+    // trap the user inside its iframe.
+    if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
+      if (this.state.iframeInteractionActive) {
         this.playbackService.endInteractionWindow('navigation');
-        this.closePlayer();
-      } else if (keyCode === KEY.CHANNEL_UP) {
-        this.playbackService.endInteractionWindow('navigation');
-        this.switchChannel(1);
-      } else if (keyCode === KEY.CHANNEL_DOWN) {
-        this.playbackService.endInteractionWindow('navigation');
-        this.switchChannel(-1);
-      } else if (keyCode === KEY.LEFT) {
-        this.playbackService.endInteractionWindow('navigation');
-        this.switchSource(-1);
-      } else if (keyCode === KEY.RIGHT) {
-        this.playbackService.endInteractionWindow('navigation');
-        this.switchSource(1);
       }
+      this.closePlayer();
+      return;
+    }
+    if (keyCode === KEY.CHANNEL_UP || keyCode === KEY.CHANNEL_DOWN) {
+      if (this.state.iframeInteractionActive) {
+        this.playbackService.endInteractionWindow('navigation');
+      }
+      this.switchChannel(keyCode === KEY.CHANNEL_UP ? 1 : -1);
+      return;
+    }
+    if (keyCode === KEY.LEFT || keyCode === KEY.RIGHT) {
+      if (this.state.iframeInteractionActive) {
+        this.playbackService.endInteractionWindow('navigation');
+      }
+      this.switchSource(keyCode === KEY.RIGHT ? 1 : -1);
+      return;
+    }
+
+    if (this.state.iframeInteractionActive) {
       return;
     }
 
     if (this.state.requiresUserAction) {
       if (keyCode === KEY.ENTER) {
         this.playbackService.activateCurrentSource();
-      } else if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
-        this.closePlayer();
-      } else if (keyCode === KEY.CHANNEL_UP) {
-        this.switchChannel(1);
-      } else if (keyCode === KEY.CHANNEL_DOWN) {
-        this.switchChannel(-1);
-      } else if (keyCode === KEY.LEFT) {
-        this.switchSource(-1);
-      } else if (keyCode === KEY.RIGHT) {
-        this.switchSource(1);
       }
       return;
     }
@@ -215,24 +214,12 @@
         this.state.hasError = false;
         this.playerView.hideError();
         this.playbackService.retry();
-      } else if (keyCode === KEY.BACK) {
-        this.closePlayer();
       }
       return;
     }
 
-    if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
-      this.closePlayer();
-    } else if (keyCode === KEY.ENTER || keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.MEDIA_PAUSE) {
+    if (keyCode === KEY.ENTER || keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.MEDIA_PAUSE) {
       this.playbackService.toggle();
-    } else if (keyCode === KEY.CHANNEL_UP) {
-      this.switchChannel(1);
-    } else if (keyCode === KEY.CHANNEL_DOWN) {
-      this.switchChannel(-1);
-    } else if (keyCode === KEY.LEFT) {
-      this.switchSource(-1);
-    } else if (keyCode === KEY.RIGHT) {
-      this.switchSource(1);
     } else {
       this.playerView.showOverlay();
     }

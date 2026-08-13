@@ -4,6 +4,7 @@
   var DEFAULT_START_TIMEOUT_MS = 6000;
   var DEFAULT_MANUAL_TIMEOUT_MS = 6000;
   var DEFAULT_INTERACTION_WINDOW_MS = 6000;
+  var FOCUS_WATCHDOG_MS = 400;
   var SAFE_SANDBOX = 'allow-scripts allow-same-origin';
 
   function IframePlayerAdapter(iframeElement, profile) {
@@ -14,16 +15,18 @@
     this.state = 'idle';
     this.isPlaying = false;
     this.startTimeout = null;
+    this.loadTimeout = null;
     this.manualTimeout = null;
     this.interactionTimeout = null;
     this.focusRestoreTimeout = null;
-    this.focusGuardTimeouts = [];
+    this.focusWatchdogTimeout = null;
     this.actionTimeouts = [];
     this.boundLoad = null;
     this.boundError = null;
     this.boundMessage = null;
     this.boundWindowBlur = null;
     this.boundVisibilityChange = null;
+    this.boundDocumentFocusIn = null;
     this.sameOriginMedia = null;
     this.boundMediaHandlers = null;
     this.securityMode = 'sandbox';
@@ -51,7 +54,9 @@
       if (self.state !== 'loading') {
         return;
       }
+      self.clearLoadTimeout();
       self.state = 'starting';
+      self.iframe.style.visibility = 'visible';
       self.disableInteraction();
       self.restoreApplicationFocus();
       invoke(self.callbacks.onBuffering, true);
@@ -81,9 +86,36 @@
       this.iframe.removeAttribute('sandbox');
     }
     this.iframe.style.display = 'block';
+    // A cross-origin frame may steal the remote focus while its provider is
+    // still loading. Keep it visually hidden until the load event and retain
+    // the application as the sole keyboard owner outside manual interaction.
+    this.iframe.style.visibility = 'hidden';
     this.disableInteraction();
+    this.bindApplicationFocusGuard();
+    this.armLoadTimeout();
     this.iframe.src = sourceUrl;
-    this.scheduleApplicationFocusGuards();
+    this.startFocusWatchdog();
+  };
+
+  IframePlayerAdapter.prototype.armLoadTimeout = function armLoadTimeout() {
+    var self = this;
+    var startup = getStartup(this.profile);
+    var timeoutMs = startup.loadTimeoutMs || startup.timeoutMs || this.source.timeoutMs || DEFAULT_START_TIMEOUT_MS;
+
+    this.clearLoadTimeout();
+    this.loadTimeout = window.setTimeout(function onIframeLoadTimeout() {
+      self.loadTimeout = null;
+      if (self.state === 'loading') {
+        self.fail('O iframe não respondeu. Verifique a conexão, o DNS ou tente outra fonte.');
+      }
+    }, timeoutMs);
+  };
+
+  IframePlayerAdapter.prototype.clearLoadTimeout = function clearLoadTimeout() {
+    if (this.loadTimeout) {
+      window.clearTimeout(this.loadTimeout);
+      this.loadTimeout = null;
+    }
   };
 
   IframePlayerAdapter.prototype.runStartupActions = function runStartupActions(fromUserGesture) {
@@ -261,6 +293,7 @@
     if (this.interactionActive) {
       this.finishInteractionWindow('verified', false);
     }
+    this.clearLoadTimeout();
     this.clearStartTimeouts();
     if (!keepInteraction) {
       this.disableInteraction();
@@ -282,6 +315,7 @@
       return;
     }
 
+    this.clearLoadTimeout();
     this.clearStartTimeouts();
     this.state = getStartup(this.profile).manualFallback === 'timedInteraction' ? 'interaction-required' : 'autoplay-blocked';
     this.isPlaying = false;
@@ -297,8 +331,11 @@
     if (this.interactionActive) {
       this.finishInteractionWindow('cancelled', false);
     }
+    this.clearLoadTimeout();
     this.clearStartTimeouts();
+    this.stopFocusWatchdog();
     this.disableInteraction();
+    this.restoreApplicationFocus();
     this.state = 'error';
     this.isPlaying = false;
     invoke(this.callbacks.onBuffering, false);
@@ -357,7 +394,7 @@
     }
 
     this.clearStartTimeouts();
-    this.clearFocusGuards();
+    this.stopFocusWatchdog();
     this.interactionActive = true;
     this.state = 'interaction-active';
     this.isPlaying = false;
@@ -406,6 +443,7 @@
       }
       invoke(this.callbacks.onBuffering, false);
     }
+    this.startFocusWatchdog();
     return true;
   };
 
@@ -482,6 +520,7 @@
     this.cancelInteractionWindow('cancelled');
     this.clearAllTimeouts();
     this.unbindInteractionGuards();
+    this.unbindApplicationFocusGuard();
     this.unbindSameOriginMedia();
 
     if (this.boundLoad) {
@@ -498,6 +537,7 @@
     this.disableInteraction();
     this.iframe.removeAttribute('src');
     this.iframe.style.display = 'none';
+    this.iframe.style.visibility = 'hidden';
     this.boundLoad = null;
     this.boundError = null;
     this.boundMessage = null;
@@ -520,6 +560,7 @@
   };
 
   IframePlayerAdapter.prototype.enableInteraction = function enableInteraction() {
+    this.iframe.style.visibility = 'visible';
     this.iframe.style.pointerEvents = 'auto';
     this.iframe.setAttribute('tabindex', '0');
     try {
@@ -531,6 +572,28 @@
   IframePlayerAdapter.prototype.disableInteraction = function disableInteraction() {
     this.iframe.style.pointerEvents = 'none';
     this.iframe.setAttribute('tabindex', '-1');
+  };
+
+  IframePlayerAdapter.prototype.bindApplicationFocusGuard = function bindApplicationFocusGuard() {
+    var self = this;
+
+    if (this.boundDocumentFocusIn) {
+      return;
+    }
+    this.boundDocumentFocusIn = function onDocumentFocusIn(event) {
+      if (!self.interactionActive && event.target === self.iframe) {
+        self.disableInteraction();
+        self.restoreApplicationFocus();
+      }
+    };
+    document.addEventListener('focusin', this.boundDocumentFocusIn, true);
+  };
+
+  IframePlayerAdapter.prototype.unbindApplicationFocusGuard = function unbindApplicationFocusGuard() {
+    if (this.boundDocumentFocusIn) {
+      document.removeEventListener('focusin', this.boundDocumentFocusIn, true);
+      this.boundDocumentFocusIn = null;
+    }
   };
 
   IframePlayerAdapter.prototype.restoreApplicationFocus = function restoreApplicationFocus() {
@@ -562,29 +625,27 @@
     }, 100);
   };
 
-  IframePlayerAdapter.prototype.scheduleApplicationFocusGuards = function scheduleApplicationFocusGuards() {
+  IframePlayerAdapter.prototype.startFocusWatchdog = function startFocusWatchdog() {
     var self = this;
-    var delays = [0, 250, 1000, 2500];
-    var index;
 
-    this.clearFocusGuards();
-    for (index = 0; index < delays.length; index += 1) {
-      this.focusGuardTimeouts.push(window.setTimeout(function recoverFocusDuringLoad() {
-        if (!self.interactionActive && self.state !== 'released' && self.state !== 'error') {
-          self.disableInteraction();
-          self.restoreApplicationFocus();
-        }
-      }, delays[index]));
+    this.stopFocusWatchdog();
+    function recoverFocus() {
+      if (self.interactionActive || self.state === 'released' || self.state === 'error') {
+        self.focusWatchdogTimeout = null;
+        return;
+      }
+      self.disableInteraction();
+      self.restoreApplicationFocus();
+      self.focusWatchdogTimeout = window.setTimeout(recoverFocus, FOCUS_WATCHDOG_MS);
     }
+    recoverFocus();
   };
 
-  IframePlayerAdapter.prototype.clearFocusGuards = function clearFocusGuards() {
-    var index;
-
-    for (index = 0; index < this.focusGuardTimeouts.length; index += 1) {
-      window.clearTimeout(this.focusGuardTimeouts[index]);
+  IframePlayerAdapter.prototype.stopFocusWatchdog = function stopFocusWatchdog() {
+    if (this.focusWatchdogTimeout) {
+      window.clearTimeout(this.focusWatchdogTimeout);
+      this.focusWatchdogTimeout = null;
     }
-    this.focusGuardTimeouts = [];
   };
 
   IframePlayerAdapter.prototype.bindInteractionGuards = function bindInteractionGuards() {
@@ -640,7 +701,8 @@
 
   IframePlayerAdapter.prototype.clearAllTimeouts = function clearAllTimeouts() {
     this.clearStartTimeouts();
-    this.clearFocusGuards();
+    this.clearLoadTimeout();
+    this.stopFocusWatchdog();
     if (this.interactionTimeout) {
       window.clearTimeout(this.interactionTimeout);
       this.interactionTimeout = null;

@@ -7,7 +7,7 @@ Protótipo de hub de canais ao vivo, desenhado para Samsung Tizen e navegação 
 1. Crie um repositório **público** no GitHub.
 2. Envie o conteúdo deste ZIP para a **raiz** do repositório (o `package.json` deve ficar na raiz).
 3. Na TV abra **TizenBrew → Module Manager → Add GitHub Module**.
-4. Informe `EwertonMendes/TblackTV@v0.2.3` para usar a versão imutável validada na TV.
+4. Informe `EwertonMendes/TblackTV@v0.2.4` para usar a versão imutável validada na TV.
 5. Volte para a Home do TizenBrew e abra **TblackTV**.
 
 Evite `@master`: o jsDelivr pode manter arquivos de commits diferentes em cache. Cada versão de teste recebe uma tag própria e um novo `appPath`, garantindo que manifesto, HTML, CSS e JavaScript pertençam à mesma publicação.

@@ -1,0 +1,3986 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TblackTV</title>
+
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; background: #070b14; color: #f8fafc; font-family: Arial, sans-serif; }
+    #app, #home-screen { width: 100%; height: 100%; }
+    #test-build-number { color: #dce2ff; font-weight: 700; }
+  </style>
+  <script type="text/javascript" defer src="$WEBAPIS/webapis/webapis.js"></script>
+  <style id="tblacktv-bundled-styles">
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; min-width: 100%; min-height: 100%; margin: 0; padding: 0; }
+body { overflow: hidden; }
+button, input, select, textarea { font: inherit; }
+h1, h2, h3, p { margin: 0; }
+
+:root {
+  --bg: #070b14;
+  --surface: #0d1322;
+  --surface-2: #111a2d;
+  --surface-3: #18243c;
+  --text: #f8fafc;
+  --muted: #98a6bd;
+  --muted-2: #6e7f99;
+  --focus: #ffffff;
+  --live: #ff365f;
+  --accent: #6b7cff;
+  --success: #45d483;
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, .48);
+  --radius-lg: 26px;
+  --radius-md: 18px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.app-shell,
+.screen {
+  width: 100%;
+  height: 100%;
+}
+
+.app-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.screen--home {
+  position: relative;
+  padding: 54px 76px 42px;
+  background:
+    radial-gradient(circle at 78% 0%, rgba(76, 91, 211, .22), transparent 34%),
+    radial-gradient(circle at 10% 100%, rgba(34, 170, 148, .10), transparent 30%),
+    linear-gradient(145deg, #070b14 0%, #09101e 52%, #070b14 100%);
+}
+
+.screen--home::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: .22;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+.topbar,
+.hero,
+.channel-section,
+.helpbar { position: relative; z-index: 1; }
+
+.topbar {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand { display: flex; align-items: center; }
+.brand > * + * { margin-left: 18px; }
+.brand__mark {
+  width: 62px; height: 62px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; font-weight: 800;
+  background: linear-gradient(135deg, #7180ff, #8e5cff);
+  box-shadow: 0 12px 34px rgba(107,124,255,.32);
+}
+.brand__title { font-size: 28px; line-height: 1.05; letter-spacing: -.5px; }
+.brand__subtitle { margin-top: 6px; color: var(--muted); font-size: 16px; }
+
+.topbar__status { display: flex; align-items: center; }
+.topbar__status > * + * { margin-left: 28px; }
+.build-marker {
+  padding: 9px 13px;
+  border: 1px solid rgba(153, 165, 255, .42);
+  border-radius: 9px;
+  background: rgba(113, 128, 255, .10);
+  color: #dce2ff;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.status-pill {
+  display: flex; align-items: center;
+  padding: 11px 16px; border-radius: 999px;
+  background: rgba(255,255,255,.06); color: #dce5f3; font-size: 16px;
+}
+.status-dot { width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px rgba(69,212,131,.12); }
+.status-pill--warning .status-dot { background: #f2b84b; box-shadow: 0 0 0 5px rgba(242,184,75,.12); }
+.clock { min-width: 86px; text-align: right; font-size: 24px; font-weight: 700; letter-spacing: .4px; }
+
+.hero { margin-top: 36px; }
+.eyebrow { color: #99a5ff; font-weight: 800; font-size: 16px; letter-spacing: 2.4px; }
+.hero__title { margin-top: 14px; font-size: 58px; line-height: 1.04; letter-spacing: -2.1px; }
+.hero__description { margin-top: 18px; max-width: 830px; color: var(--muted); font-size: 21px; line-height: 1.45; }
+
+.channel-section { margin-top: 36px; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.section-heading h3 { font-size: 25px; letter-spacing: -.4px; }
+.section-heading__meta { color: var(--muted); font-size: 16px; }
+
+.channel-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  margin-right: -30px;
+  margin-bottom: -30px;
+}
+.channel-card { margin-right: 30px; margin-bottom: 30px; }
+
+.channel-grid--error {
+  display: block;
+  color: #ff9bad;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.helpbar {
+  position: absolute;
+  left: 76px; right: 76px; bottom: 40px;
+  display: flex; align-items: center;
+  color: var(--muted); font-size: 16px;
+}
+.helpbar > * + * { margin-left: 34px; }
+
+kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 32px; padding: 0 10px; margin-right: 8px;
+  border-radius: 9px; background: rgba(255,255,255,.09);
+  color: #fff; font-weight: 700; font-family: Arial, Helvetica, sans-serif;
+}
+
+.is-hidden { display: none !important; }
+
+@media screen and (max-width: 1500px) {
+  .screen--home { padding: 28px 40px 24px; }
+  .topbar { height: 60px; }
+  .brand > * + * { margin-left: 12px; }
+  .brand__mark { width: 48px; height: 48px; border-radius: 14px; font-size: 26px; }
+  .brand__title { font-size: 22px; }
+  .brand__subtitle { margin-top: 3px; font-size: 13px; }
+  .topbar__status > * + * { margin-left: 18px; }
+  .build-marker { padding: 7px 10px; font-size: 12px; }
+  .status-pill { padding: 8px 12px; font-size: 13px; }
+  .clock { font-size: 20px; }
+  .hero { margin-top: 18px; }
+  .eyebrow { font-size: 13px; letter-spacing: 2px; }
+  .hero__title { margin-top: 8px; font-size: 42px; letter-spacing: -1.4px; }
+  .hero__description { margin-top: 10px; font-size: 17px; }
+  .channel-section { margin-top: 18px; }
+  .section-heading { margin-bottom: 12px; }
+  .section-heading h3 { font-size: 20px; }
+  .channel-grid { margin-right: -18px; margin-bottom: -18px; }
+  .channel-card { margin-right: 18px; margin-bottom: 18px; }
+  .helpbar { left: 40px; right: 40px; bottom: 18px; font-size: 13px; }
+  .helpbar > * + * { margin-left: 22px; }
+  kbd { min-height: 26px; padding: 0 8px; }
+}
+
+.channel-card {
+  position: relative;
+  width: 380px;
+  height: 238px;
+  padding: 24px;
+  margin-right: 30px !important;
+  margin-bottom: 30px !important;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.045));
+  border: 2px solid rgba(255,255,255,.08);
+  box-shadow: 0 15px 36px rgba(0,0,0,.2);
+  transform: scale(1);
+  transition: transform 150ms var(--ease), border-color 150ms var(--ease), box-shadow 150ms var(--ease), background 150ms var(--ease);
+}
+
+.channel-card::before {
+  content: '';
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  right: -82px;
+  top: -100px;
+  background: var(--channel-accent);
+  opacity: .17;
+  filter: blur(2px);
+}
+
+.channel-card.is-focused {
+  transform: scale(1.045);
+  border-color: rgba(255,255,255,.95);
+  background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.065));
+  box-shadow: 0 24px 64px rgba(0,0,0,.42), 0 0 0 5px rgba(255,255,255,.07);
+}
+
+.channel-card__header { display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 1; }
+.channel-card__logo {
+  width: 66px; height: 66px; border-radius: 19px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--channel-accent);
+  color: #fff; font-size: 20px; font-weight: 900; letter-spacing: -.5px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 12px 28px rgba(0,0,0,.25);
+}
+.channel-card__live {
+  display: flex; align-items: center;
+  color: #ffe5eb; font-size: 13px; font-weight: 800; letter-spacing: 1.2px;
+}
+.channel-card__live span { width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--live); }
+.channel-card__body { position: relative; z-index: 1; margin-top: 16px; min-width: 0; }
+.channel-card__category { color: #a9b5c9; font-size: 13px; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; }
+.channel-card__name { margin-top: 5px; font-size: 27px; line-height: 1.15; letter-spacing: -.7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.channel-card__description { margin-top: 8px; color: #b8c3d5; font-size: 14px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+@media screen and (max-width: 1500px) {
+  .channel-card {
+    width: calc(25% - 18px);
+    height: 185px;
+    padding: 18px;
+    margin-right: 18px !important;
+    margin-bottom: 18px !important;
+    border-radius: 18px;
+  }
+  .channel-card.is-focused { transform: scale(1.025); }
+  .channel-card__logo { width: 52px; height: 52px; border-radius: 15px; font-size: 16px; }
+  .channel-card__live { font-size: 10px; letter-spacing: .9px; }
+  .channel-card__body { margin-top: 10px; }
+  .channel-card__category { font-size: 10px; }
+  .channel-card__name { margin-top: 3px; font-size: 21px; }
+  .channel-card__description { margin-top: 5px; font-size: 12px; }
+}
+
+.screen--player {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+}
+
+.av-player,
+.html5-player,
+.iframe-player {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.av-player { z-index: 1; }
+.html5-player { z-index: 1; object-fit: contain; display: none; }
+.iframe-player { z-index: 2; border: 0; display: none; }
+
+.player-loading {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #06080d;
+  color: #d9e2ef;
+  font-size: 21px;
+}
+.player-loading .spinner { margin-bottom: 22px; }
+
+.spinner {
+  width: 66px; height: 66px; border-radius: 50%;
+  border: 6px solid rgba(255,255,255,.14);
+  border-top-color: #fff;
+  animation: spin 900ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.player-overlay {
+  position: absolute;
+  z-index: 8;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 58px 72px 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  opacity: 1;
+  background: linear-gradient(to bottom, rgba(0,0,0,.58), transparent 28%, transparent 67%, rgba(0,0,0,.68));
+}
+.player-overlay.is-dimmed { opacity: 0; visibility: hidden; }
+
+.interaction-banner {
+  position: absolute;
+  z-index: 14;
+  top: 28px;
+  left: 50%;
+  max-width: calc(100% - 96px);
+  padding: 14px 20px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px;
+  background: rgba(10,16,26,.92);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 12px 36px rgba(0,0,0,.42);
+}
+.interaction-banner__indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #65e0ad;
+  box-shadow: 0 0 0 5px rgba(68,211,154,.16);
+}
+.player-overlay__top { display: flex; justify-content: space-between; align-items: flex-start; }
+.live-label { display: flex; align-items: center; color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 1.8px; }
+.live-label span { width: 10px; height: 10px; margin-right: 9px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 6px rgba(255,54,95,.16); }
+.player-overlay h2 { margin-top: 14px; font-size: 50px; letter-spacing: -1.2px; }
+#player-source-name { margin-top: 8px; color: rgba(255,255,255,.72); font-size: 17px; }
+.player-overlay__hints { color: rgba(255,255,255,.72); font-size: 17px; line-height: 1.7; padding-top: 4px; text-align: right; }
+.player-overlay__bottom { display: flex; align-items: center; }
+.player-overlay__bottom > * + * { margin-left: 34px; }
+.player-action { display: flex; align-items: center; color: #fff; font-size: 17px; }
+.player-action > * + * { margin-left: 12px; }
+.player-action--muted { color: rgba(255,255,255,.68); }
+#play-state-icon { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,.16); font-weight: 900; }
+
+.error-dialog,
+.activation-dialog {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.76);
+}
+.error-dialog__card,
+.activation-dialog__card {
+  width: 690px;
+  padding: 48px 52px;
+  border-radius: 26px;
+  background: #121a28;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.error-dialog__icon,
+.activation-dialog__icon {
+  width: 62px; height: 62px; margin: 0 auto 22px;
+  border-radius: 18px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,54,95,.16); color: #ff5f7c; font-size: 34px; font-weight: 900;
+}
+.activation-dialog__icon { background: rgba(68, 211, 154, .16); color: #65e0ad; }
+.error-dialog h3,
+.activation-dialog h3 { font-size: 31px; }
+.error-dialog p,
+.activation-dialog p { margin-top: 14px; color: var(--muted); font-size: 18px; line-height: 1.5; }
+.error-dialog__actions,
+.activation-dialog__actions { margin-top: 30px; display: flex; justify-content: center; color: #dce5f3; }
+.error-dialog__actions > * + *,
+.activation-dialog__actions > * + * { margin-left: 26px; }
+
+@media screen and (max-width: 1500px) {
+  .player-overlay { padding: 34px 42px 32px; }
+  .player-overlay h2 { font-size: 38px; }
+  .player-overlay__hints,
+  #player-source-name,
+  .player-action { font-size: 14px; }
+  .interaction-banner { top: 18px; font-size: 14px; }
+}
+  </style>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <main id="home-screen" class="screen screen--home" aria-label="Canais ao vivo" tabindex="-1">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">T</div>
+          <div>
+            <h1 class="brand__title">TblackTV</h1>
+            <p class="brand__subtitle">TV ao vivo</p>
+          </div>
+        </div>
+
+        <div class="topbar__status">
+          <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
+          <!-- Incrementar este número a cada publicação usada para teste na TV. -->
+          <span id="test-build-number" class="build-marker">Número de teste: 4</span>
+          <time id="clock" class="clock">--:--</time>
+        </div>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">CANAIS GRATUITOS</p>
+        <h2 class="hero__title">O que você quer assistir?</h2>
+        <p class="hero__description">Escolha um canal e aperte OK. Interface otimizada para o controle da TV.</p>
+      </section>
+
+      <section class="channel-section" aria-labelledby="channels-heading">
+        <div class="section-heading">
+          <h3 id="channels-heading">Ao vivo agora</h3>
+          <span id="channel-count" class="section-heading__meta"></span>
+        </div>
+        <div id="channel-grid" class="channel-grid" role="list"></div>
+      </section>
+
+      <footer class="helpbar">
+        <span><kbd>← ↑ ↓ →</kbd> navegar</span>
+        <span><kbd>OK</kbd> assistir</span>
+        <span><kbd>Return</kbd> sair</span>
+      </footer>
+    </main>
+
+    <section id="player-screen" class="screen screen--player is-hidden" aria-label="Player ao vivo" tabindex="-1">
+      <object id="av-player" class="av-player" type="application/avplayer"></object>
+      <video id="html5-player" class="html5-player" playsinline></video>
+      <iframe
+        id="iframe-player"
+        name="Player"
+        class="iframe-player"
+        title="Player incorporado"
+        frameborder="0"
+        sandbox="allow-scripts allow-same-origin"
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        allowfullscreen
+        tabindex="-1"></iframe>
+
+      <div id="player-loading" class="player-loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="player-loading-text">Conectando ao canal…</p>
+      </div>
+
+      <div id="interaction-banner" class="interaction-banner is-hidden" role="status" aria-live="polite">
+        <span class="interaction-banner__indicator" aria-hidden="true"></span>
+        <span id="interaction-banner-text">Acione o Play — controle do TblackTV retorna em 6 segundos</span>
+      </div>
+
+      <div id="player-overlay" class="player-overlay">
+        <div class="player-overlay__top">
+          <div>
+            <div class="live-label"><span></span> AO VIVO</div>
+            <h2 id="player-channel-name">Canal</h2>
+            <p id="player-source-name">Fonte</p>
+          </div>
+          <div class="player-overlay__hints">
+            <div>← → troca de fonte</div>
+            <div>Channel ± troca de canal</div>
+          </div>
+        </div>
+
+        <div class="player-overlay__bottom">
+          <div class="player-action"><span id="play-state-icon">Ⅱ</span><span id="play-state-label">OK para pausar</span></div>
+          <div class="player-action player-action--muted">Return para voltar</div>
+        </div>
+      </div>
+
+      <div id="error-dialog" class="error-dialog is-hidden" role="dialog" aria-modal="true">
+        <div class="error-dialog__card">
+          <div class="error-dialog__icon">!</div>
+          <h3>Não foi possível reproduzir</h3>
+          <p id="error-message">A fonte não respondeu.</p>
+          <div class="error-dialog__actions">
+            <span><kbd>OK</kbd> tentar novamente</span>
+            <span><kbd>Return</kbd> voltar</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="activation-dialog" class="activation-dialog is-hidden" role="dialog" aria-modal="true">
+        <div class="activation-dialog__card">
+          <div class="activation-dialog__icon">&#9654;</div>
+          <h3>Confirmação necessária</h3>
+          <p id="activation-message">OK para iniciar esta fonte</p>
+          <div class="activation-dialog__actions">
+            <span><kbd>OK</kbd> iniciar</span>
+            <span><kbd>Return</kbd> voltar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script data-tblacktv-source="js/bootstrap.js">
+(function bootstrapNamespace(global) {
+  'use strict';
+
+  global.TblackTV = global.TblackTV || {
+    config: {},
+    core: {},
+    services: {},
+    adapters: {},
+    ui: {},
+    controllers: {}
+  };
+}(window));
+</script>
+  <script data-tblacktv-source="js/config/EmbeddedCatalog.js">
+(function defineEmbeddedCatalog(namespace) {
+  'use strict';
+
+  /* Gerado por npm run sync-catalog. Não edite manualmente. */
+  namespace.config.embeddedProfiles = {
+    "schemaVersion": 1,
+    "profiles": [
+      {
+        "id": "youtube-postmessage",
+        "kind": "iframe",
+        "startup": {
+          "postMessageFormat": "json",
+          "urlParams": {
+            "autoplay": "1",
+            "enablejsapi": "1",
+            "playsinline": "1"
+          },
+          "postMessages": [
+            {
+              "message": {
+                "event": "listening"
+              },
+              "delaysMs": [
+                0,
+                500
+              ]
+            },
+            {
+              "message": {
+                "event": "command",
+                "func": "addEventListener",
+                "args": [
+                  "onStateChange"
+                ]
+              },
+              "delaysMs": [
+                50,
+                550
+              ]
+            },
+            {
+              "message": {
+                "event": "command",
+                "func": "playVideo",
+                "args": []
+              },
+              "delaysMs": [
+                100,
+                700,
+                1600
+              ]
+            }
+          ],
+          "verification": {
+            "type": "postMessage",
+            "origin": "https://www.youtube.com",
+            "eventField": "event",
+            "eventValue": "onStateChange",
+            "stateField": "info",
+            "playingValues": [
+              1
+            ]
+          },
+          "timeoutMs": 6000,
+          "manualFallback": "postMessage"
+        },
+        "controls": {
+          "strategy": "postMessage",
+          "targetOrigin": "https://www.youtube.com",
+          "play": {
+            "event": "command",
+            "func": "playVideo",
+            "args": []
+          },
+          "pause": {
+            "event": "command",
+            "func": "pauseVideo",
+            "args": []
+          }
+        }
+      },
+      {
+        "id": "same-origin-html5",
+        "kind": "iframe",
+        "startup": {
+          "sameOrigin": {
+            "mediaSelector": "video",
+            "playSelector": "[data-action=play], .vjs-big-play-button, .plyr__control--overlaid"
+          },
+          "verification": {
+            "type": "sameOriginMedia",
+            "mediaSelector": "video"
+          },
+          "timeoutMs": 5000,
+          "manualFallback": "sameOrigin"
+        }
+      },
+      {
+        "id": "opaque-iframe",
+        "kind": "iframe",
+        "startup": {
+          "securityMode": "interaction-shield",
+          "urlParams": {
+            "autoplay": "1",
+            "playsinline": "1"
+          },
+          "verification": {
+            "type": "none"
+          },
+          "timeoutMs": 5000,
+          "manualFallback": "timedInteraction",
+          "interactionWindowMs": 6000,
+          "manualCompletion": "assume-playing"
+        }
+      }
+    ]
+  };
+
+  namespace.config.embeddedCatalog = {
+    "schemaVersion": 1,
+    "channels": [
+      {
+        "id": "tv-brasil",
+        "name": "TV Brasil",
+        "shortName": "TV",
+        "category": "TV aberta",
+        "accent": "#2f73da",
+        "description": "Jornalismo, cultura, esportes e programação pública.",
+        "sources": [
+          {
+            "id": "ebc-hls",
+            "label": "EBC • HLS oficial",
+            "type": "hls",
+            "url": "https://tvbrasil-stream.ebc.com.br/index.m3u8",
+            "timeoutMs": 20000
+          },
+          {
+            "id": "local-m3u",
+            "label": "Playlist M3U • Exemplo",
+            "type": "m3u",
+            "url": "config/playlists/tv-brasil.m3u",
+            "timeoutMs": 20000
+          },
+          {
+            "id": "youtube-embed",
+            "label": "YouTube oficial • iframe",
+            "type": "iframe",
+            "url": "https://www.youtube.com/embed/live_stream?channel=UCSv9d0kQegylHWpP83jWSQg&autoplay=1&enablejsapi=1",
+            "playerProfile": "youtube-postmessage",
+            "timeoutMs": 20000,
+            "controls": {
+              "strategy": "postMessage",
+              "targetOrigin": "https://www.youtube.com",
+              "play": {
+                "event": "command",
+                "func": "playVideo",
+                "args": []
+              },
+              "pause": {
+                "event": "command",
+                "func": "pauseVideo",
+                "args": []
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "canal-gov",
+        "name": "Canal Gov",
+        "shortName": "GOV",
+        "category": "Notícias",
+        "accent": "#158a64",
+        "description": "Notícias, eventos e transmissões do Governo Federal.",
+        "sources": [
+          {
+            "id": "ebc-hls",
+            "label": "EBC • HLS oficial",
+            "type": "hls",
+            "url": "https://canalgov-stream.ebc.com.br/index.m3u8"
+          }
+        ]
+      },
+      {
+        "id": "canal-educacao",
+        "name": "Canal Educação",
+        "shortName": "EDU",
+        "category": "Educação",
+        "accent": "#b44ed1",
+        "description": "Conteúdo educacional e produções da comunicação pública.",
+        "sources": [
+          {
+            "id": "ebc-hls",
+            "label": "EBC • HLS oficial",
+            "type": "hls",
+            "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8"
+          }
+        ]
+      },
+      {
+        "id": "tv-cultura",
+        "name": "TV Cultura",
+        "shortName": "CULT",
+        "category": "TV aberta",
+        "accent": "#2159a8",
+        "description": "Cultura, educação, jornalismo e programação infantil.",
+        "sources": [
+          {
+            "id": "tvcultura-hls",
+            "label": "TV Cultura • HLS oficial",
+            "type": "hls",
+            "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8"
+          }
+        ]
+      },
+      {
+        "id": "tv-camara",
+        "name": "TV Câmara",
+        "shortName": "CAM",
+        "category": "Legislativo",
+        "accent": "#007c73",
+        "description": "Sessões, debates e notícias da Câmara dos Deputados.",
+        "sources": [
+          {
+            "id": "camara-hls",
+            "label": "Câmara dos Deputados • HLS oficial",
+            "type": "hls",
+            "url": "https://stream3.camara.gov.br/tv1/manifest.m3u8"
+          }
+        ]
+      },
+      {
+        "id": "tv-parana-turismo",
+        "name": "TV Paraná Turismo",
+        "shortName": "PR",
+        "category": "TV pública",
+        "accent": "#d17818",
+        "description": "Turismo, cultura, notícias e programação do Paraná.",
+        "sources": [
+          {
+            "id": "parana-hls",
+            "label": "Governo do Paraná • HLS oficial",
+            "type": "hls",
+            "url": "https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8"
+          }
+        ]
+      },
+      {
+        "id": "globo-rj",
+        "name": "Globo RJ",
+        "shortName": "Globo",
+        "category": "TV aberta",
+        "accent": "#00378b",
+        "description": "Programação da TV Globo para o Rio de Janeiro: jornalismo local, novelas, esportes e entretenimento.",
+        "sources": [
+          {
+            "id": "rdcanais-player-direct",
+            "label": "RD Canais • player direto",
+            "type": "iframe",
+            "url": "https://localhost.tattoo/globo/player.php?id=6120663&lat=-22.9068467&long=-43.1728965",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
+          },
+          {
+            "id": "rdcanais-wrapper",
+            "label": "RD Canais • página alternativa",
+            "type": "iframe",
+            "url": "https://rdcanais.net/globorj",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
+          },
+          {
+            "id": "alerquina-wrapper",
+            "label": "Arlequina • página alternativa",
+            "type": "iframe",
+            "url": "https://alerquina54104.embedtv.lat/eab811eb-8ba6-4c3a-b5b1-bd0add5e2913",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
+          },
+          {
+            "id": "redecanais-wrapper",
+            "label": "Rede Canais • página alternativa",
+            "type": "iframe",
+            "url": "https://outbound-proxy-us-east1-0-blob-usercontent-client-id-7775691497.googleapis.com.de/player3/ch.php?categoria=live&canal=boborj",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
+          }
+        ]
+      }
+    ]
+  };
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/core/EventBus.js">
+(function defineEventBus(namespace) {
+  'use strict';
+
+  function EventBus() {
+    this.listeners = {};
+  }
+
+  EventBus.prototype.on = function on(eventName, handler) {
+    if (!this.listeners[eventName]) {
+      this.listeners[eventName] = [];
+    }
+    this.listeners[eventName].push(handler);
+  };
+
+  EventBus.prototype.emit = function emit(eventName, payload) {
+    var handlers = this.listeners[eventName] || [];
+    var index;
+
+    for (index = 0; index < handlers.length; index += 1) {
+      handlers[index](payload);
+    }
+  };
+
+  namespace.core.EventBus = EventBus;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/core/AppState.js">
+(function defineAppState(namespace) {
+  'use strict';
+
+  function AppState(channels) {
+    this.channels = channels || [];
+    this.focusedChannelIndex = 0;
+    this.currentChannelIndex = null;
+    this.currentSourceIndex = 0;
+    this.screen = 'home';
+    this.isPlaying = false;
+    this.hasError = false;
+    this.requiresUserAction = false;
+    this.iframeInteractionActive = false;
+  }
+
+  AppState.prototype.getFocusedChannel = function getFocusedChannel() {
+    return this.channels[this.focusedChannelIndex] || null;
+  };
+
+  AppState.prototype.getCurrentChannel = function getCurrentChannel() {
+    if (this.currentChannelIndex === null) {
+      return null;
+    }
+    return this.channels[this.currentChannelIndex] || null;
+  };
+
+  AppState.prototype.selectFocusedChannel = function selectFocusedChannel() {
+    this.currentChannelIndex = this.focusedChannelIndex;
+    this.currentSourceIndex = 0;
+    this.screen = 'player';
+    this.hasError = false;
+    this.requiresUserAction = false;
+    this.iframeInteractionActive = false;
+  };
+
+  AppState.prototype.focusChannel = function focusChannel(index) {
+    if (index >= 0 && index < this.channels.length) {
+      this.focusedChannelIndex = index;
+    }
+  };
+
+  AppState.prototype.moveCurrentChannel = function moveCurrentChannel(delta) {
+    var length = this.channels.length;
+
+    if (!length || this.currentChannelIndex === null) {
+      return;
+    }
+
+    this.currentChannelIndex = (this.currentChannelIndex + delta + length) % length;
+    this.focusedChannelIndex = this.currentChannelIndex;
+    this.currentSourceIndex = 0;
+    this.hasError = false;
+    this.requiresUserAction = false;
+    this.iframeInteractionActive = false;
+  };
+
+  AppState.prototype.selectSource = function selectSource(index) {
+    var channel = this.getCurrentChannel();
+    var sourceCount = channel && channel.sources ? channel.sources.length : 0;
+
+    if (index >= 0 && index < sourceCount) {
+      this.currentSourceIndex = index;
+    }
+  };
+
+  namespace.core.AppState = AppState;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/core/SpatialNavigation.js">
+(function defineSpatialNavigation(namespace) {
+  'use strict';
+
+  function SpatialNavigation(itemCount, columns) {
+    this.itemCount = itemCount || 0;
+    this.columns = columns || 1;
+    this.index = 0;
+  }
+
+  SpatialNavigation.prototype.setIndex = function setIndex(index) {
+    if (index >= 0 && index < this.itemCount) {
+      this.index = index;
+    }
+    return this.index;
+  };
+
+  SpatialNavigation.prototype.move = function move(direction) {
+    var next = this.index;
+    var rowStart;
+    var rowEnd;
+
+    if (direction === 'left') {
+      rowStart = Math.floor(this.index / this.columns) * this.columns;
+      next = Math.max(rowStart, this.index - 1);
+    } else if (direction === 'right') {
+      rowEnd = Math.min(rowStartFromIndex(this.index, this.columns) + this.columns - 1, this.itemCount - 1);
+      next = Math.min(rowEnd, this.index + 1);
+    } else if (direction === 'up') {
+      next = Math.max(0, this.index - this.columns);
+    } else if (direction === 'down') {
+      next = Math.min(this.itemCount - 1, this.index + this.columns);
+    }
+
+    this.index = next;
+    return next;
+  };
+
+  function rowStartFromIndex(index, columns) {
+    return Math.floor(index / columns) * columns;
+  }
+
+  namespace.core.SpatialNavigation = SpatialNavigation;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/adapters/AvPlayAdapter.js">
+(function defineAvPlayAdapter(namespace) {
+  'use strict';
+
+  function AvPlayAdapter(objectElement) {
+    this.objectElement = objectElement;
+    this.callbacks = null;
+    this.prepared = false;
+  }
+
+  AvPlayAdapter.isSupported = function isSupported() {
+    return !!(window.webapis && window.webapis.avplay);
+  };
+
+  AvPlayAdapter.prototype.load = function load(source, callbacks) {
+    var self = this;
+    var url = source.url;
+
+    this.callbacks = callbacks || {};
+    this.prepared = false;
+    this.release();
+
+    try {
+      window.webapis.avplay.open(url);
+      // Samsung renders AVPlay in its own fixed multimedia coordinate space,
+      // independently from the CSS viewport.
+      window.webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
+      window.webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
+
+      try {
+        window.webapis.avplay.setStreamingProperty('ADAPTIVE_INFO', 'STARTBITRATE=HIGHEST');
+      } catch (streamingError) {
+        console.log('[AVPlay] Adaptive hint unavailable:', streamingError.message || streamingError);
+      }
+
+      window.webapis.avplay.setListener(createListener(this));
+      window.webapis.avplay.prepareAsync(
+        function onPrepared() {
+          self.prepared = true;
+          window.webapis.avplay.play();
+          invoke(self.callbacks.onReady);
+          invoke(self.callbacks.onPlayStateChange, true);
+        },
+        function onPrepareError(error) {
+          invoke(self.callbacks.onError, normalizeError(error, 'Falha ao preparar a transmissão.'));
+        }
+      );
+    } catch (error) {
+      invoke(this.callbacks.onError, normalizeError(error, 'Falha ao iniciar o AVPlay.'));
+    }
+  };
+
+  AvPlayAdapter.prototype.toggle = function toggle() {
+    var state;
+
+    try {
+      state = window.webapis.avplay.getState();
+      if (state === 'PLAYING') {
+        window.webapis.avplay.pause();
+        invoke(this.callbacks.onPlayStateChange, false);
+        return false;
+      }
+      if (state === 'PAUSED' || state === 'READY') {
+        window.webapis.avplay.play();
+        invoke(this.callbacks.onPlayStateChange, true);
+        return true;
+      }
+    } catch (error) {
+      invoke(this.callbacks.onError, normalizeError(error, 'Não foi possível alterar o estado do player.'));
+    }
+
+    return false;
+  };
+
+  AvPlayAdapter.prototype.stop = function stop() {
+    var state;
+
+    try {
+      state = window.webapis.avplay.getState();
+      if (state === 'PLAYING' || state === 'PAUSED' || state === 'READY') {
+        window.webapis.avplay.stop();
+      }
+    } catch (error) {
+      console.log('[AVPlay] stop ignored:', error.message || error);
+    }
+  };
+
+  AvPlayAdapter.prototype.release = function release() {
+    try {
+      this.stop();
+      if (window.webapis && window.webapis.avplay && window.webapis.avplay.getState() !== 'NONE') {
+        window.webapis.avplay.close();
+      }
+    } catch (error) {
+      console.log('[AVPlay] release ignored:', error.message || error);
+    }
+    this.prepared = false;
+  };
+
+  AvPlayAdapter.prototype.getName = function getName() {
+    return 'Samsung AVPlay';
+  };
+
+  AvPlayAdapter.prototype.canToggle = function canToggle() {
+    return true;
+  };
+
+  AvPlayAdapter.prototype.canActivateFromUserGesture = function canActivateFromUserGesture() {
+    return false;
+  };
+
+  AvPlayAdapter.prototype.activateFromUserGesture = function activateFromUserGesture() {
+    return false;
+  };
+
+  function createListener(adapter) {
+    return {
+      onbufferingstart: function onBufferingStart() {
+        invoke(adapter.callbacks.onBuffering, true);
+      },
+      onbufferingprogress: function onBufferingProgress(percent) {
+        invoke(adapter.callbacks.onBufferingProgress, percent);
+      },
+      onbufferingcomplete: function onBufferingComplete() {
+        invoke(adapter.callbacks.onBuffering, false);
+      },
+      onstreamcompleted: function onStreamCompleted() {
+        invoke(adapter.callbacks.onError, 'A transmissão foi encerrada.');
+      },
+      oncurrentplaytime: function onCurrentPlaytime() {},
+      onerror: function onError(eventType) {
+        invoke(adapter.callbacks.onError, 'Erro AVPlay: ' + eventType);
+      },
+      onevent: function onEvent() {},
+      onsubtitlechange: function onSubtitleChange() {},
+      ondrmevent: function onDrmEvent() {}
+    };
+  }
+
+  function normalizeError(error, fallback) {
+    if (!error) { return fallback; }
+    return error.message || String(error) || fallback;
+  }
+
+  function invoke(callback, payload) {
+    if (typeof callback === 'function') {
+      callback(payload);
+    }
+  }
+
+  namespace.adapters.AvPlayAdapter = AvPlayAdapter;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/adapters/Html5VideoAdapter.js">
+(function defineHtml5VideoAdapter(namespace) {
+  'use strict';
+
+  function Html5VideoAdapter(videoElement) {
+    this.video = videoElement;
+    this.callbacks = null;
+    this.boundHandlers = null;
+    this.readyEmitted = false;
+    this.autoplayBlockedEmitted = false;
+    this.autoplayCheckTimeout = null;
+    this.manualPlayTimeout = null;
+  }
+
+  Html5VideoAdapter.prototype.load = function load(source, callbacks) {
+    this.release();
+    this.callbacks = callbacks || {};
+    this.readyEmitted = false;
+    this.autoplayBlockedEmitted = false;
+    this.bindEvents();
+    this.video.style.display = 'block';
+    this.video.src = source.url;
+    this.video.autoplay = true;
+    this.video.load();
+    this.requestPlay(false);
+  };
+
+  Html5VideoAdapter.prototype.requestPlay = function requestPlay(fromUserGesture) {
+    var self = this;
+    var promise;
+
+    try {
+      promise = this.video.play();
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(function onPlayRejected() {
+          if (fromUserGesture) {
+            self.clearPlayTimeouts();
+            invoke(self.callbacks.onError, 'O navegador recusou a reprodução mesmo após a confirmação.');
+          } else {
+            self.notifyAutoplayBlocked();
+          }
+        });
+      }
+    } catch (error) {
+      if (fromUserGesture) {
+        this.clearPlayTimeouts();
+        invoke(this.callbacks.onError, 'Não foi possível iniciar o vídeo.');
+      } else {
+        this.notifyAutoplayBlocked();
+      }
+    }
+  };
+
+  Html5VideoAdapter.prototype.activateFromUserGesture = function activateFromUserGesture() {
+    var self = this;
+
+    this.clearPlayTimeouts();
+    this.requestPlay(true);
+    this.manualPlayTimeout = window.setTimeout(function checkManualPlayback() {
+      if (!self.readyEmitted && self.video.paused) {
+        self.clearPlayTimeouts();
+        invoke(self.callbacks.onError, 'O vídeo não iniciou após a confirmação pelo controle.');
+      }
+    }, 5000);
+    return true;
+  };
+
+  Html5VideoAdapter.prototype.canActivateFromUserGesture = function canActivateFromUserGesture() {
+    return true;
+  };
+
+  Html5VideoAdapter.prototype.toggle = function toggle() {
+    if (this.video.paused) {
+      this.requestPlay(true);
+      return true;
+    }
+
+    this.video.pause();
+    invoke(this.callbacks.onPlayStateChange, false);
+    return false;
+  };
+
+  Html5VideoAdapter.prototype.stop = function stop() {
+    try { this.video.pause(); } catch (error) {}
+  };
+
+  Html5VideoAdapter.prototype.release = function release() {
+    this.clearPlayTimeouts();
+    this.stop();
+    this.unbindEvents();
+    this.video.removeAttribute('src');
+    this.video.style.display = 'none';
+    this.callbacks = null;
+    this.readyEmitted = false;
+    this.autoplayBlockedEmitted = false;
+    try { this.video.load(); } catch (error) {}
+  };
+
+  Html5VideoAdapter.prototype.getName = function getName() {
+    return 'HTML5 Video';
+  };
+
+  Html5VideoAdapter.prototype.canToggle = function canToggle() {
+    return true;
+  };
+
+  Html5VideoAdapter.prototype.bindEvents = function bindEvents() {
+    var self = this;
+
+    this.boundHandlers = {
+      loadeddata: function onLoadedData() {
+        invoke(self.callbacks.onBuffering, false);
+        if (!self.readyEmitted && self.video.paused && !self.autoplayBlockedEmitted) {
+          self.autoplayCheckTimeout = window.setTimeout(function verifyAutoplay() {
+            if (!self.readyEmitted && self.video.paused) {
+              self.notifyAutoplayBlocked();
+            }
+          }, 500);
+        }
+      },
+      waiting: function onWaiting() { invoke(self.callbacks.onBuffering, true); },
+      playing: function onPlaying() {
+        self.clearPlayTimeouts();
+        if (!self.readyEmitted) {
+          self.readyEmitted = true;
+          invoke(self.callbacks.onReady);
+        }
+        invoke(self.callbacks.onBuffering, false);
+        invoke(self.callbacks.onPlayStateChange, true);
+      },
+      pause: function onPause() { invoke(self.callbacks.onPlayStateChange, false); },
+      error: function onError() { invoke(self.callbacks.onError, 'O player HTML5 não conseguiu abrir esta transmissão.'); }
+    };
+
+    Object.keys(this.boundHandlers).forEach(function addHandler(eventName) {
+      self.video.addEventListener(eventName, self.boundHandlers[eventName]);
+    });
+  };
+
+  Html5VideoAdapter.prototype.unbindEvents = function unbindEvents() {
+    var self = this;
+
+    if (!this.boundHandlers) { return; }
+    Object.keys(this.boundHandlers).forEach(function removeHandler(eventName) {
+      self.video.removeEventListener(eventName, self.boundHandlers[eventName]);
+    });
+    this.boundHandlers = null;
+  };
+
+  Html5VideoAdapter.prototype.notifyAutoplayBlocked = function notifyAutoplayBlocked() {
+    if (this.autoplayBlockedEmitted || this.readyEmitted) {
+      return;
+    }
+    this.autoplayBlockedEmitted = true;
+    this.clearPlayTimeouts();
+    invoke(this.callbacks.onAutoplayBlocked, 'O navegador bloqueou o início automático do vídeo.');
+  };
+
+  Html5VideoAdapter.prototype.clearPlayTimeouts = function clearPlayTimeouts() {
+    if (this.autoplayCheckTimeout) {
+      window.clearTimeout(this.autoplayCheckTimeout);
+      this.autoplayCheckTimeout = null;
+    }
+    if (this.manualPlayTimeout) {
+      window.clearTimeout(this.manualPlayTimeout);
+      this.manualPlayTimeout = null;
+    }
+  };
+
+  function invoke(callback, payload) {
+    if (typeof callback === 'function') {
+      callback(payload);
+    }
+  }
+
+  namespace.adapters.Html5VideoAdapter = Html5VideoAdapter;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/adapters/IframePlayerAdapter.js">
+(function defineIframePlayerAdapter(namespace) {
+  'use strict';
+
+  var DEFAULT_START_TIMEOUT_MS = 6000;
+  var DEFAULT_MANUAL_TIMEOUT_MS = 6000;
+  var DEFAULT_INTERACTION_WINDOW_MS = 6000;
+  var FOCUS_WATCHDOG_MS = 400;
+  var SAFE_SANDBOX = 'allow-scripts allow-same-origin';
+
+  function IframePlayerAdapter(iframeElement, profile) {
+    this.iframe = iframeElement;
+    this.profile = profile || {};
+    this.source = null;
+    this.callbacks = null;
+    this.state = 'idle';
+    this.isPlaying = false;
+    this.startTimeout = null;
+    this.loadTimeout = null;
+    this.manualTimeout = null;
+    this.interactionTimeout = null;
+    this.focusRestoreTimeout = null;
+    this.focusWatchdogTimeout = null;
+    this.actionTimeouts = [];
+    this.boundLoad = null;
+    this.boundError = null;
+    this.boundMessage = null;
+    this.boundWindowBlur = null;
+    this.boundVisibilityChange = null;
+    this.boundDocumentFocusIn = null;
+    this.sameOriginMedia = null;
+    this.boundMediaHandlers = null;
+    this.securityMode = 'sandbox';
+    this.interactionActive = false;
+    this.readyReported = false;
+  }
+
+  IframePlayerAdapter.prototype.load = function load(source, callbacks) {
+    var self = this;
+    var startup;
+    var sourceUrl;
+
+    if (this.source || this.callbacks || this.boundLoad) {
+      this.release();
+    }
+    this.source = source;
+    this.callbacks = callbacks || {};
+    this.state = 'loading';
+    this.interactionActive = false;
+    this.readyReported = false;
+    startup = getStartup(this.profile);
+    sourceUrl = buildUrl(source.url, startup.urlParams);
+    this.securityMode = startup.securityMode || 'sandbox';
+    this.boundLoad = function onIframeLoad() {
+      if (self.state !== 'loading') {
+        return;
+      }
+      self.clearLoadTimeout();
+      self.state = 'starting';
+      self.iframe.style.visibility = 'visible';
+      self.disableInteraction();
+      self.restoreApplicationFocus();
+      invoke(self.callbacks.onBuffering, true);
+      self.prepareVerification();
+      if (self.state === 'error' || self.state === 'playing' || self.state === 'playing-unverified') {
+        return;
+      }
+      self.runStartupActions(false);
+      if (self.state === 'error' || self.state === 'playing' || self.state === 'playing-unverified') {
+        return;
+      }
+      self.armStartTimeout(false);
+    };
+    this.boundError = function onIframeError() {
+      self.fail('O player incorporado não pôde ser carregado.');
+    };
+    this.boundMessage = function onWindowMessage(event) {
+      self.handleWindowMessage(event);
+    };
+
+    this.iframe.addEventListener('load', this.boundLoad);
+    this.iframe.addEventListener('error', this.boundError);
+    window.addEventListener('message', this.boundMessage);
+    if (this.securityMode === 'sandbox') {
+      this.iframe.setAttribute('sandbox', SAFE_SANDBOX);
+    } else {
+      this.iframe.removeAttribute('sandbox');
+    }
+    this.iframe.style.display = 'block';
+    // A cross-origin frame may steal the remote focus while its provider is
+    // still loading. Keep it visually hidden until the load event and retain
+    // the application as the sole keyboard owner outside manual interaction.
+    this.iframe.style.visibility = 'hidden';
+    this.disableInteraction();
+    this.bindApplicationFocusGuard();
+    this.armLoadTimeout();
+    this.iframe.src = sourceUrl;
+    this.startFocusWatchdog();
+  };
+
+  IframePlayerAdapter.prototype.armLoadTimeout = function armLoadTimeout() {
+    var self = this;
+    var startup = getStartup(this.profile);
+    var timeoutMs = startup.loadTimeoutMs || startup.timeoutMs || this.source.timeoutMs || DEFAULT_START_TIMEOUT_MS;
+
+    this.clearLoadTimeout();
+    this.loadTimeout = window.setTimeout(function onIframeLoadTimeout() {
+      self.loadTimeout = null;
+      if (self.state === 'loading') {
+        self.fail('O iframe não respondeu. Verifique a conexão, o DNS ou tente outra fonte.');
+      }
+    }, timeoutMs);
+  };
+
+  IframePlayerAdapter.prototype.clearLoadTimeout = function clearLoadTimeout() {
+    if (this.loadTimeout) {
+      window.clearTimeout(this.loadTimeout);
+      this.loadTimeout = null;
+    }
+  };
+
+  IframePlayerAdapter.prototype.runStartupActions = function runStartupActions(fromUserGesture) {
+    var startup = getStartup(this.profile);
+
+    if (startup.sameOrigin) {
+      this.trySameOriginPlay(startup.sameOrigin, fromUserGesture);
+    }
+    this.schedulePostMessages(startup.postMessages || [], fromUserGesture);
+  };
+
+  IframePlayerAdapter.prototype.prepareVerification = function prepareVerification() {
+    var verification = getVerification(this.profile);
+
+    if (verification.type === 'sameOriginMedia') {
+      this.bindSameOriginMedia(verification.mediaSelector);
+    }
+  };
+
+  IframePlayerAdapter.prototype.bindSameOriginMedia = function bindSameOriginMedia(selector) {
+    var self = this;
+    var frameDocument;
+    var media;
+
+    try {
+      frameDocument = this.iframe.contentDocument;
+      media = frameDocument ? frameDocument.querySelector(selector) : null;
+    } catch (error) {
+      this.fail('O perfil exige acesso same-origin, mas o iframe pertence a outro domínio.');
+      return;
+    }
+
+    if (!media) {
+      this.fail('O elemento de mídia configurado não foi encontrado no iframe.');
+      return;
+    }
+
+    this.sameOriginMedia = media;
+    this.boundMediaHandlers = {
+      playing: function onPlaying() { self.markPlaying(); },
+      pause: function onPause() {
+        self.isPlaying = false;
+        invoke(self.callbacks.onPlayStateChange, false);
+      },
+      error: function onMediaError() { self.fail('A mídia incorporada informou um erro.'); }
+    };
+
+    media.addEventListener('playing', this.boundMediaHandlers.playing);
+    media.addEventListener('pause', this.boundMediaHandlers.pause);
+    media.addEventListener('error', this.boundMediaHandlers.error);
+
+    if (!media.paused && media.readyState >= 2) {
+      this.markPlaying();
+    }
+  };
+
+  IframePlayerAdapter.prototype.trySameOriginPlay = function trySameOriginPlay(config, fromUserGesture) {
+    var frameDocument;
+    var media;
+    var playButton;
+    var promise;
+
+    try {
+      frameDocument = this.iframe.contentDocument;
+      media = this.sameOriginMedia || (frameDocument && config.mediaSelector ? frameDocument.querySelector(config.mediaSelector) : null);
+      playButton = frameDocument && config.playSelector ? frameDocument.querySelector(config.playSelector) : null;
+    } catch (error) {
+      if (fromUserGesture) {
+        this.fail('Não é possível controlar este iframe por acesso same-origin.');
+      }
+      return;
+    }
+
+    if (media && typeof media.play === 'function') {
+      try {
+        promise = media.play();
+        if (promise && typeof promise.catch === 'function') {
+          promise.catch(function ignoreBlockedPromise() {});
+        }
+      } catch (error) {}
+    }
+
+    if (playButton && typeof playButton.click === 'function') {
+      try { playButton.click(); } catch (error) {}
+    }
+  };
+
+  IframePlayerAdapter.prototype.schedulePostMessages = function schedulePostMessages(actions, fromUserGesture) {
+    var self = this;
+
+    actions.forEach(function scheduleAction(action) {
+      action.delaysMs.forEach(function scheduleDelay(delay) {
+        if (fromUserGesture && delay === 0) {
+          self.sendMessage(action.message);
+          return;
+        }
+        self.actionTimeouts.push(window.setTimeout(function sendScheduledMessage() {
+          self.sendMessage(action.message);
+        }, delay));
+      });
+    });
+  };
+
+  IframePlayerAdapter.prototype.sendMessage = function sendMessage(message) {
+    var targetOrigin = getTargetOrigin(this.profile);
+    var payload = message;
+
+    if (!message || !targetOrigin || !this.iframe.contentWindow) {
+      return;
+    }
+    if (getStartup(this.profile).postMessageFormat === 'json') {
+      try {
+        payload = JSON.stringify(message);
+      } catch (error) {
+        return;
+      }
+    }
+    try {
+      this.iframe.contentWindow.postMessage(payload, targetOrigin);
+    } catch (error) {}
+  };
+
+  IframePlayerAdapter.prototype.handleWindowMessage = function handleWindowMessage(event) {
+    var verification = getVerification(this.profile);
+    var payload;
+
+    if (verification.type !== 'postMessage') {
+      return;
+    }
+    if (event.source !== this.iframe.contentWindow || event.origin !== verification.origin) {
+      return;
+    }
+
+    payload = parseMessageData(event.data);
+    if (!payload || payload[verification.eventField] !== verification.eventValue) {
+      return;
+    }
+    if (verification.stateField && !contains(verification.playingValues, payload[verification.stateField])) {
+      return;
+    }
+    this.markPlaying();
+  };
+
+  IframePlayerAdapter.prototype.armStartTimeout = function armStartTimeout(manual) {
+    var self = this;
+    var startup = getStartup(this.profile);
+    var timeoutMs = manual ? (startup.manualTimeoutMs || DEFAULT_MANUAL_TIMEOUT_MS) : (startup.timeoutMs || this.source.timeoutMs || DEFAULT_START_TIMEOUT_MS);
+
+    if (this.startTimeout) {
+      window.clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
+    if (this.manualTimeout) {
+      window.clearTimeout(this.manualTimeout);
+      this.manualTimeout = null;
+    }
+    this.startTimeout = window.setTimeout(function onStartTimeout() {
+      if (self.state !== 'starting') {
+        return;
+      }
+      if (manual) {
+        self.disableInteraction();
+        self.fail('O player incorporado não confirmou a reprodução após a ativação.');
+      } else {
+        self.markAutoplayBlocked('A fonte carregou, mas não confirmou o início automático.');
+      }
+    }, timeoutMs);
+  };
+
+  IframePlayerAdapter.prototype.markPlaying = function markPlaying(keepInteraction, reportPlayState) {
+    if (this.state === 'playing' || this.state === 'released') {
+      return;
+    }
+
+    if (this.interactionActive) {
+      this.finishInteractionWindow('verified', false);
+    }
+    this.clearLoadTimeout();
+    this.clearStartTimeouts();
+    if (!keepInteraction) {
+      this.disableInteraction();
+    }
+    this.state = 'playing';
+    this.isPlaying = true;
+    if (!this.readyReported) {
+      this.readyReported = true;
+      invoke(this.callbacks.onReady);
+    }
+    invoke(this.callbacks.onBuffering, false);
+    if (reportPlayState !== false) {
+      invoke(this.callbacks.onPlayStateChange, true);
+    }
+  };
+
+  IframePlayerAdapter.prototype.markAutoplayBlocked = function markAutoplayBlocked(message) {
+    if (this.state === 'autoplay-blocked' || this.state === 'playing' || this.state === 'error' || this.state === 'released') {
+      return;
+    }
+
+    this.clearLoadTimeout();
+    this.clearStartTimeouts();
+    this.state = getStartup(this.profile).manualFallback === 'timedInteraction' ? 'interaction-required' : 'autoplay-blocked';
+    this.isPlaying = false;
+    invoke(this.callbacks.onBuffering, false);
+    invoke(this.callbacks.onAutoplayBlocked, message);
+  };
+
+  IframePlayerAdapter.prototype.fail = function fail(message) {
+    if (this.state === 'error' || this.state === 'released') {
+      return;
+    }
+
+    if (this.interactionActive) {
+      this.finishInteractionWindow('cancelled', false);
+    }
+    this.clearLoadTimeout();
+    this.clearStartTimeouts();
+    this.stopFocusWatchdog();
+    this.disableInteraction();
+    this.restoreApplicationFocus();
+    this.state = 'error';
+    this.isPlaying = false;
+    invoke(this.callbacks.onBuffering, false);
+    invoke(this.callbacks.onError, message);
+  };
+
+  IframePlayerAdapter.prototype.activateFromUserGesture = function activateFromUserGesture() {
+    var startup = getStartup(this.profile);
+    var fallback = startup.manualFallback || 'none';
+
+    if (!this.canActivateFromUserGesture()) {
+      return false;
+    }
+
+    if (fallback === 'timedInteraction') {
+      return this.beginInteractionWindow();
+    }
+
+    this.state = 'starting';
+    invoke(this.callbacks.onBuffering, true);
+
+    if (fallback === 'postMessage') {
+      this.sendMessage(getControls(this.profile).play);
+      this.runStartupActions(true);
+    } else if (fallback === 'sameOrigin') {
+      this.trySameOriginPlay(startup.sameOrigin || { mediaSelector: 'video' }, true);
+    } else if (fallback === 'focus') {
+      this.enableInteraction();
+      invoke(this.callbacks.onManualInteraction, 'Use o controle do player para iniciar a transmissão.');
+      if (startup.manualCompletion === 'assume-playing') {
+        this.markPlaying(true, false);
+        return true;
+      }
+    } else if (fallback === 'acknowledge') {
+      this.disableInteraction();
+      invoke(this.callbacks.onManualInteraction, 'Fonte ativa em modo protegido.');
+      this.markPlaying(false, false);
+      return true;
+    }
+
+    this.armStartTimeout(true);
+    return true;
+  };
+
+  IframePlayerAdapter.prototype.canActivateFromUserGesture = function canActivateFromUserGesture() {
+    return (getStartup(this.profile).manualFallback || 'none') !== 'none';
+  };
+
+  IframePlayerAdapter.prototype.beginInteractionWindow = function beginInteractionWindow() {
+    var self = this;
+    var startup = getStartup(this.profile);
+    var durationMs = startup.interactionWindowMs || DEFAULT_INTERACTION_WINDOW_MS;
+
+    if (startup.manualFallback !== 'timedInteraction' || this.interactionActive || this.state === 'released' || this.state === 'error') {
+      return false;
+    }
+
+    this.clearStartTimeouts();
+    this.stopFocusWatchdog();
+    this.interactionActive = true;
+    this.state = 'interaction-active';
+    this.isPlaying = false;
+    invoke(this.callbacks.onBuffering, false);
+    this.enableInteraction();
+    this.bindInteractionGuards();
+    this.interactionTimeout = window.setTimeout(function onInteractionTimeout() {
+      self.finishInteractionWindow('timeout', true);
+    }, durationMs);
+    invoke(this.callbacks.onInteractionStarted, { durationMs: durationMs });
+    return true;
+  };
+
+  IframePlayerAdapter.prototype.finishInteractionWindow = function finishInteractionWindow(reason, complete) {
+    var startup = getStartup(this.profile);
+    var shouldAssumePlaying;
+
+    if (!this.interactionActive) {
+      return false;
+    }
+
+    if (this.interactionTimeout) {
+      window.clearTimeout(this.interactionTimeout);
+      this.interactionTimeout = null;
+    }
+    this.unbindInteractionGuards();
+    this.interactionActive = false;
+    this.disableInteraction();
+    this.restoreApplicationFocus();
+    shouldAssumePlaying = complete !== false && startup.manualCompletion === 'assume-playing';
+
+    if (shouldAssumePlaying) {
+      this.state = 'playing-unverified';
+      this.isPlaying = true;
+    } else if (this.state !== 'released' && this.state !== 'error') {
+      this.state = 'interaction-required';
+      this.isPlaying = false;
+    }
+
+    invoke(this.callbacks.onInteractionEnded, { reason: reason || 'cancelled' });
+
+    if (shouldAssumePlaying) {
+      if (!this.readyReported) {
+        this.readyReported = true;
+        invoke(this.callbacks.onReady);
+      }
+      invoke(this.callbacks.onBuffering, false);
+    }
+    this.startFocusWatchdog();
+    return true;
+  };
+
+  IframePlayerAdapter.prototype.cancelInteractionWindow = function cancelInteractionWindow(reason) {
+    return this.finishInteractionWindow(reason || 'cancelled', false);
+  };
+
+  IframePlayerAdapter.prototype.reopenInteractionWindow = function reopenInteractionWindow() {
+    if (!this.canReopenInteractionWindow()) {
+      return false;
+    }
+    return this.beginInteractionWindow();
+  };
+
+  IframePlayerAdapter.prototype.canReopenInteractionWindow = function canReopenInteractionWindow() {
+    var fallback = getStartup(this.profile).manualFallback;
+    return fallback === 'timedInteraction' && !this.interactionActive &&
+      (this.state === 'interaction-required' || this.state === 'autoplay-blocked' || this.state === 'playing-unverified');
+  };
+
+  IframePlayerAdapter.prototype.isInteractionWindowActive = function isInteractionWindowActive() {
+    return this.interactionActive;
+  };
+
+  IframePlayerAdapter.prototype.usesTimedInteraction = function usesTimedInteraction() {
+    return getStartup(this.profile).manualFallback === 'timedInteraction';
+  };
+
+  IframePlayerAdapter.prototype.toggle = function toggle() {
+    var controls = getControls(this.profile);
+    var message;
+    var promise;
+
+    if (this.sameOriginMedia) {
+      if (this.sameOriginMedia.paused) {
+        promise = this.sameOriginMedia.play();
+        if (promise && typeof promise.catch === 'function') {
+          promise.catch(function ignoreTogglePromise() {});
+        }
+        return true;
+      }
+      this.sameOriginMedia.pause();
+      return false;
+    }
+
+    if (!this.canToggle()) {
+      return this.isPlaying;
+    }
+
+    message = this.isPlaying ? controls.pause : controls.play;
+    this.sendMessage(message);
+    this.isPlaying = !this.isPlaying;
+    invoke(this.callbacks.onPlayStateChange, this.isPlaying);
+    return this.isPlaying;
+  };
+
+  IframePlayerAdapter.prototype.canToggle = function canToggle() {
+    var controls = getControls(this.profile);
+    return !!(this.sameOriginMedia || (controls && controls.targetOrigin && controls.play && controls.pause));
+  };
+
+  IframePlayerAdapter.prototype.stop = function stop() {
+    var controls = getControls(this.profile);
+
+    if (this.sameOriginMedia) {
+      try { this.sameOriginMedia.pause(); } catch (error) {}
+    } else if (controls && controls.pause && this.isPlaying) {
+      this.sendMessage(controls.pause);
+    }
+    this.isPlaying = false;
+  };
+
+  IframePlayerAdapter.prototype.release = function release() {
+    this.cancelInteractionWindow('cancelled');
+    this.clearAllTimeouts();
+    this.unbindInteractionGuards();
+    this.unbindApplicationFocusGuard();
+    this.unbindSameOriginMedia();
+
+    if (this.boundLoad) {
+      this.iframe.removeEventListener('load', this.boundLoad);
+    }
+    if (this.boundError) {
+      this.iframe.removeEventListener('error', this.boundError);
+    }
+    if (this.boundMessage) {
+      window.removeEventListener('message', this.boundMessage);
+    }
+
+    this.stop();
+    this.disableInteraction();
+    this.iframe.removeAttribute('src');
+    this.iframe.style.display = 'none';
+    this.iframe.style.visibility = 'hidden';
+    this.boundLoad = null;
+    this.boundError = null;
+    this.boundMessage = null;
+    this.callbacks = null;
+    this.source = null;
+    this.securityMode = 'sandbox';
+    this.interactionActive = false;
+    this.readyReported = false;
+    this.state = 'released';
+  };
+
+  IframePlayerAdapter.prototype.unbindSameOriginMedia = function unbindSameOriginMedia() {
+    if (this.sameOriginMedia && this.boundMediaHandlers) {
+      this.sameOriginMedia.removeEventListener('playing', this.boundMediaHandlers.playing);
+      this.sameOriginMedia.removeEventListener('pause', this.boundMediaHandlers.pause);
+      this.sameOriginMedia.removeEventListener('error', this.boundMediaHandlers.error);
+    }
+    this.sameOriginMedia = null;
+    this.boundMediaHandlers = null;
+  };
+
+  IframePlayerAdapter.prototype.enableInteraction = function enableInteraction() {
+    this.iframe.style.visibility = 'visible';
+    this.iframe.style.pointerEvents = 'auto';
+    this.iframe.setAttribute('tabindex', '0');
+    try {
+      this.iframe.focus();
+      this.iframe.contentWindow.focus();
+    } catch (error) {}
+  };
+
+  IframePlayerAdapter.prototype.disableInteraction = function disableInteraction() {
+    this.iframe.style.pointerEvents = 'none';
+    this.iframe.setAttribute('tabindex', '-1');
+  };
+
+  IframePlayerAdapter.prototype.bindApplicationFocusGuard = function bindApplicationFocusGuard() {
+    var self = this;
+
+    if (this.boundDocumentFocusIn) {
+      return;
+    }
+    this.boundDocumentFocusIn = function onDocumentFocusIn(event) {
+      if (!self.interactionActive && event.target === self.iframe) {
+        self.disableInteraction();
+        self.restoreApplicationFocus();
+      }
+    };
+    document.addEventListener('focusin', this.boundDocumentFocusIn, true);
+  };
+
+  IframePlayerAdapter.prototype.unbindApplicationFocusGuard = function unbindApplicationFocusGuard() {
+    if (this.boundDocumentFocusIn) {
+      document.removeEventListener('focusin', this.boundDocumentFocusIn, true);
+      this.boundDocumentFocusIn = null;
+    }
+  };
+
+  IframePlayerAdapter.prototype.restoreApplicationFocus = function restoreApplicationFocus() {
+    var self = this;
+    var focusTarget = this.iframe.parentNode;
+
+    function focusPlayerScreen() {
+      try {
+        if (typeof self.iframe.blur === 'function') {
+          self.iframe.blur();
+        }
+        if (self.iframe.contentWindow && typeof self.iframe.contentWindow.blur === 'function') {
+          self.iframe.contentWindow.blur();
+        }
+        if (focusTarget && typeof focusTarget.focus === 'function') {
+          focusTarget.focus();
+        }
+        window.focus();
+      } catch (error) {}
+    }
+
+    if (this.focusRestoreTimeout) {
+      window.clearTimeout(this.focusRestoreTimeout);
+    }
+    focusPlayerScreen();
+    this.focusRestoreTimeout = window.setTimeout(function restoreAfterProviderEvent() {
+      self.focusRestoreTimeout = null;
+      focusPlayerScreen();
+    }, 100);
+  };
+
+  IframePlayerAdapter.prototype.startFocusWatchdog = function startFocusWatchdog() {
+    var self = this;
+
+    this.stopFocusWatchdog();
+    function recoverFocus() {
+      if (self.interactionActive || self.state === 'released' || self.state === 'error') {
+        self.focusWatchdogTimeout = null;
+        return;
+      }
+      self.disableInteraction();
+      self.restoreApplicationFocus();
+      self.focusWatchdogTimeout = window.setTimeout(recoverFocus, FOCUS_WATCHDOG_MS);
+    }
+    recoverFocus();
+  };
+
+  IframePlayerAdapter.prototype.stopFocusWatchdog = function stopFocusWatchdog() {
+    if (this.focusWatchdogTimeout) {
+      window.clearTimeout(this.focusWatchdogTimeout);
+      this.focusWatchdogTimeout = null;
+    }
+  };
+
+  IframePlayerAdapter.prototype.bindInteractionGuards = function bindInteractionGuards() {
+    var self = this;
+
+    this.boundWindowBlur = function onWindowBlur() {
+      self.finishInteractionWindow('focus-lost', true);
+    };
+    this.boundVisibilityChange = function onVisibilityChange() {
+      if (document.hidden) {
+        self.finishInteractionWindow('focus-lost', true);
+      }
+    };
+    window.addEventListener('blur', this.boundWindowBlur);
+    document.addEventListener('visibilitychange', this.boundVisibilityChange);
+  };
+
+  IframePlayerAdapter.prototype.unbindInteractionGuards = function unbindInteractionGuards() {
+    if (this.boundWindowBlur) {
+      window.removeEventListener('blur', this.boundWindowBlur);
+      this.boundWindowBlur = null;
+    }
+    if (this.boundVisibilityChange) {
+      document.removeEventListener('visibilitychange', this.boundVisibilityChange);
+      this.boundVisibilityChange = null;
+    }
+  };
+
+  IframePlayerAdapter.prototype.getName = function getName() {
+    return 'Iframe Embed';
+  };
+
+  IframePlayerAdapter.prototype.getState = function getState() {
+    return this.state;
+  };
+
+  IframePlayerAdapter.prototype.clearStartTimeouts = function clearStartTimeouts() {
+    var index;
+
+    if (this.startTimeout) {
+      window.clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
+    if (this.manualTimeout) {
+      window.clearTimeout(this.manualTimeout);
+      this.manualTimeout = null;
+    }
+    for (index = 0; index < this.actionTimeouts.length; index += 1) {
+      window.clearTimeout(this.actionTimeouts[index]);
+    }
+    this.actionTimeouts = [];
+  };
+
+  IframePlayerAdapter.prototype.clearAllTimeouts = function clearAllTimeouts() {
+    this.clearStartTimeouts();
+    this.clearLoadTimeout();
+    this.stopFocusWatchdog();
+    if (this.interactionTimeout) {
+      window.clearTimeout(this.interactionTimeout);
+      this.interactionTimeout = null;
+    }
+    if (this.focusRestoreTimeout) {
+      window.clearTimeout(this.focusRestoreTimeout);
+      this.focusRestoreTimeout = null;
+    }
+  };
+
+  function getStartup(profile) {
+    return profile && profile.startup ? profile.startup : {};
+  }
+
+  function getVerification(profile) {
+    return getStartup(profile).verification || { type: 'none' };
+  }
+
+  function getControls(profile) {
+    return profile && profile.controls ? profile.controls : null;
+  }
+
+  function getTargetOrigin(profile) {
+    var controls = getControls(profile);
+    var verification = getVerification(profile);
+    return controls && controls.targetOrigin ? controls.targetOrigin : verification.origin;
+  }
+
+  function parseMessageData(data) {
+    if (typeof data === 'string') {
+      try { return JSON.parse(data); } catch (error) { return null; }
+    }
+    return data && typeof data === 'object' ? data : null;
+  }
+
+  function contains(values, value) {
+    var index;
+    for (index = 0; index < values.length; index += 1) {
+      if (values[index] === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function buildUrl(url, params) {
+    var result = normalizeProtocol(url);
+    var hash = '';
+    var hashIndex = result.indexOf('#');
+    var key;
+
+    params = params || {};
+
+    if (hashIndex >= 0) {
+      hash = result.slice(hashIndex);
+      result = result.slice(0, hashIndex);
+    }
+
+    for (key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        result = setQueryParam(result, key, params[key]);
+      }
+    }
+    return result + hash;
+  }
+
+  function setQueryParam(url, key, value) {
+    var encodedKey = encodeURIComponent(key);
+    var encodedValue = encodeURIComponent(value);
+    var expression = new RegExp('([?&])' + escapeRegExp(encodedKey) + '=[^&#]*');
+
+    if (expression.test(url)) {
+      return url.replace(expression, '$1' + encodedKey + '=' + encodedValue);
+    }
+    return url + (url.indexOf('?') >= 0 ? '&' : '?') + encodedKey + '=' + encodedValue;
+  }
+
+  function escapeRegExp(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function normalizeProtocol(url) {
+    return url.indexOf('//') === 0 ? 'https:' + url : url;
+  }
+
+  function invoke(callback, payload) {
+    if (typeof callback === 'function') {
+      callback(payload);
+    }
+  }
+
+  namespace.adapters.IframePlayerAdapter = IframePlayerAdapter;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/CatalogService.js">
+(function defineCatalogService(namespace) {
+  'use strict';
+
+  var SUPPORTED_SOURCE_TYPES = {
+    hls: true,
+    dash: true,
+    video: true,
+    iframe: true,
+    m3u: true
+  };
+
+  var SUPPORTED_MANUAL_FALLBACKS = {
+    none: true,
+    postMessage: true,
+    sameOrigin: true,
+    focus: true,
+    acknowledge: true,
+    timedInteraction: true
+  };
+
+  var SUPPORTED_SECURITY_MODES = {
+    sandbox: true,
+    'interaction-shield': true
+  };
+
+  var SUPPORTED_MANUAL_COMPLETIONS = {
+    verified: true,
+    'assume-playing': true
+  };
+
+  var SUPPORTED_VERIFICATIONS = {
+    none: true,
+    postMessage: true,
+    sameOriginMedia: true
+  };
+
+  var DEFAULT_REQUEST_TIMEOUT_MS = 3500;
+  var CACHE_KEY = 'tblacktv.catalog.v1';
+
+  function CatalogService(catalogUrl, profilesUrl, requestFactory, fallbackDocuments) {
+    this.catalogUrl = catalogUrl;
+    this.profilesUrl = profilesUrl;
+    this.requestFactory = requestFactory || createRequest;
+    this.fallbackDocuments = fallbackDocuments || {};
+  }
+
+  CatalogService.prototype.load = function load(onSuccess, onError) {
+    var self = this;
+    var completed = false;
+    var catalogDocument = null;
+    var profileDocument = null;
+
+    function deliver(catalog, profileDocument, origin, warning) {
+      var profiles;
+      var channels;
+
+      if (completed) {
+        return;
+      }
+      profiles = validateProfiles(cloneDocument(profileDocument));
+      channels = validateCatalog(cloneDocument(catalog), profiles);
+
+      completed = true;
+      if (origin === 'network') {
+        writeCache(catalog, profileDocument);
+      }
+      onSuccess({
+        channels: channels,
+        profiles: profiles,
+        origin: origin,
+        warning: warning || ''
+      });
+    }
+
+    function succeed(catalog, profileDocument) {
+      try {
+        deliver(catalog, profileDocument, 'network');
+      } catch (error) {
+        useFallback('Configuração inválida: ' + (error.message || error));
+      }
+    }
+
+    function useFallback(reason) {
+      var cached = readCache();
+
+      if (completed) {
+        return;
+      }
+      if (cached) {
+        try {
+          deliver(cached.catalog, cached.profiles, 'cache', reason);
+          return;
+        } catch (cacheError) {
+          clearCache();
+        }
+      }
+      if (self.fallbackDocuments.catalog && self.fallbackDocuments.profiles) {
+        try {
+          deliver(self.fallbackDocuments.catalog, self.fallbackDocuments.profiles, 'embedded', reason);
+          return;
+        } catch (fallbackError) {
+          reason += ' Catálogo incorporado inválido: ' + (fallbackError.message || fallbackError) + '.';
+        }
+      }
+      completed = true;
+      onError(reason + ' O catálogo de emergência também não está disponível.');
+    }
+
+    function deliverNetworkWhenReady() {
+      if (!completed && catalogDocument && profileDocument) {
+        succeed(catalogDocument, profileDocument);
+      }
+    }
+
+    loadJson(this.profilesUrl, this.requestFactory, function onProfilesLoaded(document) {
+      profileDocument = document;
+      deliverNetworkWhenReady();
+    }, useFallback);
+    loadJson(this.catalogUrl, this.requestFactory, function onCatalogLoaded(document) {
+      catalogDocument = document;
+      deliverNetworkWhenReady();
+    }, useFallback);
+  };
+
+  function loadJson(url, requestFactory, onSuccess, onError) {
+    var request = requestFactory();
+    var completed = false;
+    var timeoutId;
+
+    function fail(message) {
+      if (completed) {
+        return;
+      }
+      completed = true;
+      window.clearTimeout(timeoutId);
+      try { request.abort(); } catch (error) {}
+      onError(message);
+    }
+
+    request.onreadystatechange = function onReadyStateChange() {
+      var data;
+
+      if (request.readyState !== 4 || completed) {
+        return;
+      }
+
+      if (!isSuccessfulStatus(request.status)) {
+        fail('Não foi possível carregar "' + url + '". HTTP ' + request.status + '.');
+        return;
+      }
+
+      try {
+        data = JSON.parse(request.responseText);
+      } catch (error) {
+        fail('O arquivo "' + url + '" não contém JSON válido.');
+        return;
+      }
+
+      completed = true;
+      window.clearTimeout(timeoutId);
+      onSuccess(data);
+    };
+
+    request.onerror = function onRequestError() {
+      fail('Não foi possível carregar "' + url + '".');
+    };
+
+    request.ontimeout = function onRequestTimeout() {
+      fail('O carregamento de "' + url + '" excedeu o tempo limite.');
+    };
+
+    timeoutId = window.setTimeout(function onFallbackTimeout() {
+      fail('O carregamento de "' + url + '" excedeu o tempo limite.');
+    }, DEFAULT_REQUEST_TIMEOUT_MS);
+
+    try {
+      request.open('GET', url, true);
+      request.timeout = DEFAULT_REQUEST_TIMEOUT_MS;
+      request.send();
+    } catch (error) {
+      fail('Não foi possível abrir "' + url + '".');
+    }
+  }
+
+  function cloneDocument(document) {
+    return JSON.parse(JSON.stringify(document));
+  }
+
+  function readCache() {
+    var value;
+
+    try {
+      value = window.localStorage ? window.localStorage.getItem(CACHE_KEY) : null;
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeCache(catalog, profiles) {
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem(CACHE_KEY, JSON.stringify({ catalog: catalog, profiles: profiles }));
+      }
+    } catch (error) {}
+  }
+
+  function clearCache() {
+    try {
+      if (window.localStorage) {
+        window.localStorage.removeItem(CACHE_KEY);
+      }
+    } catch (error) {}
+  }
+
+  function validateProfiles(document) {
+    var profiles = {};
+
+    if (!document || document.schemaVersion !== 1 || !Array.isArray(document.profiles)) {
+      throw new Error('schemaVersion deve ser 1 e "profiles" deve ser uma lista.');
+    }
+
+    document.profiles.forEach(function validateProfile(profile, profileIndex) {
+      var path = 'profiles[' + profileIndex + ']';
+      var startup;
+
+      requireText(profile.id, path + '.id');
+      if (profiles[profile.id]) {
+        throw new Error('id de perfil duplicado: "' + profile.id + '".');
+      }
+      if (profile.kind !== 'iframe') {
+        throw new Error(path + '.kind deve ser "iframe".');
+      }
+
+      startup = profile.startup || {};
+      if (startup.securityMode && !SUPPORTED_SECURITY_MODES[startup.securityMode]) {
+        throw new Error(path + '.startup.securityMode não é suportado.');
+      }
+      if (startup.postMessageFormat && startup.postMessageFormat !== 'json') {
+        throw new Error(path + '.startup.postMessageFormat deve ser "json" quando informado.');
+      }
+      validateUrlParams(startup.urlParams, path + '.startup.urlParams');
+      validatePostMessages(startup.postMessages, path + '.startup.postMessages');
+      validateSameOrigin(startup.sameOrigin, path + '.startup.sameOrigin');
+      validateVerification(startup.verification, path + '.startup.verification');
+
+      if (startup.manualFallback && !SUPPORTED_MANUAL_FALLBACKS[startup.manualFallback]) {
+        throw new Error(path + '.startup.manualFallback não é suportado.');
+      }
+      if (startup.manualCompletion && !SUPPORTED_MANUAL_COMPLETIONS[startup.manualCompletion]) {
+        throw new Error(path + '.startup.manualCompletion não é suportado.');
+      }
+      validatePositiveNumber(startup.timeoutMs, path + '.startup.timeoutMs');
+      validatePositiveNumber(startup.manualTimeoutMs, path + '.startup.manualTimeoutMs');
+      validatePositiveNumber(startup.interactionWindowMs, path + '.startup.interactionWindowMs');
+      validateControls(profile.controls, path + '.controls');
+
+      profiles[profile.id] = profile;
+    });
+
+    return profiles;
+  }
+
+  function validateCatalog(catalog, profiles) {
+    var channels;
+    var channelIds = {};
+
+    if (!catalog || catalog.schemaVersion !== 1 || !Array.isArray(catalog.channels)) {
+      throw new Error('schemaVersion deve ser 1 e "channels" deve ser uma lista.');
+    }
+
+    channels = catalog.channels.filter(function validateChannel(channel, channelIndex) {
+      var path = 'channels[' + channelIndex + ']';
+      var sourceIds = {};
+
+      if (channel.enabled === false) {
+        return false;
+      }
+
+      requireText(channel.id, path + '.id');
+      requireText(channel.name, path + '.name');
+      requireText(channel.shortName, path + '.shortName');
+
+      if (channelIds[channel.id]) {
+        throw new Error('id de canal duplicado: "' + channel.id + '".');
+      }
+      channelIds[channel.id] = true;
+
+      if (!Array.isArray(channel.sources)) {
+        throw new Error(path + '.sources deve ser uma lista.');
+      }
+
+      channel.sources = channel.sources.filter(function validateSource(source, sourceIndex) {
+        var sourcePath = path + '.sources[' + sourceIndex + ']';
+
+        if (source.enabled === false) {
+          return false;
+        }
+
+        requireText(source.id, sourcePath + '.id');
+        requireText(source.label, sourcePath + '.label');
+        requireText(source.type, sourcePath + '.type');
+        requireText(source.url, sourcePath + '.url');
+
+        if (!SUPPORTED_SOURCE_TYPES[source.type]) {
+          throw new Error(sourcePath + '.type não suportado: "' + source.type + '".');
+        }
+        if (sourceIds[source.id]) {
+          throw new Error('id de fonte duplicado em "' + channel.id + '": "' + source.id + '".');
+        }
+        sourceIds[source.id] = true;
+
+        if (source.playerProfile) {
+          requireText(source.playerProfile, sourcePath + '.playerProfile');
+          if (source.type !== 'iframe') {
+            throw new Error(sourcePath + '.playerProfile só pode ser usado em fontes iframe.');
+          }
+          if (!profiles[source.playerProfile]) {
+            throw new Error(sourcePath + '.playerProfile referencia um perfil inexistente.');
+          }
+        }
+
+        validatePositiveNumber(source.timeoutMs, sourcePath + '.timeoutMs');
+        validatePositiveNumber(source.resolveTimeoutMs, sourcePath + '.resolveTimeoutMs');
+        validateControls(source.controls, sourcePath + '.controls');
+        return true;
+      });
+
+      if (!channel.sources.length) {
+        throw new Error('o canal "' + channel.id + '" não possui fontes habilitadas.');
+      }
+      return true;
+    });
+
+    if (!channels.length) {
+      throw new Error('nenhum canal habilitado foi encontrado.');
+    }
+
+    return channels;
+  }
+
+  function validateUrlParams(params, path) {
+    var key;
+
+    if (!params) {
+      return;
+    }
+    if (typeof params !== 'object' || Array.isArray(params)) {
+      throw new Error(path + ' deve ser um objeto.');
+    }
+    for (key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key) && typeof params[key] !== 'string') {
+        throw new Error(path + '.' + key + ' deve ser texto.');
+      }
+    }
+  }
+
+  function validatePostMessages(messages, path) {
+    if (!messages) {
+      return;
+    }
+    if (!Array.isArray(messages)) {
+      throw new Error(path + ' deve ser uma lista.');
+    }
+    messages.forEach(function validateMessage(item, index) {
+      if (!item || typeof item.message !== 'object' || !Array.isArray(item.delaysMs)) {
+        throw new Error(path + '[' + index + '] deve conter message e delaysMs.');
+      }
+      item.delaysMs.forEach(function validateDelay(delay) {
+        if (typeof delay !== 'number' || delay < 0) {
+          throw new Error(path + '[' + index + '].delaysMs contém um valor inválido.');
+        }
+      });
+    });
+  }
+
+  function validateSameOrigin(config, path) {
+    if (!config) {
+      return;
+    }
+    if (config.mediaSelector) {
+      requireText(config.mediaSelector, path + '.mediaSelector');
+    }
+    if (config.playSelector) {
+      requireText(config.playSelector, path + '.playSelector');
+    }
+  }
+
+  function validateVerification(verification, path) {
+    if (!verification) {
+      return;
+    }
+    if (!SUPPORTED_VERIFICATIONS[verification.type]) {
+      throw new Error(path + '.type não é suportado.');
+    }
+    if (verification.type === 'postMessage') {
+      requireText(verification.origin, path + '.origin');
+      requireText(verification.eventField, path + '.eventField');
+      if (!Array.isArray(verification.playingValues)) {
+        throw new Error(path + '.playingValues deve ser uma lista.');
+      }
+    }
+    if (verification.type === 'sameOriginMedia') {
+      requireText(verification.mediaSelector, path + '.mediaSelector');
+    }
+  }
+
+  function validateControls(controls, path) {
+    if (!controls) {
+      return;
+    }
+    if (controls.strategy !== 'postMessage') {
+      throw new Error(path + '.strategy deve ser "postMessage".');
+    }
+    requireText(controls.targetOrigin, path + '.targetOrigin');
+  }
+
+  function validatePositiveNumber(value, path) {
+    if (typeof value !== 'undefined' && (typeof value !== 'number' || value <= 0)) {
+      throw new Error(path + ' deve ser um número positivo.');
+    }
+  }
+
+  function requireText(value, path) {
+    if (typeof value !== 'string' || !value.trim()) {
+      throw new Error(path + ' deve ser um texto não vazio.');
+    }
+  }
+
+  function isSuccessfulStatus(status) {
+    return status === 0 || (status >= 200 && status < 300);
+  }
+
+  function createRequest() {
+    return new XMLHttpRequest();
+  }
+
+  namespace.services.CatalogService = CatalogService;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/SourceResolver.js">
+(function defineSourceResolver(namespace) {
+  'use strict';
+
+  var DEFAULT_RESOLVE_TIMEOUT_MS = 10000;
+
+  function SourceResolver(requestFactory) {
+    this.requestFactory = requestFactory || createRequest;
+  }
+
+  SourceResolver.prototype.resolve = function resolve(source, callbacks) {
+    if (source.type === 'm3u') {
+      return this.resolveM3u(source, callbacks);
+    }
+
+    callbacks.onSuccess([copySource(source)]);
+    return noop;
+  };
+
+  SourceResolver.prototype.resolveM3u = function resolveM3u(source, callbacks) {
+    var request = this.requestFactory();
+    var timeoutId;
+    var completed = false;
+
+    function finish(handler, payload) {
+      if (completed) {
+        return;
+      }
+      completed = true;
+      window.clearTimeout(timeoutId);
+      handler(payload);
+    }
+
+    request.onreadystatechange = function onReadyStateChange() {
+      var entries;
+
+      if (request.readyState !== 4 || completed) {
+        return;
+      }
+
+      if (!isSuccessfulStatus(request.status)) {
+        finish(callbacks.onError, 'A playlist M3U respondeu com HTTP ' + request.status + '.');
+        return;
+      }
+
+      entries = parseM3u(request.responseText, source);
+      if (!entries.length) {
+        finish(callbacks.onError, 'A playlist M3U não contém fontes reproduzíveis.');
+        return;
+      }
+
+      finish(callbacks.onSuccess, entries);
+    };
+
+    request.onerror = function onRequestError() {
+      finish(callbacks.onError, 'Não foi possível carregar a playlist M3U. Verifique a URL e o CORS.');
+    };
+
+    timeoutId = window.setTimeout(function onResolveTimeout() {
+      try { request.abort(); } catch (error) {}
+      finish(callbacks.onError, 'A playlist M3U demorou demais para responder.');
+    }, source.resolveTimeoutMs || DEFAULT_RESOLVE_TIMEOUT_MS);
+
+    try {
+      request.open('GET', source.url, true);
+      request.send();
+    } catch (error) {
+      finish(callbacks.onError, 'Não foi possível abrir a playlist M3U. Verifique a URL e a rede.');
+    }
+
+    return function cancelResolution() {
+      if (completed) {
+        return;
+      }
+      completed = true;
+      window.clearTimeout(timeoutId);
+      try { request.abort(); } catch (error) {}
+    };
+  };
+
+  function parseM3u(content, parentSource) {
+    var lines = String(content || '').replace(/\r/g, '').split('\n');
+    var entries = [];
+    var pendingLabel = '';
+    var index;
+    var line;
+
+    for (index = 0; index < lines.length; index += 1) {
+      line = lines[index].trim();
+
+      if (!line) {
+        continue;
+      }
+
+      if (line.indexOf('#EXTINF:') === 0) {
+        pendingLabel = readExtInfLabel(line);
+        continue;
+      }
+
+      if (line.charAt(0) === '#') {
+        continue;
+      }
+
+      entries.push({
+        id: parentSource.id + '-entry-' + (entries.length + 1),
+        label: pendingLabel ? parentSource.label + ' • ' + pendingLabel : parentSource.label,
+        type: inferSourceType(line),
+        url: resolveUrl(parentSource.url, line),
+        timeoutMs: parentSource.timeoutMs
+      });
+      pendingLabel = '';
+    }
+
+    return entries;
+  }
+
+  function readExtInfLabel(line) {
+    var commaIndex = line.indexOf(',');
+    return commaIndex >= 0 ? line.slice(commaIndex + 1).trim() : '';
+  }
+
+  function inferSourceType(url) {
+    var cleanUrl = url.split('?')[0].toLowerCase();
+
+    if (/\.m3u8$/.test(cleanUrl)) {
+      return 'hls';
+    }
+    if (/\.mpd$/.test(cleanUrl)) {
+      return 'dash';
+    }
+    return 'video';
+  }
+
+  function resolveUrl(playlistUrl, entryUrl) {
+    var anchor;
+
+    if (/^[a-z]+:/i.test(entryUrl) || entryUrl.indexOf('//') === 0) {
+      return normalizeProtocol(entryUrl);
+    }
+
+    anchor = document.createElement('a');
+    anchor.href = playlistUrl;
+    anchor.href = anchor.href.slice(0, anchor.href.lastIndexOf('/') + 1) + entryUrl;
+    return anchor.href;
+  }
+
+  function normalizeProtocol(url) {
+    return url.indexOf('//') === 0 ? 'https:' + url : url;
+  }
+
+  function copySource(source) {
+    var result = {};
+    var key;
+
+    for (key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        result[key] = source[key];
+      }
+    }
+    result.url = normalizeProtocol(result.url);
+    return result;
+  }
+
+  function isSuccessfulStatus(status) {
+    return status === 0 || (status >= 200 && status < 300);
+  }
+
+  function createRequest() {
+    return new XMLHttpRequest();
+  }
+
+  function noop() {}
+
+  namespace.services.SourceResolver = SourceResolver;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/PlayerFactory.js">
+(function definePlayerFactory(namespace) {
+  'use strict';
+
+  function PlayerFactory(elements, playerProfiles) {
+    this.elements = elements;
+    this.playerProfiles = playerProfiles || {};
+  }
+
+  PlayerFactory.prototype.create = function create(source) {
+    if (source.type === 'iframe') {
+      return new namespace.adapters.IframePlayerAdapter(
+        this.elements.iframePlayer,
+        resolveIframeProfile(source, this.playerProfiles)
+      );
+    }
+
+    if (!isDirectMediaSource(source.type)) {
+      throw new Error('Tipo de fonte não reproduzível: ' + source.type + '.');
+    }
+
+    if (namespace.adapters.AvPlayAdapter.isSupported()) {
+      return new namespace.adapters.AvPlayAdapter(this.elements.avPlayer);
+    }
+    return new namespace.adapters.Html5VideoAdapter(this.elements.html5Player);
+  };
+
+  function isDirectMediaSource(type) {
+    return type === 'hls' || type === 'dash' || type === 'video';
+  }
+
+  function resolveIframeProfile(source, profiles) {
+    if (source.playerProfile && profiles[source.playerProfile]) {
+      return profiles[source.playerProfile];
+    }
+
+    if (source.controls) {
+      return {
+        id: 'legacy-inline-controls',
+        kind: 'iframe',
+        startup: {
+          postMessages: [{ message: source.controls.play, delaysMs: [0, 500, 1500] }],
+          verification: { type: 'none' },
+          timeoutMs: source.timeoutMs || 6000,
+          manualFallback: 'postMessage'
+        },
+        controls: source.controls
+      };
+    }
+
+    return profiles['opaque-iframe'] || {
+      id: 'opaque-iframe',
+      kind: 'iframe',
+      startup: {
+        securityMode: 'interaction-shield',
+        verification: { type: 'none' },
+        timeoutMs: source.timeoutMs || 5000,
+        manualFallback: 'timedInteraction',
+        interactionWindowMs: 6000,
+        manualCompletion: 'assume-playing'
+      }
+    };
+  }
+
+  namespace.services.PlayerFactory = PlayerFactory;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/PlaybackService.js">
+(function definePlaybackService(namespace) {
+  'use strict';
+
+  var DEFAULT_START_TIMEOUT_MS = 20000;
+
+  function PlaybackService(playerFactory, sourceResolver, eventBus) {
+    this.playerFactory = playerFactory;
+    this.sourceResolver = sourceResolver;
+    this.eventBus = eventBus;
+    this.player = null;
+    this.channel = null;
+    this.sourceIndex = 0;
+    this.sourcesTried = 0;
+    this.resolvedSources = [];
+    this.resolvedSourceIndex = 0;
+    this.operationId = 0;
+    this.cancelResolution = null;
+    this.startTimeout = null;
+    this.manualCandidate = null;
+    this.restoringManualCandidate = false;
+    this.awaitingUserAction = false;
+    this.manualActivationInProgress = false;
+    this.interactionActive = false;
+    this.lastFailureMessage = '';
+    this.automaticFallback = true;
+  }
+
+  PlaybackService.prototype.playChannel = function playChannel(channel, preferredSourceIndex) {
+    this.resetActivePlayback();
+    this.channel = channel;
+    this.sourceIndex = normalizeIndex(preferredSourceIndex || 0, this.getSources().length);
+    this.sourcesTried = 0;
+    this.manualCandidate = null;
+    this.restoringManualCandidate = false;
+    this.manualActivationInProgress = false;
+    this.interactionActive = false;
+    this.lastFailureMessage = '';
+    this.automaticFallback = true;
+    this.tryConfiguredSource();
+  };
+
+  PlaybackService.prototype.tryConfiguredSource = function tryConfiguredSource() {
+    var self = this;
+    var configuredSource = this.getConfiguredSource();
+    var operationId;
+
+    this.cancelPendingResolution();
+    this.releasePlayer();
+    this.clearStartTimeout();
+    this.awaitingUserAction = false;
+
+    if (!configuredSource) {
+      this.finishWithError('Nenhuma fonte de reprodução está configurada para este canal.');
+      return;
+    }
+
+    operationId = this.nextOperationId();
+    this.eventBus.emit('playback:resolving', this.createPlaybackPayload(configuredSource, this.getStartingMessage()));
+
+    this.cancelResolution = this.sourceResolver.resolve(configuredSource, {
+      onSuccess: function onResolved(resolvedSources) {
+        if (!self.isCurrentOperation(operationId)) {
+          return;
+        }
+
+        self.cancelResolution = null;
+        self.resolvedSources = resolvedSources;
+        self.resolvedSourceIndex = 0;
+        self.tryResolvedSource();
+      },
+      onError: function onResolveError(message) {
+        if (!self.isCurrentOperation(operationId)) {
+          return;
+        }
+
+        self.cancelResolution = null;
+        self.handleConfiguredSourceFailure(message);
+      }
+    });
+  };
+
+  PlaybackService.prototype.tryResolvedSource = function tryResolvedSource() {
+    var self = this;
+    var source = this.getResolvedSource();
+    var operationId;
+
+    this.releasePlayer();
+    this.clearStartTimeout();
+    this.awaitingUserAction = false;
+
+    if (!source) {
+      this.handleConfiguredSourceFailure('A fonte não produziu uma mídia reproduzível.');
+      return;
+    }
+
+    try {
+      this.player = this.playerFactory.create(source);
+    } catch (error) {
+      this.handleResolvedSourceFailure(error.message || String(error));
+      return;
+    }
+
+    operationId = this.nextOperationId();
+    this.eventBus.emit('playback:loading', this.createPlaybackPayload(source, this.getStartingMessage()));
+    this.startTimeout = window.setTimeout(function onStartTimeout() {
+      if (self.isCurrentOperation(operationId)) {
+        self.handleResolvedSourceFailure('A fonte demorou demais para iniciar.');
+      }
+    }, source.timeoutMs || DEFAULT_START_TIMEOUT_MS);
+
+    try {
+      this.player.load(source, {
+      onReady: function onReady() {
+        if (!self.isCurrentOperation(operationId)) {
+          return;
+        }
+        self.clearStartTimeout();
+        self.awaitingUserAction = false;
+        self.manualActivationInProgress = false;
+        self.restoringManualCandidate = false;
+        self.manualCandidate = null;
+        self.eventBus.emit('playback:ready', {
+          channel: self.channel,
+          source: source,
+          canReopenInteraction: self.playerCanReopenInteraction()
+        });
+      },
+      onBuffering: function onBuffering(isBuffering) {
+        if (self.isCurrentOperation(operationId)) {
+          self.eventBus.emit('playback:buffering', isBuffering);
+        }
+      },
+      onBufferingProgress: function onBufferingProgress(percent) {
+        if (self.isCurrentOperation(operationId)) {
+          self.eventBus.emit('playback:bufferingProgress', percent);
+        }
+      },
+      onPlayStateChange: function onPlayStateChange(isPlaying) {
+        if (self.isCurrentOperation(operationId)) {
+          self.eventBus.emit('playback:state', isPlaying);
+        }
+      },
+      onAutoplayBlocked: function onAutoplayBlocked(message) {
+        if (self.isCurrentOperation(operationId)) {
+          self.handleAutoplayBlocked(message);
+        }
+      },
+      onManualInteraction: function onManualInteraction(message) {
+        if (self.isCurrentOperation(operationId)) {
+          self.eventBus.emit('playback:manualInteraction', message);
+        }
+      },
+      onInteractionStarted: function onInteractionStarted(payload) {
+        if (self.isCurrentOperation(operationId)) {
+          self.interactionActive = true;
+          self.eventBus.emit('playback:interactionStarted', payload);
+        }
+      },
+      onInteractionEnded: function onInteractionEnded(payload) {
+        if (self.isCurrentOperation(operationId)) {
+          self.interactionActive = false;
+          self.eventBus.emit('playback:interactionEnded', payload);
+        }
+      },
+      onError: function onError(message) {
+        if (self.isCurrentOperation(operationId)) {
+          if (self.awaitingUserAction || self.restoringManualCandidate || self.manualActivationInProgress) {
+            self.finishWithError(message);
+          } else {
+            self.handleResolvedSourceFailure(message);
+          }
+        }
+      }
+      });
+    } catch (error) {
+      if (this.isCurrentOperation(operationId)) {
+        this.handleResolvedSourceFailure(error.message || 'O player falhou ao abrir esta fonte.');
+      }
+    }
+  };
+
+  PlaybackService.prototype.handleAutoplayBlocked = function handleAutoplayBlocked(message) {
+    this.clearStartTimeout();
+    this.lastFailureMessage = message || 'A reprodução automática foi bloqueada.';
+
+    if (this.manualActivationInProgress) {
+      this.finishWithError(this.lastFailureMessage);
+      return;
+    }
+
+    if (this.playerCanActivate() && !this.manualCandidate) {
+      this.manualCandidate = {
+        sourceIndex: this.sourceIndex,
+        resolvedSourceIndex: this.resolvedSourceIndex,
+        source: this.getResolvedSource()
+      };
+    }
+
+    // An opaque iframe that finished loading is not a technical failure: its
+    // internal playback state simply cannot be inspected cross-origin. Prompt
+    // immediately instead of making the user wait through every backup source.
+    if (this.playerUsesTimedInteraction() && this.playerCanActivate()) {
+      this.requestUserAction();
+      return;
+    }
+
+    if (this.restoringManualCandidate) {
+      this.requestUserAction();
+      return;
+    }
+
+    this.advanceAfterFailure(this.lastFailureMessage);
+  };
+
+  PlaybackService.prototype.handleResolvedSourceFailure = function handleResolvedSourceFailure(message) {
+    this.clearStartTimeout();
+    this.lastFailureMessage = message || 'A fonte atual falhou.';
+
+    if (this.restoringManualCandidate) {
+      this.finishWithError(this.lastFailureMessage);
+      return;
+    }
+    this.advanceAfterFailure(this.lastFailureMessage);
+  };
+
+  PlaybackService.prototype.advanceAfterFailure = function advanceAfterFailure(message) {
+    if (this.resolvedSourceIndex + 1 < this.resolvedSources.length) {
+      this.resolvedSourceIndex += 1;
+      this.tryResolvedSource();
+      return;
+    }
+    this.handleConfiguredSourceFailure(message);
+  };
+
+  PlaybackService.prototype.handleConfiguredSourceFailure = function handleConfiguredSourceFailure(message) {
+    var sources = this.getSources();
+
+    this.lastFailureMessage = message || this.lastFailureMessage;
+    this.sourcesTried += 1;
+    if (this.automaticFallback && this.sourcesTried < sources.length) {
+      this.sourceIndex = normalizeIndex(this.sourceIndex + 1, sources.length);
+      this.eventBus.emit('playback:fallback', {
+        sourceIndex: this.sourceIndex,
+        sourceCount: sources.length
+      });
+      this.tryConfiguredSource();
+      return;
+    }
+
+    if (this.manualCandidate) {
+      if (this.isCurrentManualCandidate() && this.playerCanActivate()) {
+        this.requestUserAction();
+      } else {
+        this.restoreManualCandidate();
+      }
+      return;
+    }
+
+    this.finishWithError(this.lastFailureMessage || 'Todas as fontes deste canal falharam.');
+  };
+
+  PlaybackService.prototype.restoreManualCandidate = function restoreManualCandidate() {
+    var candidate = this.manualCandidate;
+
+    this.restoringManualCandidate = true;
+    this.sourceIndex = candidate.sourceIndex;
+    this.resolvedSources = [candidate.source];
+    this.resolvedSourceIndex = 0;
+    this.tryResolvedSource();
+  };
+
+  PlaybackService.prototype.requestUserAction = function requestUserAction() {
+    this.clearStartTimeout();
+    this.awaitingUserAction = true;
+    this.restoringManualCandidate = false;
+    this.eventBus.emit('playback:userActionRequired', {
+      channel: this.channel,
+      source: this.getResolvedSource(),
+      message: 'OK para iniciar esta fonte'
+    });
+  };
+
+  PlaybackService.prototype.activateCurrentSource = function activateCurrentSource() {
+    var activated;
+
+    if (!this.awaitingUserAction || !this.player || !this.playerCanActivate()) {
+      return false;
+    }
+
+    this.awaitingUserAction = false;
+    this.manualActivationInProgress = true;
+    this.eventBus.emit('playback:activationStarted', {
+      interactive: this.playerUsesTimedInteraction(),
+      message: 'Confirmando reprodução…'
+    });
+    activated = this.player.activateFromUserGesture();
+
+    if (!activated) {
+      this.finishWithError('Esta fonte não aceita ativação pelo controle remoto.');
+      return false;
+    }
+    return true;
+  };
+
+  PlaybackService.prototype.moveSource = function moveSource(delta) {
+    var sources = this.getSources();
+    var nextIndex;
+
+    if (sources.length < 2) {
+      this.eventBus.emit('playback:notice', 'Este canal possui apenas uma fonte.');
+      return;
+    }
+
+    nextIndex = normalizeIndex(this.sourceIndex + delta, sources.length);
+    this.resetActivePlayback();
+    this.sourceIndex = nextIndex;
+    this.sourcesTried = 0;
+    this.automaticFallback = false;
+    this.manualCandidate = null;
+    this.restoringManualCandidate = false;
+    this.tryConfiguredSource();
+  };
+
+  PlaybackService.prototype.retry = function retry() {
+    this.resetActivePlayback();
+    this.sourcesTried = 0;
+    this.automaticFallback = false;
+    this.manualCandidate = null;
+    this.restoringManualCandidate = false;
+    this.tryConfiguredSource();
+  };
+
+  PlaybackService.prototype.toggle = function toggle() {
+    if (!this.player) {
+      return false;
+    }
+    if (this.player.canToggle()) {
+      return this.player.toggle();
+    }
+    if (this.playerCanReopenInteraction()) {
+      return this.player.reopenInteractionWindow();
+    }
+    if (!this.player.canToggle()) {
+      this.eventBus.emit('playback:notice', 'Play/Pause não está disponível para esta fonte incorporada.');
+      return false;
+    }
+    return false;
+  };
+
+  PlaybackService.prototype.endInteractionWindow = function endInteractionWindow(reason) {
+    if (!this.player || typeof this.player.cancelInteractionWindow !== 'function') {
+      return false;
+    }
+    return this.player.cancelInteractionWindow(reason || 'navigation');
+  };
+
+  PlaybackService.prototype.isInteractionWindowActive = function isInteractionWindowActive() {
+    return this.interactionActive;
+  };
+
+  PlaybackService.prototype.stop = function stop() {
+    this.resetActivePlayback();
+    this.manualCandidate = null;
+    this.restoringManualCandidate = false;
+  };
+
+  PlaybackService.prototype.getSources = function getSources() {
+    return this.channel && this.channel.sources ? this.channel.sources : [];
+  };
+
+  PlaybackService.prototype.getConfiguredSource = function getConfiguredSource() {
+    return this.getSources()[this.sourceIndex] || null;
+  };
+
+  PlaybackService.prototype.getResolvedSource = function getResolvedSource() {
+    return this.resolvedSources[this.resolvedSourceIndex] || null;
+  };
+
+  PlaybackService.prototype.getStartingMessage = function getStartingMessage() {
+    var count = this.getSources().length;
+    return 'Iniciando fonte ' + (this.sourceIndex + 1) + ' de ' + count + '…';
+  };
+
+  PlaybackService.prototype.createPlaybackPayload = function createPlaybackPayload(source, statusText) {
+    return {
+      channel: this.channel,
+      source: source,
+      sourceIndex: this.sourceIndex,
+      sourceCount: this.getSources().length,
+      playerName: this.player ? this.player.getName() : '',
+      canToggle: this.player ? this.player.canToggle() : false,
+      canReopenInteraction: this.playerCanReopenInteraction(),
+      statusText: statusText
+    };
+  };
+
+  PlaybackService.prototype.playerCanActivate = function playerCanActivate() {
+    return !!(this.player && typeof this.player.canActivateFromUserGesture === 'function' && this.player.canActivateFromUserGesture());
+  };
+
+  PlaybackService.prototype.playerCanReopenInteraction = function playerCanReopenInteraction() {
+    return !!(this.player && typeof this.player.canReopenInteractionWindow === 'function' && this.player.canReopenInteractionWindow());
+  };
+
+  PlaybackService.prototype.playerUsesTimedInteraction = function playerUsesTimedInteraction() {
+    return !!(this.player && typeof this.player.usesTimedInteraction === 'function' && this.player.usesTimedInteraction());
+  };
+
+  PlaybackService.prototype.isCurrentManualCandidate = function isCurrentManualCandidate() {
+    return !!(this.manualCandidate &&
+      this.manualCandidate.sourceIndex === this.sourceIndex &&
+      this.manualCandidate.resolvedSourceIndex === this.resolvedSourceIndex);
+  };
+
+  PlaybackService.prototype.finishWithError = function finishWithError(message) {
+    this.clearStartTimeout();
+    this.awaitingUserAction = false;
+    this.restoringManualCandidate = false;
+    this.manualActivationInProgress = false;
+    this.interactionActive = false;
+    this.releasePlayer();
+    this.eventBus.emit('playback:error', message || 'Todas as fontes deste canal falharam.');
+  };
+
+  PlaybackService.prototype.resetActivePlayback = function resetActivePlayback() {
+    this.endInteractionWindow('navigation');
+    this.nextOperationId();
+    this.cancelPendingResolution();
+    this.clearStartTimeout();
+    this.releasePlayer();
+    this.resolvedSources = [];
+    this.resolvedSourceIndex = 0;
+    this.awaitingUserAction = false;
+    this.manualActivationInProgress = false;
+    this.interactionActive = false;
+  };
+
+  PlaybackService.prototype.cancelPendingResolution = function cancelPendingResolution() {
+    if (this.cancelResolution) {
+      this.cancelResolution();
+      this.cancelResolution = null;
+    }
+  };
+
+  PlaybackService.prototype.releasePlayer = function releasePlayer() {
+    var player;
+
+    if (this.player) {
+      player = this.player;
+      this.player = null;
+      try {
+        player.release();
+      } catch (error) {
+        console.log('[Playback] Player release ignored:', error.message || error);
+      }
+    }
+    this.interactionActive = false;
+  };
+
+  PlaybackService.prototype.clearStartTimeout = function clearStartTimeout() {
+    if (this.startTimeout) {
+      window.clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
+  };
+
+  PlaybackService.prototype.nextOperationId = function nextOperationId() {
+    this.operationId += 1;
+    return this.operationId;
+  };
+
+  PlaybackService.prototype.isCurrentOperation = function isCurrentOperation(operationId) {
+    return operationId === this.operationId;
+  };
+
+  function normalizeIndex(index, length) {
+    if (!length) {
+      return 0;
+    }
+    return (index + length) % length;
+  }
+
+  namespace.services.PlaybackService = PlaybackService;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/ui/ChannelGridView.js">
+(function defineChannelGridView(namespace) {
+  'use strict';
+
+  function ChannelGridView(gridElement, countElement) {
+    this.gridElement = gridElement;
+    this.countElement = countElement;
+    this.cardElements = [];
+  }
+
+  ChannelGridView.prototype.render = function render(channels) {
+    var fragment = document.createDocumentFragment();
+    var index;
+
+    this.gridElement.innerHTML = '';
+    this.cardElements = [];
+
+    for (index = 0; index < channels.length; index += 1) {
+      var card = createCard(channels[index], index);
+      this.cardElements.push(card);
+      fragment.appendChild(card);
+    }
+
+    this.gridElement.appendChild(fragment);
+    this.countElement.textContent = channels.length + (channels.length === 1 ? ' canal' : ' canais');
+  };
+
+  ChannelGridView.prototype.focus = function focus(index) {
+    var currentIndex;
+
+    for (currentIndex = 0; currentIndex < this.cardElements.length; currentIndex += 1) {
+      if (currentIndex === index) {
+        this.cardElements[currentIndex].classList.add('is-focused');
+      } else {
+        this.cardElements[currentIndex].classList.remove('is-focused');
+      }
+    }
+  };
+
+  function createCard(channel, index) {
+    var card = document.createElement('article');
+    card.className = 'channel-card';
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('data-index', index);
+    card.style.setProperty('--channel-accent', channel.accent);
+    card.innerHTML = [
+      '<div class="channel-card__header">',
+        '<div class="channel-card__logo">' + escapeHtml(channel.shortName) + '</div>',
+        '<div class="channel-card__live"><span></span> AO VIVO</div>',
+      '</div>',
+      '<div class="channel-card__body">',
+        '<p class="channel-card__category">' + escapeHtml(channel.category) + '</p>',
+        '<h4 class="channel-card__name">' + escapeHtml(channel.name) + '</h4>',
+        '<p class="channel-card__description">' + escapeHtml(channel.description) + '</p>',
+      '</div>'
+    ].join('');
+
+    return card;
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  namespace.ui.ChannelGridView = ChannelGridView;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/ui/ClockView.js">
+(function defineClockView(namespace) {
+  'use strict';
+
+  function ClockView(element) {
+    this.element = element;
+    this.intervalId = null;
+  }
+
+  ClockView.prototype.start = function start() {
+    var self = this;
+
+    this.stop();
+    this.update();
+    this.intervalId = window.setInterval(function updateClock() {
+      self.update();
+    }, 30000);
+  };
+
+  ClockView.prototype.update = function update() {
+    var date = new Date();
+
+    if (!this.element) {
+      return;
+    }
+    this.element.textContent = pad(date.getHours()) + ':' + pad(date.getMinutes());
+  };
+
+  ClockView.prototype.stop = function stop() {
+    if (this.intervalId) {
+      window.clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  };
+
+  function pad(value) {
+    return value < 10 ? '0' + value : String(value);
+  }
+
+  namespace.ui.ClockView = ClockView;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/ui/PlayerView.js">
+(function definePlayerView(namespace) {
+  'use strict';
+
+  function PlayerView(elements) {
+    this.elements = elements;
+    this.overlayTimeout = null;
+  }
+
+  PlayerView.prototype.show = function show(channel, source, sourceIndex, sourceCount, canToggle, canReopenInteraction) {
+    this.elements.homeScreen.classList.add('is-hidden');
+    this.elements.playerScreen.classList.remove('is-hidden');
+    this.elements.channelName.textContent = channel.name;
+    this.elements.sourceName.textContent = formatSourceName(source, sourceIndex, sourceCount);
+    this.setControlAvailability(canToggle, canReopenInteraction);
+    this.hideError();
+    this.hideActivation();
+    this.hideInteractionMode();
+    this.showOverlay();
+    this.showLoading('Conectando ao canal…');
+    focusElement(this.elements.playerScreen);
+  };
+
+  PlayerView.prototype.hide = function hide() {
+    this.clearOverlayTimer();
+    this.elements.playerScreen.classList.add('is-hidden');
+    this.elements.homeScreen.classList.remove('is-hidden');
+    this.hideLoading();
+    this.hideError();
+    this.hideActivation();
+    this.hideInteractionMode();
+    focusElement(this.elements.homeScreen);
+  };
+
+  PlayerView.prototype.showLoading = function showLoading(message) {
+    this.elements.loadingText.textContent = message || 'Carregando…';
+    this.elements.loading.classList.remove('is-hidden');
+  };
+
+  PlayerView.prototype.updateBufferingProgress = function updateBufferingProgress(percent) {
+    this.elements.loadingText.textContent = 'Carregando transmissão… ' + percent + '%';
+  };
+
+  PlayerView.prototype.hideLoading = function hideLoading() {
+    this.elements.loading.classList.add('is-hidden');
+  };
+
+  PlayerView.prototype.showError = function showError(message) {
+    this.hideLoading();
+    this.hideActivation();
+    this.hideInteractionMode();
+    this.elements.errorMessage.textContent = message || 'A fonte não respondeu.';
+    this.elements.errorDialog.classList.remove('is-hidden');
+    this.showOverlay();
+  };
+
+  PlayerView.prototype.hideError = function hideError() {
+    this.elements.errorDialog.classList.add('is-hidden');
+  };
+
+  PlayerView.prototype.showActivation = function showActivation(message) {
+    this.hideLoading();
+    this.hideError();
+    this.hideInteractionMode();
+    this.elements.activationMessage.textContent = message || 'OK para iniciar esta fonte';
+    this.elements.activationDialog.classList.remove('is-hidden');
+    this.showOverlay();
+  };
+
+  PlayerView.prototype.hideActivation = function hideActivation() {
+    this.elements.activationDialog.classList.add('is-hidden');
+  };
+
+  PlayerView.prototype.setPlayingState = function setPlayingState(isPlaying) {
+    this.elements.playStateIcon.textContent = isPlaying ? 'Ⅱ' : '▶';
+    this.elements.playStateLabel.textContent = isPlaying ? 'OK para pausar' : 'OK para continuar';
+    this.showOverlay();
+  };
+
+  PlayerView.prototype.setControlAvailability = function setControlAvailability(canToggle, canReopenInteraction) {
+    if (canToggle) {
+      this.elements.playStateIcon.textContent = 'Ⅱ';
+      this.elements.playStateLabel.textContent = 'OK para pausar';
+      return;
+    }
+    if (canReopenInteraction) {
+      this.setRetryInteractionAvailable();
+      return;
+    }
+    this.elements.playStateIcon.textContent = '•';
+    this.elements.playStateLabel.textContent = 'Controle pelo provedor';
+  };
+
+  PlayerView.prototype.showInteractionMode = function showInteractionMode(durationMs) {
+    var seconds = Math.round((durationMs || 6000) / 1000);
+
+    this.hideLoading();
+    this.hideActivation();
+    this.hideError();
+    this.clearOverlayTimer();
+    this.elements.overlay.classList.remove('is-dimmed');
+    this.elements.interactionBannerText.textContent = 'Acione o Play — controle do TblackTV retorna em ' + seconds + ' segundos';
+    this.elements.interactionBanner.classList.remove('is-hidden');
+  };
+
+  PlayerView.prototype.hideInteractionMode = function hideInteractionMode() {
+    this.elements.interactionBanner.classList.add('is-hidden');
+  };
+
+  PlayerView.prototype.setRetryInteractionAvailable = function setRetryInteractionAvailable() {
+    this.elements.playStateIcon.textContent = '▶';
+    this.elements.playStateLabel.textContent = 'OK para tentar o Play novamente';
+    this.showOverlay();
+  };
+
+  PlayerView.prototype.showNotice = function showNotice(message) {
+    this.elements.playStateLabel.textContent = message;
+    this.showOverlay();
+  };
+
+  PlayerView.prototype.showOverlay = function showOverlay() {
+    var self = this;
+
+    this.clearOverlayTimer();
+    this.elements.overlay.classList.remove('is-dimmed');
+    this.overlayTimeout = window.setTimeout(function dimOverlay() {
+      self.elements.overlay.classList.add('is-dimmed');
+    }, 4500);
+  };
+
+  PlayerView.prototype.clearOverlayTimer = function clearOverlayTimer() {
+    if (this.overlayTimeout) {
+      window.clearTimeout(this.overlayTimeout);
+      this.overlayTimeout = null;
+    }
+  };
+
+  function formatSourceName(source, sourceIndex, sourceCount) {
+    var label = source ? source.label : '';
+
+    if (sourceCount > 1) {
+      label += '  •  Fonte ' + (sourceIndex + 1) + ' de ' + sourceCount;
+    }
+    return label;
+  }
+
+  function focusElement(element) {
+    window.setTimeout(function focusAfterScreenChange() {
+      try {
+        window.focus();
+        element.focus();
+      } catch (error) {}
+    }, 0);
+  }
+
+  namespace.ui.PlayerView = PlayerView;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/controllers/AppController.js">
+(function defineAppController(namespace) {
+  'use strict';
+
+  var KEY = {
+    ENTER: 13,
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    BACK: 10009,
+    MEDIA_PLAY: 415,
+    MEDIA_PAUSE: 19,
+    MEDIA_PLAY_PAUSE: 10252,
+    MEDIA_STOP: 413,
+    CHANNEL_UP: 427,
+    CHANNEL_DOWN: 428
+  };
+
+  function AppController(options) {
+    this.state = options.state;
+    this.eventBus = options.eventBus;
+    this.navigation = options.navigation;
+    this.gridView = options.gridView;
+    this.playerView = options.playerView;
+    this.playbackService = options.playbackService;
+    this.boundKeyHandler = this.onKeyDown.bind(this);
+    this.lastHandledEvent = null;
+    this.lastSourceSwitchAt = 0;
+  }
+
+  AppController.prototype.start = function start() {
+    this.gridView.render(this.state.channels);
+    this.gridView.focus(this.state.focusedChannelIndex);
+    this.bindPlaybackEvents();
+    window.addEventListener('keydown', this.boundKeyHandler, true);
+    document.addEventListener('keydown', this.boundKeyHandler, true);
+  };
+
+  AppController.prototype.bindPlaybackEvents = function bindPlaybackEvents() {
+    var self = this;
+
+    this.eventBus.on('playback:loading', function onLoading(payload) {
+      self.state.hasError = false;
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.state.selectSource(payload.sourceIndex);
+      self.playerView.show(payload.channel, payload.source, payload.sourceIndex, payload.sourceCount, payload.canToggle, payload.canReopenInteraction);
+      self.playerView.showLoading(payload.statusText);
+    });
+
+    this.eventBus.on('playback:resolving', function onResolving(payload) {
+      self.state.hasError = false;
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.state.selectSource(payload.sourceIndex);
+      self.playerView.show(payload.channel, payload.source, payload.sourceIndex, payload.sourceCount, false);
+      self.playerView.showLoading(payload.statusText);
+    });
+
+    this.eventBus.on('playback:ready', function onReady(payload) {
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.playerView.hideActivation();
+      self.playerView.hideLoading();
+      self.playerView.hideInteractionMode();
+      if (payload.canReopenInteraction) {
+        self.playerView.setRetryInteractionAvailable();
+      }
+    });
+
+    this.eventBus.on('playback:buffering', function onBuffering(isBuffering) {
+      if (isBuffering) {
+        self.playerView.showLoading('Carregando transmissão…');
+      } else {
+        self.playerView.hideLoading();
+      }
+    });
+
+    this.eventBus.on('playback:bufferingProgress', function onBufferingProgress(percent) {
+      self.playerView.updateBufferingProgress(percent);
+    });
+
+    this.eventBus.on('playback:state', function onState(isPlaying) {
+      self.state.isPlaying = isPlaying;
+      self.playerView.setPlayingState(isPlaying);
+    });
+
+    this.eventBus.on('playback:error', function onError(message) {
+      self.state.hasError = true;
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = false;
+      self.playerView.showError(message);
+    });
+
+    this.eventBus.on('playback:userActionRequired', function onUserActionRequired(payload) {
+      self.state.hasError = false;
+      self.state.requiresUserAction = true;
+      self.playerView.showActivation(payload.message);
+    });
+
+    this.eventBus.on('playback:activationStarted', function onActivationStarted(payload) {
+      self.state.requiresUserAction = false;
+      self.playerView.hideActivation();
+      if (!payload.interactive) {
+        self.playerView.showLoading(payload.message);
+      }
+    });
+
+    this.eventBus.on('playback:manualInteraction', function onManualInteraction(message) {
+      self.state.requiresUserAction = false;
+      self.playerView.hideActivation();
+      self.playerView.hideLoading();
+      self.playerView.showNotice(message);
+    });
+
+    this.eventBus.on('playback:interactionStarted', function onInteractionStarted(payload) {
+      self.state.requiresUserAction = false;
+      self.state.iframeInteractionActive = true;
+      self.playerView.showInteractionMode(payload.durationMs);
+    });
+
+    this.eventBus.on('playback:interactionEnded', function onInteractionEnded(payload) {
+      self.state.iframeInteractionActive = false;
+      self.playerView.hideInteractionMode();
+      if (payload.reason === 'timeout' || payload.reason === 'focus-lost') {
+        self.playerView.setRetryInteractionAvailable();
+      }
+    });
+
+    this.eventBus.on('playback:notice', function onNotice(message) {
+      self.playerView.showNotice(message);
+    });
+  };
+
+  AppController.prototype.onKeyDown = function onKeyDown(event) {
+    var keyCode;
+
+    if (this.lastHandledEvent === event) {
+      return;
+    }
+    this.lastHandledEvent = event;
+    keyCode = normalizeKeyCode(event);
+
+    if (isApplicationKey(keyCode)) {
+      event.preventDefault();
+      if (typeof event.stopPropagation === 'function') {
+        event.stopPropagation();
+      }
+    }
+
+    if (this.state.screen === 'home') {
+      this.handleHomeKey(keyCode);
+      return;
+    }
+
+    this.handlePlayerKey(keyCode);
+  };
+
+  AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
+    if (keyCode === KEY.LEFT) {
+      this.moveFocus('left');
+    } else if (keyCode === KEY.RIGHT) {
+      this.moveFocus('right');
+    } else if (keyCode === KEY.UP) {
+      this.moveFocus('up');
+    } else if (keyCode === KEY.DOWN) {
+      this.moveFocus('down');
+    } else if (keyCode === KEY.ENTER) {
+      this.openFocusedChannel();
+    } else if (keyCode === KEY.BACK) {
+      this.exitApplication();
+    }
+  };
+
+  AppController.prototype.handlePlayerKey = function handlePlayerKey(keyCode) {
+    // Navigation belongs to TblackTV in every player state. Handle it before
+    // loading, activation and error-specific actions so a source can never
+    // trap the user inside its iframe.
+    if (keyCode === KEY.BACK || keyCode === KEY.MEDIA_STOP) {
+      if (this.state.iframeInteractionActive) {
+        this.playbackService.endInteractionWindow('navigation');
+      }
+      this.closePlayer();
+      return;
+    }
+    if (keyCode === KEY.CHANNEL_UP || keyCode === KEY.CHANNEL_DOWN) {
+      if (this.state.iframeInteractionActive) {
+        this.playbackService.endInteractionWindow('navigation');
+      }
+      this.switchChannel(keyCode === KEY.CHANNEL_UP ? 1 : -1);
+      return;
+    }
+    if (keyCode === KEY.LEFT || keyCode === KEY.RIGHT) {
+      if (this.state.iframeInteractionActive) {
+        this.playbackService.endInteractionWindow('navigation');
+      }
+      this.switchSource(keyCode === KEY.RIGHT ? 1 : -1);
+      return;
+    }
+
+    if (this.state.iframeInteractionActive) {
+      return;
+    }
+
+    if (this.state.requiresUserAction) {
+      if (keyCode === KEY.ENTER) {
+        this.playbackService.activateCurrentSource();
+      }
+      return;
+    }
+
+    if (this.state.hasError) {
+      if (keyCode === KEY.ENTER) {
+        this.state.hasError = false;
+        this.playerView.hideError();
+        this.playbackService.retry();
+      }
+      return;
+    }
+
+    if (keyCode === KEY.ENTER || keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.MEDIA_PAUSE) {
+      this.playbackService.toggle();
+    } else {
+      this.playerView.showOverlay();
+    }
+  };
+
+  AppController.prototype.moveFocus = function moveFocus(direction) {
+    var nextIndex = this.navigation.move(direction);
+    this.state.focusChannel(nextIndex);
+    this.gridView.focus(nextIndex);
+  };
+
+  AppController.prototype.openFocusedChannel = function openFocusedChannel() {
+    this.state.selectFocusedChannel();
+    this.playCurrentChannel();
+  };
+
+  AppController.prototype.playCurrentChannel = function playCurrentChannel() {
+    var channel = this.state.getCurrentChannel();
+    if (channel) {
+      this.playbackService.playChannel(channel, this.state.currentSourceIndex);
+    }
+  };
+
+  AppController.prototype.switchChannel = function switchChannel(delta) {
+    this.playbackService.stop();
+    this.state.moveCurrentChannel(delta);
+    this.playCurrentChannel();
+  };
+
+  AppController.prototype.switchSource = function switchSource(delta) {
+    var now = Date.now ? Date.now() : new Date().getTime();
+
+    if (now - this.lastSourceSwitchAt < 350) {
+      return;
+    }
+    this.lastSourceSwitchAt = now;
+    this.playbackService.moveSource(delta);
+  };
+
+  AppController.prototype.closePlayer = function closePlayer() {
+    this.playbackService.stop();
+    this.state.screen = 'home';
+    this.state.hasError = false;
+    this.state.requiresUserAction = false;
+    this.state.iframeInteractionActive = false;
+    this.state.isPlaying = false;
+    this.navigation.setIndex(this.state.focusedChannelIndex);
+    this.gridView.focus(this.state.focusedChannelIndex);
+    this.playerView.hide();
+  };
+
+  AppController.prototype.exitApplication = function exitApplication() {
+    try {
+      if (window.tizen && window.tizen.application) {
+        window.tizen.application.getCurrentApplication().exit();
+        return;
+      }
+    } catch (error) {
+      console.log('[App] Tizen exit unavailable:', error.message || error);
+    }
+
+    window.history.back();
+  };
+
+  function isApplicationKey(keyCode) {
+    var keyName;
+
+    for (keyName in KEY) {
+      if (Object.prototype.hasOwnProperty.call(KEY, keyName) && KEY[keyName] === keyCode) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function normalizeKeyCode(event) {
+    var key = event.key;
+    var keyCode = event.keyCode || event.which || 0;
+
+    if (isApplicationKey(keyCode)) {
+      return keyCode;
+    }
+    if (key === 'Enter') { return KEY.ENTER; }
+    if (key === 'ArrowLeft') { return KEY.LEFT; }
+    if (key === 'ArrowUp') { return KEY.UP; }
+    if (key === 'ArrowRight') { return KEY.RIGHT; }
+    if (key === 'ArrowDown') { return KEY.DOWN; }
+    if (key === 'Backspace' || key === 'Escape') { return KEY.BACK; }
+    return keyCode;
+  }
+
+  namespace.controllers.AppController = AppController;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/main.js">
+(function startTblackTV(namespace) {
+  'use strict';
+
+  function init() {
+    var elements = collectElements();
+    var clockView = new namespace.ui.ClockView(elements.clock);
+    var fallbackDocuments = {
+      catalog: namespace.config.embeddedCatalog,
+      profiles: namespace.config.embeddedProfiles
+    };
+
+    clockView.start();
+    setAppStatus(elements, 'Carregando canais', false);
+
+    new namespace.services.CatalogService(
+      'config/channels.json',
+      'config/player-profiles.json',
+      null,
+      fallbackDocuments
+    ).load(
+      function onCatalogReady(catalog) {
+        buildApplication(elements, catalog.channels, catalog.profiles);
+        if (catalog.origin === 'network') {
+          setAppStatus(elements, 'Online', false);
+        } else {
+          setAppStatus(elements, 'Catálogo local', true);
+          console.log('[Catalog] Fallback ativo:', catalog.warning);
+        }
+      },
+      function onCatalogError(message) {
+        setAppStatus(elements, 'Catálogo indisponível', true);
+        showStartupError(elements, message);
+      }
+    );
+  }
+
+  function buildApplication(elements, channels, playerProfiles) {
+    var eventBus = new namespace.core.EventBus();
+    var state = new namespace.core.AppState(channels);
+    var navigation = new namespace.core.SpatialNavigation(channels.length, 4);
+    var gridView = new namespace.ui.ChannelGridView(elements.channelGrid, elements.channelCount);
+    var playerView = new namespace.ui.PlayerView(elements);
+    var playerFactory = new namespace.services.PlayerFactory(elements, playerProfiles);
+    var sourceResolver = new namespace.services.SourceResolver();
+    var playbackService = new namespace.services.PlaybackService(playerFactory, sourceResolver, eventBus);
+    var controller = new namespace.controllers.AppController({
+      state: state,
+      eventBus: eventBus,
+      navigation: navigation,
+      gridView: gridView,
+      playerView: playerView,
+      playbackService: playbackService
+    });
+
+    controller.start();
+  }
+
+  function showStartupError(elements, message) {
+    elements.channelCount.textContent = 'Catálogo indisponível';
+    elements.channelGrid.textContent = message;
+    elements.channelGrid.classList.add('channel-grid--error');
+  }
+
+  function setAppStatus(elements, text, isWarning) {
+    elements.appStatus.textContent = text;
+    if (isWarning) {
+      elements.appStatus.parentNode.classList.add('status-pill--warning');
+    } else {
+      elements.appStatus.parentNode.classList.remove('status-pill--warning');
+    }
+  }
+
+  function collectElements() {
+    return {
+      homeScreen: document.getElementById('home-screen'),
+      playerScreen: document.getElementById('player-screen'),
+      channelGrid: document.getElementById('channel-grid'),
+      channelCount: document.getElementById('channel-count'),
+      clock: document.getElementById('clock'),
+      appStatus: document.getElementById('app-status'),
+      avPlayer: document.getElementById('av-player'),
+      html5Player: document.getElementById('html5-player'),
+      iframePlayer: document.getElementById('iframe-player'),
+      loading: document.getElementById('player-loading'),
+      loadingText: document.getElementById('player-loading-text'),
+      overlay: document.getElementById('player-overlay'),
+      channelName: document.getElementById('player-channel-name'),
+      sourceName: document.getElementById('player-source-name'),
+      playStateIcon: document.getElementById('play-state-icon'),
+      playStateLabel: document.getElementById('play-state-label'),
+      errorDialog: document.getElementById('error-dialog'),
+      errorMessage: document.getElementById('error-message'),
+      activationDialog: document.getElementById('activation-dialog'),
+      activationMessage: document.getElementById('activation-message'),
+      interactionBanner: document.getElementById('interaction-banner'),
+      interactionBannerText: document.getElementById('interaction-banner-text')
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+}(window.TblackTV));
+</script>
+</body>
+</html>
