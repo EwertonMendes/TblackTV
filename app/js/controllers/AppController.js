@@ -23,7 +23,10 @@
     this.gridView = options.gridView;
     this.playerView = options.playerView;
     this.playbackService = options.playbackService;
+    this.playerKeyCapture = options.playerKeyCapture;
     this.boundKeyHandler = this.onKeyDown.bind(this);
+    this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
+    this.boundFocusGuard = this.onApplicationFocus.bind(this);
     this.lastHandledEvent = null;
     this.lastSourceSwitchAt = 0;
   }
@@ -34,6 +37,14 @@
     this.bindPlaybackEvents();
     window.addEventListener('keydown', this.boundKeyHandler, true);
     document.addEventListener('keydown', this.boundKeyHandler, true);
+    if (this.playerKeyCapture) {
+      this.playerKeyCapture.addEventListener('keydown', this.boundKeyHandler, true);
+    }
+    window.addEventListener('tizenhwkey', this.boundHardwareBackHandler, true);
+    document.addEventListener('tizenhwkey', this.boundHardwareBackHandler, true);
+    document.addEventListener('backbutton', this.boundHardwareBackHandler, true);
+    document.addEventListener('focusin', this.boundFocusGuard, true);
+    registerRemoteKeys();
   };
 
   AppController.prototype.bindPlaybackEvents = function bindPlaybackEvents() {
@@ -46,6 +57,7 @@
       self.state.selectSource(payload.sourceIndex);
       self.playerView.show(payload.channel, payload.source, payload.sourceIndex, payload.sourceCount, payload.canToggle, payload.canReopenInteraction);
       self.playerView.showLoading(payload.statusText);
+      self.capturePlayerFocus();
     });
 
     this.eventBus.on('playback:resolving', function onResolving(payload) {
@@ -55,6 +67,7 @@
       self.state.selectSource(payload.sourceIndex);
       self.playerView.show(payload.channel, payload.source, payload.sourceIndex, payload.sourceCount, false);
       self.playerView.showLoading(payload.statusText);
+      self.capturePlayerFocus();
     });
 
     this.eventBus.on('playback:ready', function onReady(payload) {
@@ -66,6 +79,7 @@
       if (payload.canReopenInteraction) {
         self.playerView.setRetryInteractionAvailable();
       }
+      self.capturePlayerFocus();
     });
 
     this.eventBus.on('playback:buffering', function onBuffering(isBuffering) {
@@ -90,12 +104,14 @@
       self.state.requiresUserAction = false;
       self.state.iframeInteractionActive = false;
       self.playerView.showError(message);
+      self.capturePlayerFocus();
     });
 
     this.eventBus.on('playback:userActionRequired', function onUserActionRequired(payload) {
       self.state.hasError = false;
       self.state.requiresUserAction = true;
       self.playerView.showActivation(payload.message);
+      self.capturePlayerFocus();
     });
 
     this.eventBus.on('playback:activationStarted', function onActivationStarted(payload) {
@@ -125,6 +141,7 @@
       if (payload.reason === 'timeout' || payload.reason === 'focus-lost') {
         self.playerView.setRetryInteractionAvailable();
       }
+      self.capturePlayerFocus();
     });
 
     this.eventBus.on('playback:notice', function onNotice(message) {
@@ -154,6 +171,53 @@
     }
 
     this.handlePlayerKey(keyCode);
+  };
+
+  AppController.prototype.onHardwareBack = function onHardwareBack(event) {
+    var keyName = event && (event.keyName || (event.detail && event.detail.keyName));
+
+    if (this.lastHandledEvent === event) {
+      return;
+    }
+    this.lastHandledEvent = event;
+    if (event && event.type === 'tizenhwkey' && keyName !== 'back') {
+      return;
+    }
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+    if (this.state.screen === 'home') {
+      this.exitApplication();
+    } else {
+      this.handlePlayerKey(KEY.BACK);
+    }
+  };
+
+  AppController.prototype.onApplicationFocus = function onApplicationFocus(event) {
+    if (this.state.screen !== 'player' || this.state.iframeInteractionActive) {
+      return;
+    }
+    if (event.target !== this.playerKeyCapture) {
+      this.capturePlayerFocus();
+    }
+  };
+
+  AppController.prototype.capturePlayerFocus = function capturePlayerFocus() {
+    var self = this;
+
+    if (!this.playerKeyCapture || this.state.screen !== 'player' || this.state.iframeInteractionActive) {
+      return;
+    }
+    function focusCapture() {
+      if (self.state.screen === 'player' && !self.state.iframeInteractionActive) {
+        try {
+          window.focus();
+          self.playerKeyCapture.focus();
+        } catch (error) {}
+      }
+    }
+    focusCapture();
+    window.setTimeout(focusCapture, 80);
   };
 
   AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
@@ -309,6 +373,28 @@
     if (key === 'ArrowDown') { return KEY.DOWN; }
     if (key === 'Backspace' || key === 'Escape') { return KEY.BACK; }
     return keyCode;
+  }
+
+  function registerRemoteKeys() {
+    var keys = ['MediaPlay', 'MediaPause', 'MediaPlayPause', 'MediaStop', 'ChannelUp', 'ChannelDown'];
+    var inputDevice;
+    var index;
+
+    try {
+      inputDevice = window.tizen && (window.tizen.tvinputdevice || window.tizen.inputdevice);
+      if (!inputDevice) {
+        return;
+      }
+      if (typeof inputDevice.registerKeyBatch === 'function') {
+        inputDevice.registerKeyBatch(keys);
+        return;
+      }
+      for (index = 0; index < keys.length; index += 1) {
+        inputDevice.registerKey(keys[index]);
+      }
+    } catch (error) {
+      console.log('[Remote] Optional key registration unavailable:', error.message || error);
+    }
   }
 
   namespace.controllers.AppController = AppController;

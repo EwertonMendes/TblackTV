@@ -10,28 +10,25 @@
     };
 
     clockView.start();
-    setAppStatus(elements, 'Carregando canais', false);
+    setAppStatus(elements, 'Preparando canais', false);
 
-    new namespace.services.CatalogService(
+    window.setTimeout(function loadBundledCatalog() {
+      new namespace.services.CatalogService(
       'config/channels.json',
       'config/player-profiles.json',
       null,
       fallbackDocuments
-    ).load(
+      ).loadEmbedded(
       function onCatalogReady(catalog) {
         buildApplication(elements, catalog.channels, catalog.profiles);
-        if (catalog.origin === 'network') {
-          setAppStatus(elements, 'Online', false);
-        } else {
-          setAppStatus(elements, 'Catálogo local', true);
-          console.log('[Catalog] Fallback ativo:', catalog.warning);
-        }
+        setAppStatus(elements, 'Pronto', false);
       },
       function onCatalogError(message) {
         setAppStatus(elements, 'Catálogo indisponível', true);
         showStartupError(elements, message);
       }
-    );
+      );
+    }, 80);
   }
 
   function buildApplication(elements, channels, playerProfiles) {
@@ -49,6 +46,7 @@
       navigation: navigation,
       gridView: gridView,
       playerView: playerView,
+      playerKeyCapture: elements.playerKeyCapture,
       playbackService: playbackService
     });
 
@@ -74,6 +72,7 @@
     return {
       homeScreen: document.getElementById('home-screen'),
       playerScreen: document.getElementById('player-screen'),
+      playerKeyCapture: document.getElementById('player-key-capture'),
       channelGrid: document.getElementById('channel-grid'),
       channelCount: document.getElementById('channel-count'),
       clock: document.getElementById('clock'),

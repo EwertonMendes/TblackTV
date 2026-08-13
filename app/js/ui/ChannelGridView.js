@@ -12,6 +12,8 @@
     var index;
 
     this.gridElement.innerHTML = '';
+    this.gridElement.classList.remove('channel-grid--loading');
+    this.gridElement.setAttribute('aria-busy', 'false');
     this.cardElements = [];
 
     for (index = 0; index < channels.length; index += 1) {

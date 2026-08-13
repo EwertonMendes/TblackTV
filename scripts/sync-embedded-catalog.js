@@ -10,7 +10,7 @@ var output = [
   '(function defineEmbeddedCatalog(namespace) {',
   "  'use strict';",
   '',
-  '  /* Gerado por npm run sync-catalog. Não edite manualmente. */',
+  '  /* Gerado automaticamente. Não edite manualmente. */',
   '  namespace.config.embeddedProfiles = ' + indentJson(profiles) + ';',
   '',
   '  namespace.config.embeddedCatalog = ' + indentJson(catalog) + ';',

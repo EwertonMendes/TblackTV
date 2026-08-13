@@ -52,6 +52,41 @@
 .channel-card__name { margin-top: 5px; font-size: 27px; line-height: 1.15; letter-spacing: -.7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .channel-card__description { margin-top: 8px; color: #b8c3d5; font-size: 14px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+.channel-skeleton {
+  position: relative;
+  width: 380px;
+  height: 238px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  padding: 24px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.06);
+  border-radius: var(--radius-lg);
+  background: rgba(255,255,255,.045);
+  color: var(--muted);
+}
+.channel-skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,.07) 45%, transparent 65%);
+  transform: translateX(-100%);
+  animation: skeleton-pulse 1400ms ease-in-out infinite;
+}
+.channel-skeleton span {
+  display: block;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 30px;
+  border-radius: 19px;
+  background: rgba(255,255,255,.09);
+}
+.channel-skeleton strong { font-size: 18px; font-weight: 600; }
+@keyframes skeleton-pulse { to { transform: translateX(100%); } }
+
 @media screen and (max-width: 1500px) {
   .channel-card {
     width: calc(25% - 18px);
@@ -68,4 +103,7 @@
   .channel-card__category { font-size: 10px; }
   .channel-card__name { margin-top: 3px; font-size: 21px; }
   .channel-card__description { margin-top: 5px; font-size: 12px; }
+  .channel-skeleton { width: calc(25% - 18px); height: 185px; margin-right: 18px; margin-bottom: 18px; padding: 18px; border-radius: 18px; }
+  .channel-skeleton span { width: 52px; height: 52px; margin-bottom: 22px; border-radius: 15px; }
+  .channel-skeleton strong { font-size: 14px; }
 }

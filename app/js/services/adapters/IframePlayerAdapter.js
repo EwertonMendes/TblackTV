@@ -48,6 +48,18 @@
     this.interactionActive = false;
     this.readyReported = false;
     startup = getStartup(this.profile);
+    if (shouldBlockOnTizen(startup, source)) {
+      this.state = 'error';
+      this.iframe.style.display = 'none';
+      this.disableInteraction();
+      window.setTimeout(function reportUnsafeTizenIframe() {
+        if (self.state === 'error' && self.callbacks) {
+          invoke(self.callbacks.onBuffering, false);
+          invoke(self.callbacks.onError, 'Iframe opaco bloqueado no Tizen para impedir travamentos. Tente outra fonte.');
+        }
+      }, 0);
+      return;
+    }
     sourceUrl = buildUrl(source.url, startup.urlParams);
     this.securityMode = startup.securityMode || 'sandbox';
     this.boundLoad = function onIframeLoad() {
@@ -598,7 +610,9 @@
 
   IframePlayerAdapter.prototype.restoreApplicationFocus = function restoreApplicationFocus() {
     var self = this;
-    var focusTarget = this.iframe.parentNode;
+    var focusTarget = document.getElementById ? document.getElementById('player-key-capture') : null;
+
+    focusTarget = focusTarget || this.iframe.parentNode;
 
     function focusPlayerScreen() {
       try {
@@ -715,6 +729,16 @@
 
   function getStartup(profile) {
     return profile && profile.startup ? profile.startup : {};
+  }
+
+  function shouldBlockOnTizen(startup, source) {
+    var userAgent = window.navigator && window.navigator.userAgent ? window.navigator.userAgent : '';
+    var isTizen = !!window.tizen || /Tizen/i.test(userAgent);
+
+    if (!isTizen || source.allowOnTizen === true) {
+      return false;
+    }
+    return startup.tizenPolicy === 'block';
   }
 
   function getVerification(profile) {

@@ -82,6 +82,7 @@
       "kind": "iframe",
       "startup": {
         "securityMode": "interaction-shield",
+        "tizenPolicy": "block",
         "urlParams": {
           "autoplay": "1",
           "playsinline": "1"

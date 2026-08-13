@@ -225,6 +225,33 @@ test('iframe DNS hang times out without loading and releases keyboard focus', fu
   assert.strictEqual(runtime.documentListeners.focusin, undefined);
 });
 
+test('opaque iframe is blocked on Tizen before third-party code can freeze the app', function () {
+  var runtime = createRuntime();
+  var iframe = createIframe();
+  var errors = [];
+  var Adapter;
+  var adapter;
+
+  runtime.window.tizen = {};
+  loadScript(runtime.context, 'app/js/services/adapters/IframePlayerAdapter.js');
+  Adapter = runtime.window.TblackTV.adapters.IframePlayerAdapter;
+  adapter = new Adapter(iframe, {
+    startup: {
+      tizenPolicy: 'block',
+      manualFallback: 'timedInteraction'
+    }
+  });
+  adapter.load({ url: 'https://opaque.example/player' }, {
+    onError: function onError(message) { errors.push(message); }
+  });
+
+  assert.strictEqual(typeof iframe.src, 'undefined');
+  runtime.runTimersThrough(0);
+  assert.strictEqual(errors.length, 1);
+  assert.strictEqual(errors[0].indexOf('bloqueado no Tizen') >= 0, true);
+  assert.strictEqual(adapter.getState(), 'error');
+});
+
 test('same-origin profile confirms playback only from the media playing event', function () {
   var runtime = createRuntime();
   var mediaListeners = {};
@@ -685,7 +712,7 @@ test('CatalogService uses the embedded catalog when a DNS request hangs', functi
 
   assert.strictEqual(failure, null);
   assert.strictEqual(result.origin, 'embedded');
-  assert.strictEqual(result.channels.length, 7);
+  assert.strictEqual(result.channels.length, runtime.window.TblackTV.config.embeddedCatalog.channels.length);
   assert.strictEqual(request.aborted, true);
 });
 
@@ -728,21 +755,28 @@ test('synchronous player failures become playback errors without escaping the se
 
 test('TV entry point bundles all local CSS and JavaScript', function () {
   var packageDocument = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
+  var catalogDocument = JSON.parse(fs.readFileSync(path.join(projectRoot, 'app/config/channels.json'), 'utf8'));
   var html = fs.readFileSync(path.join(projectRoot, packageDocument.appPath), 'utf8');
 
   assert.strictEqual(html.indexOf('content="width=1920,') >= 0, true);
-  assert.strictEqual(packageDocument.appPath, 'app/index-test-4.html');
-  assert.strictEqual(packageDocument.testBuild, 4);
+  assert.strictEqual(packageDocument.appPath, 'app/index-test-5.html');
+  assert.strictEqual(packageDocument.testBuild, 5);
   assert.strictEqual(html.indexOf('id="test-build-number"') >= 0, true);
-  assert.strictEqual(html.indexOf('Número de teste: 4') >= 0, true);
+  assert.strictEqual(html.indexOf('Número de teste: 5') >= 0, true);
   assert.strictEqual(html.indexOf('id="tblacktv-bundled-styles"') >= 0, true);
   assert.strictEqual(html.indexOf('<link rel="stylesheet"') >= 0, false);
   assert.strictEqual(html.indexOf('.screen--player') >= 0, true);
   assert.strictEqual(html.indexOf('.channel-card.is-focused') >= 0, true);
+  assert.strictEqual(html.indexOf('class="channel-grid channel-grid--loading"') >= 0, true);
+  assert.strictEqual(html.indexOf('id="player-key-capture"') >= 0, true);
+  assert.strictEqual(html.indexOf('.channel-skeleton') >= 0, true);
   assert.strictEqual(html.indexOf('defer src="$WEBAPIS/webapis/webapis.js"') >= 0, true);
   assert.strictEqual(html.indexOf('<script src="js/') >= 0, false);
   assert.strictEqual((html.match(/data-tblacktv-source="js\//g) || []).length >= 16, true);
   assert.strictEqual(html.indexOf('namespace.controllers.AppController = AppController') >= 0, true);
+  catalogDocument.channels.forEach(function assertChannelBundled(channel) {
+    assert.strictEqual(html.indexOf('"id": "' + channel.id + '"') >= 0, true, 'missing bundled channel ' + channel.id);
+  });
 });
 
 test('TV styles avoid unsupported inset and flex gap declarations', function () {

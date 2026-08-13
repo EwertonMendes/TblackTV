@@ -27,6 +27,21 @@
 .html5-player { z-index: 1; object-fit: contain; display: none; }
 .iframe-player { z-index: 2; border: 0; display: none; }
 
+.player-key-capture {
+  position: absolute;
+  z-index: 19;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  opacity: .01;
+  background: transparent;
+  pointer-events: none;
+}
+
 .player-loading {
   position: absolute;
   z-index: 6;

@@ -44,6 +44,24 @@
     this.fallbackDocuments = fallbackDocuments || {};
   }
 
+  CatalogService.prototype.loadEmbedded = function loadEmbedded(onSuccess, onError) {
+    var profiles;
+    var channels;
+
+    try {
+      profiles = validateProfiles(cloneDocument(this.fallbackDocuments.profiles));
+      channels = validateCatalog(cloneDocument(this.fallbackDocuments.catalog), profiles);
+      onSuccess({
+        channels: channels,
+        profiles: profiles,
+        origin: 'embedded',
+        warning: ''
+      });
+    } catch (error) {
+      onError('O catálogo incorporado é inválido: ' + (error.message || error));
+    }
+  };
+
   CatalogService.prototype.load = function load(onSuccess, onError) {
     var self = this;
     var completed = false;
@@ -238,6 +256,9 @@
       }
       if (startup.postMessageFormat && startup.postMessageFormat !== 'json') {
         throw new Error(path + '.startup.postMessageFormat deve ser "json" quando informado.');
+      }
+      if (startup.tizenPolicy && startup.tizenPolicy !== 'block' && startup.tizenPolicy !== 'allow') {
+        throw new Error(path + '.startup.tizenPolicy deve ser "block" ou "allow".');
       }
       validateUrlParams(startup.urlParams, path + '.startup.urlParams');
       validatePostMessages(startup.postMessages, path + '.startup.postMessages');

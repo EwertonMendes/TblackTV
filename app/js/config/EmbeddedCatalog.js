@@ -1,7 +1,7 @@
 (function defineEmbeddedCatalog(namespace) {
   'use strict';
 
-  /* Gerado por npm run sync-catalog. Não edite manualmente. */
+  /* Gerado automaticamente. Não edite manualmente. */
   namespace.config.embeddedProfiles = {
     "schemaVersion": 1,
     "profiles": [
@@ -100,6 +100,7 @@
         "kind": "iframe",
         "startup": {
           "securityMode": "interaction-shield",
+          "tizenPolicy": "block",
           "urlParams": {
             "autoplay": "1",
             "playsinline": "1"
@@ -248,7 +249,7 @@
       {
         "id": "globo-rj",
         "name": "Globo RJ",
-        "shortName": "GlOBO",
+        "shortName": "Globo",
         "category": "TV aberta",
         "accent": "#00378b",
         "description": "Programação da TV Globo para o Rio de Janeiro: jornalismo local, novelas, esportes e entretenimento.",
