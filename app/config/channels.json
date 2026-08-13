@@ -178,14 +178,6 @@
       "description": "Transmissão de jogos de futebol ao vivo, incluindo campeonatos nacionais e internacionais.",
       "sources": [
         {
-          "id": "alerquina-wrapper",
-          "label": "Arlequina • página alternativa",
-          "type": "iframe",
-          "url": "https://alerquina54104.embedtv.lat/88b3ca0b-04f1-4b7a-a65c-d186b23e5cc5",
-          "playerProfile": "opaque-iframe",
-          "timeoutMs": 8000
-        },
-        {
           "id": "redecanais-wrapper",
           "label": "Rede Canais • página alternativa",
           "type": "iframe",
@@ -198,6 +190,14 @@
           "label": "RD Canais • página alternativa",
           "type": "iframe",
           "url": "https://rdcanais.net/premiereclubes",
+          "playerProfile": "opaque-iframe",
+          "timeoutMs": 8000
+        },
+        {
+          "id": "alerquina-wrapper",
+          "label": "Arlequina • página alternativa",
+          "type": "iframe",
+          "url": "https://alerquina54104.embedtv.lat/88b3ca0b-04f1-4b7a-a65c-d186b23e5cc5",
           "playerProfile": "opaque-iframe",
           "timeoutMs": 8000
         }
