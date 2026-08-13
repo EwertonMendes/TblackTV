@@ -1,0 +1,78 @@
+# Dependencies
+node_modules/
+
+# Test coverage and reports
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# Build caches and temporary output
+.cache/
+.parcel-cache/
+.eslintcache
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Editor and IDE settings
+.vscode/
+.idea/
+*.code-workspace
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*.swo
+*~
+
+# Operating-system metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+
+# Codex local attachments and workspace state
+.codex-remote-attachments/
+.codex/
+
+# Tizen tooling output and signing material
+.tizen/
+.tizen-ui-builder-tool.xml
+Debug/
+Release/
+*.wgt
+*.tpk
+*.apk
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.csr
+
+# Local server and diagnostic artifacts
+*.pid
+*.pid.lock
+*.stackdump
+
+# Keep versioned TizenBrew entry points (app/index-test-N.html) tracked.
