@@ -1,0 +1,21 @@
+{
+  "name": "tizen-sports-hub",
+  "version": "0.1.0",
+  "description": "TV-first live channel hub for Samsung Tizen via TizenBrew.",
+  "packageType": "app",
+  "appName": "Sports Hub TV",
+  "appPath": "app/index.html",
+  "keys": [
+    "MediaPlay",
+    "MediaPause",
+    "MediaPlayPause",
+    "MediaStop",
+    "ChannelUp",
+    "ChannelDown"
+  ],
+  "evaluateScriptOnDocumentStart": false,
+  "files": [
+    "app",
+    "README.md"
+  ]
+}

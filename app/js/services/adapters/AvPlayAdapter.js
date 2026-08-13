@@ -1,0 +1,136 @@
+(function defineAvPlayAdapter(namespace) {
+  'use strict';
+
+  function AvPlayAdapter(objectElement) {
+    this.objectElement = objectElement;
+    this.callbacks = null;
+    this.prepared = false;
+  }
+
+  AvPlayAdapter.isSupported = function isSupported() {
+    return !!(window.webapis && window.webapis.avplay);
+  };
+
+  AvPlayAdapter.prototype.load = function load(url, callbacks) {
+    var self = this;
+
+    this.callbacks = callbacks || {};
+    this.prepared = false;
+    this.release();
+
+    try {
+      window.webapis.avplay.open(url);
+      window.webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
+      window.webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
+
+      try {
+        window.webapis.avplay.setStreamingProperty('ADAPTIVE_INFO', 'STARTBITRATE=HIGHEST');
+      } catch (streamingError) {
+        console.log('[AVPlay] Adaptive hint unavailable:', streamingError.message || streamingError);
+      }
+
+      window.webapis.avplay.setListener(createListener(this));
+      window.webapis.avplay.prepareAsync(
+        function onPrepared() {
+          self.prepared = true;
+          window.webapis.avplay.play();
+          invoke(self.callbacks.onReady);
+          invoke(self.callbacks.onPlayStateChange, true);
+        },
+        function onPrepareError(error) {
+          invoke(self.callbacks.onError, normalizeError(error, 'Falha ao preparar a transmissão.'));
+        }
+      );
+    } catch (error) {
+      invoke(this.callbacks.onError, normalizeError(error, 'Falha ao iniciar o AVPlay.'));
+    }
+  };
+
+  AvPlayAdapter.prototype.toggle = function toggle() {
+    var state;
+
+    try {
+      state = window.webapis.avplay.getState();
+      if (state === 'PLAYING') {
+        window.webapis.avplay.pause();
+        invoke(this.callbacks.onPlayStateChange, false);
+        return false;
+      }
+      if (state === 'PAUSED' || state === 'READY') {
+        window.webapis.avplay.play();
+        invoke(this.callbacks.onPlayStateChange, true);
+        return true;
+      }
+    } catch (error) {
+      invoke(this.callbacks.onError, normalizeError(error, 'Não foi possível alterar o estado do player.'));
+    }
+
+    return false;
+  };
+
+  AvPlayAdapter.prototype.stop = function stop() {
+    var state;
+
+    try {
+      state = window.webapis.avplay.getState();
+      if (state === 'PLAYING' || state === 'PAUSED' || state === 'READY') {
+        window.webapis.avplay.stop();
+      }
+    } catch (error) {
+      console.log('[AVPlay] stop ignored:', error.message || error);
+    }
+  };
+
+  AvPlayAdapter.prototype.release = function release() {
+    try {
+      this.stop();
+      if (window.webapis && window.webapis.avplay && window.webapis.avplay.getState() !== 'NONE') {
+        window.webapis.avplay.close();
+      }
+    } catch (error) {
+      console.log('[AVPlay] release ignored:', error.message || error);
+    }
+    this.prepared = false;
+  };
+
+  AvPlayAdapter.prototype.getName = function getName() {
+    return 'Samsung AVPlay';
+  };
+
+  function createListener(adapter) {
+    return {
+      onbufferingstart: function onBufferingStart() {
+        invoke(adapter.callbacks.onBuffering, true);
+      },
+      onbufferingprogress: function onBufferingProgress(percent) {
+        invoke(adapter.callbacks.onBufferingProgress, percent);
+      },
+      onbufferingcomplete: function onBufferingComplete() {
+        invoke(adapter.callbacks.onBuffering, false);
+      },
+      onstreamcompleted: function onStreamCompleted() {
+        invoke(adapter.callbacks.onError, 'A transmissão foi encerrada.');
+      },
+      oncurrentplaytime: function onCurrentPlaytime() {},
+      onerror: function onError(eventType) {
+        invoke(adapter.callbacks.onError, 'Erro AVPlay: ' + eventType);
+      },
+      onevent: function onEvent() {},
+      onsubtitlechange: function onSubtitleChange() {},
+      ondrmevent: function onDrmEvent() {}
+    };
+  }
+
+  function normalizeError(error, fallback) {
+    if (!error) { return fallback; }
+    return error.message || String(error) || fallback;
+  }
+
+  function invoke(callback, payload) {
+    if (typeof callback === 'function') {
+      callback(payload);
+    }
+  }
+
+  namespace.adapters.AvPlayAdapter = AvPlayAdapter;
+}(window.SportsHub));

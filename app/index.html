@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sports Hub TV</title>
+
+  <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
+
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/player.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <main id="home-screen" class="screen screen--home" aria-label="Canais ao vivo">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">S</div>
+          <div>
+            <h1 class="brand__title">Sports Hub</h1>
+            <p class="brand__subtitle">TV ao vivo</p>
+          </div>
+        </div>
+
+        <div class="topbar__status">
+          <span class="status-pill"><span class="status-dot"></span> Online</span>
+          <time id="clock" class="clock">--:--</time>
+        </div>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">CANAIS GRATUITOS</p>
+        <h2 class="hero__title">O que você quer assistir?</h2>
+        <p class="hero__description">Escolha um canal e aperte OK. Interface otimizada para o controle da TV.</p>
+      </section>
+
+      <section class="channel-section" aria-labelledby="channels-heading">
+        <div class="section-heading">
+          <h3 id="channels-heading">Ao vivo agora</h3>
+          <span id="channel-count" class="section-heading__meta"></span>
+        </div>
+        <div id="channel-grid" class="channel-grid" role="list"></div>
+      </section>
+
+      <footer class="helpbar">
+        <span><kbd>← ↑ ↓ →</kbd> navegar</span>
+        <span><kbd>OK</kbd> assistir</span>
+        <span><kbd>Return</kbd> sair</span>
+      </footer>
+    </main>
+
+    <section id="player-screen" class="screen screen--player is-hidden" aria-label="Player ao vivo">
+      <object id="av-player" class="av-player" type="application/avplayer"></object>
+      <video id="html5-player" class="html5-player" playsinline></video>
+
+      <div id="player-loading" class="player-loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="player-loading-text">Conectando ao canal…</p>
+      </div>
+
+      <div id="player-overlay" class="player-overlay">
+        <div class="player-overlay__top">
+          <div>
+            <div class="live-label"><span></span> AO VIVO</div>
+            <h2 id="player-channel-name">Canal</h2>
+            <p id="player-source-name">Fonte</p>
+          </div>
+          <div class="player-overlay__hint">Channel ± troca de canal</div>
+        </div>
+
+        <div class="player-overlay__bottom">
+          <div class="player-action"><span id="play-state-icon">Ⅱ</span><span id="play-state-label">OK para pausar</span></div>
+          <div class="player-action player-action--muted">Return para voltar</div>
+        </div>
+      </div>
+
+      <div id="error-dialog" class="error-dialog is-hidden" role="dialog" aria-modal="true">
+        <div class="error-dialog__card">
+          <div class="error-dialog__icon">!</div>
+          <h3>Não foi possível reproduzir</h3>
+          <p id="error-message">A fonte não respondeu.</p>
+          <div class="error-dialog__actions">
+            <span><kbd>OK</kbd> tentar novamente</span>
+            <span><kbd>Return</kbd> voltar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/bootstrap.js"></script>
+  <script src="js/config/channels.js"></script>
+  <script src="js/core/EventBus.js"></script>
+  <script src="js/core/AppState.js"></script>
+  <script src="js/core/SpatialNavigation.js"></script>
+  <script src="js/services/adapters/AvPlayAdapter.js"></script>
+  <script src="js/services/adapters/Html5VideoAdapter.js"></script>
+  <script src="js/services/PlayerFactory.js"></script>
+  <script src="js/services/PlaybackService.js"></script>
+  <script src="js/ui/ChannelGridView.js"></script>
+  <script src="js/ui/PlayerView.js"></script>
+  <script src="js/controllers/AppController.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
