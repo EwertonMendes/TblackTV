@@ -1,12 +1,14 @@
 {
   "name": "tblack-tv",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "TV-first live channel hub for Samsung Tizen via TizenBrew.",
   "packageType": "app",
   "appName": "TblackTV",
-  "appPath": "app/index-test-2.html",
+  "appPath": "app/index-test-3.html",
+  "testBuild": 3,
   "scripts": {
     "sync-catalog": "node scripts/sync-embedded-catalog.js",
+    "build-tv-entry": "node scripts/build-tv-entry.js",
     "test": "node tests/autoplay.test.js"
   },
   "keys": [

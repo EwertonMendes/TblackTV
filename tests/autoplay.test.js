@@ -648,27 +648,23 @@ test('synchronous player failures become playback errors without escaping the se
   assert.strictEqual(releaseCount, 1);
 });
 
-test('TV entry point fixes the logical viewport and versions every local asset', function () {
+test('TV entry point bundles all local CSS and JavaScript', function () {
   var packageDocument = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
   var html = fs.readFileSync(path.join(projectRoot, packageDocument.appPath), 'utf8');
-  var canonicalHtml = fs.readFileSync(path.join(projectRoot, 'app/index.html'), 'utf8');
-  var assetPattern = /(?:src|href)="((?:css|js)\/[^\"]+)"/g;
-  var match;
-  var assets = [];
 
   assert.strictEqual(html.indexOf('content="width=1920,') >= 0, true);
-  assert.strictEqual(packageDocument.appPath, 'app/index-test-2.html');
-  assert.strictEqual(html, canonicalHtml);
+  assert.strictEqual(packageDocument.appPath, 'app/index-test-3.html');
+  assert.strictEqual(packageDocument.testBuild, 3);
   assert.strictEqual(html.indexOf('id="test-build-number"') >= 0, true);
-  assert.strictEqual(html.indexOf('Número de teste: 2') >= 0, true);
+  assert.strictEqual(html.indexOf('Número de teste: 3') >= 0, true);
+  assert.strictEqual(html.indexOf('id="tblacktv-bundled-styles"') >= 0, true);
+  assert.strictEqual(html.indexOf('<link rel="stylesheet"') >= 0, false);
+  assert.strictEqual(html.indexOf('.screen--player') >= 0, true);
+  assert.strictEqual(html.indexOf('.channel-card.is-focused') >= 0, true);
   assert.strictEqual(html.indexOf('defer src="$WEBAPIS/webapis/webapis.js"') >= 0, true);
-  while ((match = assetPattern.exec(html))) {
-    assets.push(match[1]);
-  }
-  assert.strictEqual(assets.length > 0, true);
-  assets.forEach(function assertVersioned(asset) {
-    assert.strictEqual(asset.indexOf('?v=' + packageDocument.version) > 0, true);
-  });
+  assert.strictEqual(html.indexOf('<script src="js/') >= 0, false);
+  assert.strictEqual((html.match(/data-tblacktv-source="js\//g) || []).length >= 16, true);
+  assert.strictEqual(html.indexOf('namespace.controllers.AppController = AppController') >= 0, true);
 });
 
 test('TV styles avoid unsupported inset and flex gap declarations', function () {

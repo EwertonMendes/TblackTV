@@ -1,0 +1,50 @@
+name: Validate TizenBrew release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out tagged release
+        uses: actions/checkout@v4
+
+      - name: Verify immutable jsDelivr package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          repository="EwertonMendes/TblackTV"
+          release="${GITHUB_REF_NAME}"
+          expected_version="${release#v}"
+          local_version="$(node -p "require('./package.json').version")"
+          app_path="$(node -p "require('./package.json').appPath")"
+          expected_hash="$(sha256sum "${app_path}" | cut -d ' ' -f 1)"
+
+          [ "${local_version}" = "${expected_version}" ]
+
+          for attempt in 1 2 3 4 5 6; do
+            base_url="https://cdn.jsdelivr.net/gh/${repository}@${release}"
+            remote_package="$(curl --fail --silent --show-error "${base_url}/package.json?check=${GITHUB_SHA}-${attempt}")"
+            remote_version="$(printf '%s' "${remote_package}" | node -e "let value=''; process.stdin.on('data', chunk => value += chunk); process.stdin.on('end', () => process.stdout.write(JSON.parse(value).version));")"
+            remote_app_path="$(printf '%s' "${remote_package}" | node -e "let value=''; process.stdin.on('data', chunk => value += chunk); process.stdin.on('end', () => process.stdout.write(JSON.parse(value).appPath));")"
+
+            if [ "${remote_version}" = "${local_version}" ] && [ "${remote_app_path}" = "${app_path}" ]; then
+              remote_hash="$(curl --fail --silent --show-error "${base_url}/${app_path}?check=${GITHUB_SHA}" | sha256sum | cut -d ' ' -f 1)"
+              [ "${remote_hash}" = "${expected_hash}" ]
+              echo "Verified ${repository}@${release}: ${local_version}, ${app_path}."
+              exit 0
+            fi
+
+            sleep 10
+          done
+
+          echo "The immutable jsDelivr release did not become available in time." >&2
+          exit 1
