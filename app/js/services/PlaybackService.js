@@ -186,12 +186,20 @@
       return;
     }
 
-    if (this.playerCanActivate()) {
+    if (this.playerCanActivate() && !this.manualCandidate) {
       this.manualCandidate = {
         sourceIndex: this.sourceIndex,
         resolvedSourceIndex: this.resolvedSourceIndex,
         source: this.getResolvedSource()
       };
+    }
+
+    // An opaque iframe that finished loading is not a technical failure: its
+    // internal playback state simply cannot be inspected cross-origin. Prompt
+    // immediately instead of making the user wait through every backup source.
+    if (this.playerUsesTimedInteraction() && this.playerCanActivate()) {
+      this.requestUserAction();
+      return;
     }
 
     if (this.restoringManualCandidate) {
@@ -294,14 +302,16 @@
 
   PlaybackService.prototype.moveSource = function moveSource(delta) {
     var sources = this.getSources();
+    var nextIndex;
 
     if (sources.length < 2) {
       this.eventBus.emit('playback:notice', 'Este canal possui apenas uma fonte.');
       return;
     }
 
+    nextIndex = normalizeIndex(this.sourceIndex + delta, sources.length);
     this.resetActivePlayback();
-    this.sourceIndex = normalizeIndex(this.sourceIndex + delta, sources.length);
+    this.sourceIndex = nextIndex;
     this.sourcesTried = 0;
     this.manualCandidate = null;
     this.restoringManualCandidate = false;
@@ -404,6 +414,7 @@
     this.restoringManualCandidate = false;
     this.manualActivationInProgress = false;
     this.interactionActive = false;
+    this.releasePlayer();
     this.eventBus.emit('playback:error', message || 'Todas as fontes deste canal falharam.');
   };
 
@@ -428,9 +439,16 @@
   };
 
   PlaybackService.prototype.releasePlayer = function releasePlayer() {
+    var player;
+
     if (this.player) {
-      this.player.release();
+      player = this.player;
       this.player = null;
+      try {
+        player.release();
+      } catch (error) {
+        console.log('[Playback] Player release ignored:', error.message || error);
+      }
     }
     this.interactionActive = false;
   };

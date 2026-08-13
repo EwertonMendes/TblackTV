@@ -2,20 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=1920, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>TblackTV</title>
 
   <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/tokens.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/reset.css?v=0.2.0">
+  <link rel="stylesheet" href="css/tokens.css?v=0.2.0">
+  <link rel="stylesheet" href="css/layout.css?v=0.2.0">
+  <link rel="stylesheet" href="css/components.css?v=0.2.0">
+  <link rel="stylesheet" href="css/player.css?v=0.2.0">
 </head>
 <body>
   <div id="app" class="app-shell">
-    <main id="home-screen" class="screen screen--home" aria-label="Canais ao vivo">
+    <main id="home-screen" class="screen screen--home" aria-label="Canais ao vivo" tabindex="-1">
       <header class="topbar">
         <div class="brand">
           <div class="brand__mark" aria-hidden="true">T</div>
@@ -57,10 +57,11 @@
       <video id="html5-player" class="html5-player" playsinline></video>
       <iframe
         id="iframe-player"
+        name="Player"
         class="iframe-player"
         title="Player incorporado"
         frameborder="0"
-        sandbox="allow-scripts allow-same-origin allow-presentation"
+        sandbox="allow-scripts allow-same-origin"
         allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
         allowfullscreen
         tabindex="-1"></iframe>
@@ -120,22 +121,22 @@
     </section>
   </div>
 
-  <script src="js/bootstrap.js"></script>
-  <script src="js/config/EmbeddedCatalog.js"></script>
-  <script src="js/core/EventBus.js"></script>
-  <script src="js/core/AppState.js"></script>
-  <script src="js/core/SpatialNavigation.js"></script>
-  <script src="js/services/adapters/AvPlayAdapter.js"></script>
-  <script src="js/services/adapters/Html5VideoAdapter.js"></script>
-  <script src="js/services/adapters/IframePlayerAdapter.js"></script>
-  <script src="js/services/CatalogService.js"></script>
-  <script src="js/services/SourceResolver.js"></script>
-  <script src="js/services/PlayerFactory.js"></script>
-  <script src="js/services/PlaybackService.js"></script>
-  <script src="js/ui/ChannelGridView.js"></script>
-  <script src="js/ui/ClockView.js"></script>
-  <script src="js/ui/PlayerView.js"></script>
-  <script src="js/controllers/AppController.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/bootstrap.js?v=0.2.0"></script>
+  <script src="js/config/EmbeddedCatalog.js?v=0.2.0"></script>
+  <script src="js/core/EventBus.js?v=0.2.0"></script>
+  <script src="js/core/AppState.js?v=0.2.0"></script>
+  <script src="js/core/SpatialNavigation.js?v=0.2.0"></script>
+  <script src="js/services/adapters/AvPlayAdapter.js?v=0.2.0"></script>
+  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.2.0"></script>
+  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.2.0"></script>
+  <script src="js/services/CatalogService.js?v=0.2.0"></script>
+  <script src="js/services/SourceResolver.js?v=0.2.0"></script>
+  <script src="js/services/PlayerFactory.js?v=0.2.0"></script>
+  <script src="js/services/PlaybackService.js?v=0.2.0"></script>
+  <script src="js/ui/ChannelGridView.js?v=0.2.0"></script>
+  <script src="js/ui/ClockView.js?v=0.2.0"></script>
+  <script src="js/ui/PlayerView.js?v=0.2.0"></script>
+  <script src="js/controllers/AppController.js?v=0.2.0"></script>
+  <script src="js/main.js?v=0.2.0"></script>
 </body>
 </html>

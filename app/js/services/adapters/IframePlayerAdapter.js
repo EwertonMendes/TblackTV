@@ -4,7 +4,7 @@
   var DEFAULT_START_TIMEOUT_MS = 6000;
   var DEFAULT_MANUAL_TIMEOUT_MS = 6000;
   var DEFAULT_INTERACTION_WINDOW_MS = 6000;
-  var SAFE_SANDBOX = 'allow-scripts allow-same-origin allow-presentation';
+  var SAFE_SANDBOX = 'allow-scripts allow-same-origin';
 
   function IframePlayerAdapter(iframeElement, profile) {
     this.iframe = iframeElement;
@@ -17,6 +17,7 @@
     this.manualTimeout = null;
     this.interactionTimeout = null;
     this.focusRestoreTimeout = null;
+    this.focusGuardTimeouts = [];
     this.actionTimeouts = [];
     this.boundLoad = null;
     this.boundError = null;
@@ -51,6 +52,8 @@
         return;
       }
       self.state = 'starting';
+      self.disableInteraction();
+      self.restoreApplicationFocus();
       invoke(self.callbacks.onBuffering, true);
       self.prepareVerification();
       if (self.state === 'error' || self.state === 'playing' || self.state === 'playing-unverified') {
@@ -80,6 +83,7 @@
     this.iframe.style.display = 'block';
     this.disableInteraction();
     this.iframe.src = sourceUrl;
+    this.scheduleApplicationFocusGuards();
   };
 
   IframePlayerAdapter.prototype.runStartupActions = function runStartupActions(fromUserGesture) {
@@ -353,6 +357,7 @@
     }
 
     this.clearStartTimeouts();
+    this.clearFocusGuards();
     this.interactionActive = true;
     this.state = 'interaction-active';
     this.isPlaying = false;
@@ -557,6 +562,31 @@
     }, 100);
   };
 
+  IframePlayerAdapter.prototype.scheduleApplicationFocusGuards = function scheduleApplicationFocusGuards() {
+    var self = this;
+    var delays = [0, 250, 1000, 2500];
+    var index;
+
+    this.clearFocusGuards();
+    for (index = 0; index < delays.length; index += 1) {
+      this.focusGuardTimeouts.push(window.setTimeout(function recoverFocusDuringLoad() {
+        if (!self.interactionActive && self.state !== 'released' && self.state !== 'error') {
+          self.disableInteraction();
+          self.restoreApplicationFocus();
+        }
+      }, delays[index]));
+    }
+  };
+
+  IframePlayerAdapter.prototype.clearFocusGuards = function clearFocusGuards() {
+    var index;
+
+    for (index = 0; index < this.focusGuardTimeouts.length; index += 1) {
+      window.clearTimeout(this.focusGuardTimeouts[index]);
+    }
+    this.focusGuardTimeouts = [];
+  };
+
   IframePlayerAdapter.prototype.bindInteractionGuards = function bindInteractionGuards() {
     var self = this;
 
@@ -610,6 +640,7 @@
 
   IframePlayerAdapter.prototype.clearAllTimeouts = function clearAllTimeouts() {
     this.clearStartTimeouts();
+    this.clearFocusGuards();
     if (this.interactionTimeout) {
       window.clearTimeout(this.interactionTimeout);
       this.interactionTimeout = null;

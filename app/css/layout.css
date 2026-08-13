@@ -10,6 +10,11 @@ html, body {
   height: 100%;
 }
 
+.app-shell {
+  position: relative;
+  overflow: hidden;
+}
+
 .screen--home {
   position: relative;
   padding: 54px 76px 42px;
@@ -81,10 +86,10 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  margin-right: -26px;
-  margin-bottom: -26px;
+  margin-right: -30px;
+  margin-bottom: -30px;
 }
-.channel-card { margin-right: 26px; margin-bottom: 26px; }
+.channel-card { margin-right: 30px; margin-bottom: 30px; }
 
 .channel-grid--error {
   display: block;
@@ -109,3 +114,27 @@ kbd {
 }
 
 .is-hidden { display: none !important; }
+
+@media screen and (max-width: 1500px) {
+  .screen--home { padding: 28px 40px 24px; }
+  .topbar { height: 60px; }
+  .brand > * + * { margin-left: 12px; }
+  .brand__mark { width: 48px; height: 48px; border-radius: 14px; font-size: 26px; }
+  .brand__title { font-size: 22px; }
+  .brand__subtitle { margin-top: 3px; font-size: 13px; }
+  .topbar__status > * + * { margin-left: 18px; }
+  .status-pill { padding: 8px 12px; font-size: 13px; }
+  .clock { font-size: 20px; }
+  .hero { margin-top: 18px; }
+  .eyebrow { font-size: 13px; letter-spacing: 2px; }
+  .hero__title { margin-top: 8px; font-size: 42px; letter-spacing: -1.4px; }
+  .hero__description { margin-top: 10px; font-size: 17px; }
+  .channel-section { margin-top: 18px; }
+  .section-heading { margin-bottom: 12px; }
+  .section-heading h3 { font-size: 20px; }
+  .channel-grid { margin-right: -18px; margin-bottom: -18px; }
+  .channel-card { margin-right: 18px; margin-bottom: 18px; }
+  .helpbar { left: 40px; right: 40px; bottom: 18px; font-size: 13px; }
+  .helpbar > * + * { margin-left: 22px; }
+  kbd { min-height: 26px; padding: 0 8px; }
+}

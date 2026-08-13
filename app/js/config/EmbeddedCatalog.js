@@ -254,12 +254,36 @@
         "description": "Programação da TV Globo para o Rio de Janeiro: jornalismo local, novelas, esportes e entretenimento.",
         "sources": [
           {
-            "id": "rdcanais-embed",
-            "label": "RD Canais • iframe",
+            "id": "rdcanais-player-direct",
+            "label": "RD Canais • player direto",
+            "type": "iframe",
+            "url": "https://localhost.tattoo/globo/player.php?id=6120663&lat=-22.9068467&long=-43.1728965",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
+          },
+          {
+            "id": "rdcanais-wrapper",
+            "label": "RD Canais • página alternativa",
             "type": "iframe",
             "url": "https://rdcanais.net/globorj",
             "playerProfile": "opaque-iframe",
-            "timeoutMs": 20000
+            "timeoutMs": 8000
+          },
+          {
+            "id": "alerquina-wrapper",
+            "label": "Arlequina • página alternativa",
+            "type": "iframe",
+            "url": "https://alerquina54104.embedtv.lat/eab811eb-8ba6-4c3a-b5b1-bd0add5e2913",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
+          },
+          {
+            "id": "redecanais-wrapper",
+            "label": "Rede Canais • página alternativa",
+            "type": "iframe",
+            "url": "https://outbound-proxy-us-east1-0-blob-usercontent-client-id-7775691497.googleapis.com.de/player3/ch.php?categoria=live&canal=boborj",
+            "playerProfile": "opaque-iframe",
+            "timeoutMs": 8000
           }
         ]
       }

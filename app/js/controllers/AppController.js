@@ -24,13 +24,16 @@
     this.playerView = options.playerView;
     this.playbackService = options.playbackService;
     this.boundKeyHandler = this.onKeyDown.bind(this);
+    this.lastHandledEvent = null;
+    this.lastSourceSwitchAt = 0;
   }
 
   AppController.prototype.start = function start() {
     this.gridView.render(this.state.channels);
     this.gridView.focus(this.state.focusedChannelIndex);
     this.bindPlaybackEvents();
-    document.addEventListener('keydown', this.boundKeyHandler);
+    window.addEventListener('keydown', this.boundKeyHandler, true);
+    document.addEventListener('keydown', this.boundKeyHandler, true);
   };
 
   AppController.prototype.bindPlaybackEvents = function bindPlaybackEvents() {
@@ -130,16 +133,27 @@
   };
 
   AppController.prototype.onKeyDown = function onKeyDown(event) {
-    if (isApplicationKey(event.keyCode)) {
+    var keyCode;
+
+    if (this.lastHandledEvent === event) {
+      return;
+    }
+    this.lastHandledEvent = event;
+    keyCode = normalizeKeyCode(event);
+
+    if (isApplicationKey(keyCode)) {
       event.preventDefault();
+      if (typeof event.stopPropagation === 'function') {
+        event.stopPropagation();
+      }
     }
 
     if (this.state.screen === 'home') {
-      this.handleHomeKey(event.keyCode);
+      this.handleHomeKey(keyCode);
       return;
     }
 
-    this.handlePlayerKey(event.keyCode);
+    this.handlePlayerKey(keyCode);
   };
 
   AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
@@ -249,6 +263,12 @@
   };
 
   AppController.prototype.switchSource = function switchSource(delta) {
+    var now = Date.now ? Date.now() : new Date().getTime();
+
+    if (now - this.lastSourceSwitchAt < 350) {
+      return;
+    }
+    this.lastSourceSwitchAt = now;
     this.playbackService.moveSource(delta);
   };
 
@@ -286,6 +306,22 @@
       }
     }
     return false;
+  }
+
+  function normalizeKeyCode(event) {
+    var key = event.key;
+    var keyCode = event.keyCode || event.which || 0;
+
+    if (isApplicationKey(keyCode)) {
+      return keyCode;
+    }
+    if (key === 'Enter') { return KEY.ENTER; }
+    if (key === 'ArrowLeft') { return KEY.LEFT; }
+    if (key === 'ArrowUp') { return KEY.UP; }
+    if (key === 'ArrowRight') { return KEY.RIGHT; }
+    if (key === 'ArrowDown') { return KEY.DOWN; }
+    if (key === 'Backspace' || key === 'Escape') { return KEY.BACK; }
+    return keyCode;
   }
 
   namespace.controllers.AppController = AppController;

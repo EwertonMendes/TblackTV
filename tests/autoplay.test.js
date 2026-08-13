@@ -165,7 +165,7 @@ test('iframe load does not report ready and postMessage validates window and ori
   });
   assert.strictEqual(
     iframe.attributes.sandbox,
-    'allow-scripts allow-same-origin allow-presentation'
+    'allow-scripts allow-same-origin'
   );
   assert.strictEqual(iframe.attributes.sandbox.indexOf('allow-popups'), -1);
   assert.strictEqual(iframe.attributes.sandbox.indexOf('allow-top-navigation'), -1);
@@ -491,6 +491,7 @@ test('PlaybackService exposes interaction events and reopens an opaque source wi
   var callbacks;
   var active = false;
   var ready = false;
+  var createCount = 0;
   var player = {
     load: function load(unused, handlers) {
       callbacks = handlers;
@@ -519,7 +520,7 @@ test('PlaybackService exposes interaction events and reopens an opaque source wi
     canToggle: function canToggle() { return false; },
     getName: function getName() { return 'fake opaque'; }
   };
-  var factory = { create: function create() { return player; } };
+  var factory = { create: function create() { createCount += 1; return player; } };
   var resolver = {
     resolve: function resolve(source, handlers) {
       handlers.onSuccess([source]);
@@ -534,8 +535,13 @@ test('PlaybackService exposes interaction events and reopens an opaque source wi
   loadScript(runtime.context, 'app/js/services/PlaybackService.js');
   Service = runtime.window.TblackTV.services.PlaybackService;
   service = new Service(factory, resolver, eventBus);
-  service.playChannel({ sources: [{ id: 'opaque', type: 'iframe', url: 'https://opaque.example' }] }, 0);
+  service.playChannel({ sources: [
+    { id: 'opaque', type: 'iframe', url: 'https://opaque.example' },
+    { id: 'backup', type: 'iframe', url: 'https://backup.example' }
+  ] }, 0);
 
+  assert.strictEqual(createCount, 1);
+  assert.strictEqual(events.filter(function isPrompt(event) { return event.name === 'playback:userActionRequired'; }).length, 1);
   assert.strictEqual(service.activateCurrentSource(), true);
   assert.strictEqual(service.isInteractionWindowActive(), true);
   assert.strictEqual(events.filter(function isReady(event) { return event.name === 'playback:ready'; }).length, 0);
@@ -608,11 +614,12 @@ test('CatalogService uses the embedded catalog when a DNS request hangs', functi
 test('synchronous player failures become playback errors without escaping the service', function () {
   var runtime = createRuntime();
   var events = [];
+  var releaseCount = 0;
   var factory = {
     create: function create() {
       return {
         load: function load() { throw new Error('player exploded'); },
-        release: function release() {},
+        release: function release() { releaseCount += 1; },
         canActivateFromUserGesture: function canActivate() { return false; },
         canToggle: function canToggle() { return false; },
         getName: function getName() { return 'broken'; }
@@ -638,6 +645,24 @@ test('synchronous player failures become playback errors without escaping the se
     service.playChannel({ sources: [{ id: 'broken', type: 'video', url: 'broken:' }] }, 0);
   });
   assert.strictEqual(events.filter(function isError(event) { return event.name === 'playback:error'; }).length, 1);
+  assert.strictEqual(releaseCount, 1);
+});
+
+test('TV entry point fixes the logical viewport and versions every local asset', function () {
+  var packageDocument = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
+  var html = fs.readFileSync(path.join(projectRoot, 'app/index.html'), 'utf8');
+  var assetPattern = /(?:src|href)="((?:css|js)\/[^\"]+)"/g;
+  var match;
+  var assets = [];
+
+  assert.strictEqual(html.indexOf('content="width=1920,') >= 0, true);
+  while ((match = assetPattern.exec(html))) {
+    assets.push(match[1]);
+  }
+  assert.strictEqual(assets.length > 0, true);
+  assets.forEach(function assertVersioned(asset) {
+    assert.strictEqual(asset.indexOf('?v=' + packageDocument.version) > 0, true);
+  });
 });
 
 test('TV styles avoid unsupported inset and flex gap declarations', function () {
@@ -650,7 +675,7 @@ test('TV styles avoid unsupported inset and flex gap declarations', function () 
   assert.strictEqual(/(^|[;{]\s*)gap\s*:/m.test(css), false);
 });
 
-test('AVPlay uses the real player surface instead of a fixed 1920x1080 rectangle', function () {
+test('AVPlay uses Samsung fixed 1920x1080 multimedia coordinates', function () {
   var runtime = createRuntime();
   var displayRect = null;
   var Adapter;
@@ -682,7 +707,7 @@ test('AVPlay uses the real player surface instead of a fixed 1920x1080 rectangle
   });
   adapter.load({ url: 'https://media.example/live.m3u8' }, {});
 
-  assert.deepStrictEqual(displayRect, [0, 0, 1280, 720]);
+  assert.deepStrictEqual(displayRect, [0, 0, 1920, 1080]);
 });
 
 function runAll() {

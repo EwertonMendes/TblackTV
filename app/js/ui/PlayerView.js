@@ -17,6 +17,7 @@
     this.hideInteractionMode();
     this.showOverlay();
     this.showLoading('Conectando ao canal…');
+    focusElement(this.elements.playerScreen);
   };
 
   PlayerView.prototype.hide = function hide() {
@@ -27,6 +28,7 @@
     this.hideError();
     this.hideActivation();
     this.hideInteractionMode();
+    focusElement(this.elements.homeScreen);
   };
 
   PlayerView.prototype.showLoading = function showLoading(message) {
@@ -139,6 +141,15 @@
       label += '  •  Fonte ' + (sourceIndex + 1) + ' de ' + sourceCount;
     }
     return label;
+  }
+
+  function focusElement(element) {
+    window.setTimeout(function focusAfterScreenChange() {
+      try {
+        window.focus();
+        element.focus();
+      } catch (error) {}
+    }, 0);
   }
 
   namespace.ui.PlayerView = PlayerView;
