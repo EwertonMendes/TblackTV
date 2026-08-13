@@ -63,6 +63,16 @@ html, body {
 
 .topbar__status { display: flex; align-items: center; }
 .topbar__status > * + * { margin-left: 28px; }
+.build-marker {
+  padding: 9px 13px;
+  border: 1px solid rgba(153, 165, 255, .42);
+  border-radius: 9px;
+  background: rgba(113, 128, 255, .10);
+  color: #dce2ff;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 .status-pill {
   display: flex; align-items: center;
   padding: 11px 16px; border-radius: 999px;
@@ -123,6 +133,7 @@ kbd {
   .brand__title { font-size: 22px; }
   .brand__subtitle { margin-top: 3px; font-size: 13px; }
   .topbar__status > * + * { margin-left: 18px; }
+  .build-marker { padding: 7px 10px; font-size: 12px; }
   .status-pill { padding: 8px 12px; font-size: 13px; }
   .clock { font-size: 20px; }
   .hero { margin-top: 18px; }

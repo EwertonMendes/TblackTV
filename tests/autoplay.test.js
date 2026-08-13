@@ -656,6 +656,8 @@ test('TV entry point fixes the logical viewport and versions every local asset',
   var assets = [];
 
   assert.strictEqual(html.indexOf('content="width=1920,') >= 0, true);
+  assert.strictEqual(html.indexOf('id="test-build-number"') >= 0, true);
+  assert.strictEqual(html.indexOf('Número de teste: 1') >= 0, true);
   while ((match = assetPattern.exec(html))) {
     assets.push(match[1]);
   }

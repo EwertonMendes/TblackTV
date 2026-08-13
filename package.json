@@ -1,6 +1,6 @@
 {
   "name": "tblack-tv",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "TV-first live channel hub for Samsung Tizen via TizenBrew.",
   "packageType": "app",
   "appName": "TblackTV",
