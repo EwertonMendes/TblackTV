@@ -8,7 +8,6 @@
   <style>
     html, body { width: 100%; height: 100%; margin: 0; background: #070b14; color: #f8fafc; font-family: Arial, sans-serif; }
     #app, #home-screen { width: 100%; height: 100%; }
-    #test-build-number { color: #dce2ff; font-weight: 700; }
   </style>
   <script type="text/javascript" defer src="$WEBAPIS/webapis/webapis.js"></script>
   <style id="tblacktv-bundled-styles">
@@ -55,7 +54,6 @@ html, body {
 
 .screen--home {
   position: relative;
-  padding: 54px 76px 42px;
   background:
     radial-gradient(circle at 78% 0%, rgba(76, 91, 211, .22), transparent 34%),
     radial-gradient(circle at 10% 100%, rgba(34, 170, 148, .10), transparent 30%),
@@ -75,9 +73,16 @@ html, body {
   background-size: 52px 52px;
 }
 
+.home-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 54px 76px 42px 136px;
+}
+
 .topbar,
 .hero,
-.catalog-toolbar,
 .channel-section,
 .helpbar { position: relative; z-index: 1; }
 
@@ -89,29 +94,12 @@ html, body {
 }
 
 .brand { display: flex; align-items: center; }
-.brand > * + * { margin-left: 18px; }
-.brand__mark {
-  width: 62px; height: 62px; border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 34px; font-weight: 800;
-  background: linear-gradient(135deg, #7180ff, #8e5cff);
-  box-shadow: 0 12px 34px rgba(107,124,255,.32);
-}
 .brand__title { font-size: 28px; line-height: 1.05; letter-spacing: -.5px; }
-.brand__subtitle { margin-top: 6px; color: var(--muted); font-size: 16px; }
+.brand__divider { width: 1px; height: 26px; margin: 0 16px; background: rgba(255,255,255,.18); }
+.brand__subtitle { color: var(--muted); font-size: 16px; }
 
 .topbar__status { display: flex; align-items: center; }
 .topbar__status > * + * { margin-left: 28px; }
-.build-marker {
-  padding: 9px 13px;
-  border: 1px solid rgba(153, 165, 255, .42);
-  border-radius: 9px;
-  background: rgba(113, 128, 255, .10);
-  color: #dce2ff;
-  font-size: 15px;
-  font-weight: 700;
-  white-space: nowrap;
-}
 .status-pill {
   display: flex; align-items: center;
   padding: 11px 16px; border-radius: 999px;
@@ -121,26 +109,25 @@ html, body {
 .status-pill--warning .status-dot { background: #f2b84b; box-shadow: 0 0 0 5px rgba(242,184,75,.12); }
 .clock { min-width: 86px; text-align: right; font-size: 24px; font-weight: 700; letter-spacing: .4px; }
 
-.hero { margin-top: 22px; }
+.hero { display: flex; align-items: center; justify-content: space-between; height: 120px; margin-top: 12px; overflow: hidden; }
+.hero__copy { position: relative; z-index: 1; }
 .eyebrow { color: #99a5ff; font-weight: 800; font-size: 16px; letter-spacing: 2.4px; }
 .hero__title { margin-top: 10px; font-size: 48px; line-height: 1.04; letter-spacing: -1.8px; }
 .hero__description { margin-top: 10px; max-width: 1000px; color: var(--muted); font-size: 18px; line-height: 1.4; }
-
-.catalog-toolbar {
-  display: flex;
-  align-items: center;
-  margin-top: 22px;
+.hero__mascot {
+  position: absolute;
+  right: 52px;
+  top: -34px;
+  width: 150px;
+  height: auto;
+  opacity: .22;
+  pointer-events: none;
+  animation: mascot-float 5200ms ease-in-out infinite;
 }
-.catalog-toolbar > * + * { margin-left: 16px; }
-.catalog-toolbar__summary {
-  margin-left: auto !important;
-  color: var(--muted);
-  font-size: 15px;
-  white-space: nowrap;
-}
-.channel-section { margin-top: 22px; }
+.channel-section { margin-top: 18px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .section-heading h3 { font-size: 25px; letter-spacing: -.4px; }
+.section-heading__filter { display: inline-block; margin-top: 5px; color: #99a5ff; font-size: 14px; }
 .section-heading__meta { color: var(--muted); font-size: 16px; }
 
 .channel-grid {
@@ -161,7 +148,7 @@ html, body {
 
 .helpbar {
   position: absolute;
-  left: 76px; right: 76px; bottom: 40px;
+  left: 136px; right: 76px; bottom: 40px;
   display: flex; align-items: center;
   color: var(--muted); font-size: 16px;
 }
@@ -176,30 +163,37 @@ kbd {
 
 .is-hidden { display: none !important; }
 
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
 @media screen and (max-width: 1500px) {
-  .screen--home { padding: 28px 40px 24px; }
+  .home-content { padding: 28px 40px 24px 104px; }
   .topbar { height: 60px; }
-  .brand > * + * { margin-left: 12px; }
-  .brand__mark { width: 48px; height: 48px; border-radius: 14px; font-size: 26px; }
   .brand__title { font-size: 22px; }
-  .brand__subtitle { margin-top: 3px; font-size: 13px; }
+  .brand__divider { height: 20px; margin: 0 12px; }
+  .brand__subtitle { font-size: 13px; }
   .topbar__status > * + * { margin-left: 18px; }
-  .build-marker { padding: 7px 10px; font-size: 12px; }
   .status-pill { padding: 8px 12px; font-size: 13px; }
   .clock { font-size: 20px; }
-  .hero { margin-top: 18px; }
+  .hero { height: 104px; margin-top: 10px; }
+  .hero__mascot { right: 34px; top: -24px; width: 125px; }
   .eyebrow { font-size: 13px; letter-spacing: 2px; }
   .hero__title { margin-top: 8px; font-size: 42px; letter-spacing: -1.4px; }
   .hero__description { margin-top: 10px; font-size: 17px; }
-  .catalog-toolbar { margin-top: 14px; }
-  .channel-section { margin-top: 18px; }
+  .channel-section { margin-top: 12px; }
   .section-heading { margin-bottom: 12px; }
   .section-heading h3 { font-size: 20px; }
   .channel-grid { margin-right: -18px; margin-bottom: -18px; }
   .channel-card { margin-right: 18px; margin-bottom: 18px; }
-  .helpbar { left: 40px; right: 40px; bottom: 18px; font-size: 13px; }
+  .helpbar { left: 104px; right: 40px; bottom: 18px; font-size: 13px; }
   .helpbar > * + * { margin-left: 22px; }
   kbd { min-height: 26px; padding: 0 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__mascot { animation: none; }
 }
 
 .channel-card {
@@ -243,7 +237,7 @@ kbd {
   width: 66px; height: 66px; border-radius: 19px;
   display: flex; align-items: center; justify-content: center;
   background: var(--channel-accent);
-  color: #fff; font-size: 20px; font-weight: 900; letter-spacing: -.5px;
+  color: #fff; font-size: 20px; font-weight: 900; letter-spacing: -.5px; line-height: 1; text-align: center;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 12px 28px rgba(0,0,0,.25);
 }
 .channel-card__live {
@@ -257,11 +251,13 @@ kbd {
   width: 38px; height: 38px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   color: #b8c3d5; background: rgba(4, 8, 18, .42);
-  font-size: 23px;
+  line-height: 0;
 }
+.channel-card__favorite svg { display: block; width: 22px; height: 22px; fill: currentColor; }
 .channel-card.is-favorite .channel-card__favorite { color: #ffd65a; background: rgba(255, 214, 90, .13); }
 .channel-card__quality {
-  padding: 8px 10px; border-radius: 9px;
+  min-height: 38px; padding: 0 10px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
   color: #dce5f3; background: rgba(4, 8, 18, .42);
   font-size: 12px; font-weight: 800;
 }
@@ -305,44 +301,6 @@ kbd {
 .channel-skeleton strong { font-size: 18px; font-weight: 600; }
 @keyframes skeleton-pulse { to { transform: translateX(100%); } }
 
-.catalog-control {
-  height: 62px;
-  border: 2px solid rgba(255,255,255,.10);
-  border-radius: 17px;
-  background: rgba(255,255,255,.055);
-  color: #eef3fb;
-  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
-}
-.catalog-control.is-focused {
-  border-color: #fff;
-  background: rgba(255,255,255,.12);
-  transform: scale(1.018);
-  box-shadow: 0 0 0 4px rgba(255,255,255,.06);
-}
-.catalog-control__icon { color: #ffd65a; font-size: 25px; }
-.catalog-control--search {
-  width: 610px;
-  display: flex; align-items: center;
-  padding: 0 19px;
-}
-.catalog-control--search > * + * { margin-left: 13px; }
-.catalog-control--search label { color: #e7edf7; font-size: 16px; font-weight: 700; white-space: nowrap; }
-.catalog-control--search input {
-  flex: 1; min-width: 0;
-  border: 0; outline: 0; background: transparent;
-  color: #fff; font-size: 17px;
-}
-.catalog-control--search input::placeholder { color: #7f8ca2; }
-.catalog-control--search.is-editing { border-color: #99a5ff; background: rgba(99, 113, 220, .16); }
-.catalog-control--favorites {
-  min-width: 250px;
-  padding: 0 20px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: default;
-}
-.catalog-control--favorites > * + * { margin-left: 11px; }
-.catalog-control--favorites .catalog-control__label { font-size: 16px; font-weight: 800; }
-.catalog-control--favorites.is-active { background: rgba(255, 214, 90, .13); border-color: rgba(255, 214, 90, .65); }
 .empty-catalog {
   width: 100%; min-height: 210px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -364,8 +322,9 @@ kbd {
   .channel-card.is-focused { transform: scale(1.025); }
   .channel-card__logo { width: 52px; height: 52px; border-radius: 15px; font-size: 16px; }
   .channel-card__live { font-size: 10px; letter-spacing: .9px; }
-  .channel-card__favorite { width: 30px; height: 30px; border-radius: 9px; font-size: 18px; }
-  .channel-card__quality { padding: 6px 7px; font-size: 9px; }
+  .channel-card__favorite { width: 30px; height: 30px; border-radius: 9px; }
+  .channel-card__favorite svg { width: 17px; height: 17px; }
+  .channel-card__quality { min-height: 30px; padding: 0 7px; font-size: 9px; }
   .channel-card__body { margin-top: 10px; }
   .channel-card__category { font-size: 10px; }
   .channel-card__name { margin-top: 3px; font-size: 21px; }
@@ -373,11 +332,246 @@ kbd {
   .channel-skeleton { width: calc(25% - 18px); height: 185px; margin-right: 18px; margin-bottom: 18px; padding: 18px; border-radius: 18px; }
   .channel-skeleton span { width: 52px; height: 52px; margin-bottom: 22px; border-radius: 15px; }
   .channel-skeleton strong { font-size: 14px; }
-  .catalog-control { height: 48px; border-radius: 13px; }
-  .catalog-control--search { width: 480px; padding: 0 14px; }
-  .catalog-control--search label, .catalog-control--search input, .catalog-control--favorites .catalog-control__label { font-size: 13px; }
-  .catalog-control--favorites { min-width: 205px; padding: 0 14px; }
-  .catalog-toolbar__summary { font-size: 12px; }
+}
+
+.side-menu {
+  position: absolute;
+  z-index: 50;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 94px;
+  padding: 34px 16px 30px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(10, 15, 28, .98), rgba(7, 11, 20, .99));
+  border-right: 1px solid rgba(255,255,255,.07);
+  box-shadow: 18px 0 42px rgba(0,0,0,.16);
+  transition: width 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+
+.side-menu.is-expanded {
+  width: 370px;
+  box-shadow: 28px 0 74px rgba(0,0,0,.58);
+}
+
+.side-menu__brand {
+  height: 116px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.side-menu__avatar {
+  flex: 0 0 60px;
+  width: 60px;
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  background: radial-gradient(circle at 50% 35%, rgba(119, 132, 255, .22), rgba(119, 132, 255, .05) 66%, transparent 68%);
+}
+
+.side-menu__avatar img {
+  display: block;
+  width: 57px;
+  height: auto;
+  transform-origin: 50% 70%;
+  animation: logo-breathe 4600ms ease-in-out infinite;
+}
+
+.side-menu__brand-copy {
+  margin-left: 19px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 120ms ease, transform 180ms var(--ease);
+}
+
+.side-menu.is-expanded .side-menu__brand-copy { opacity: 1; transform: translateX(0); }
+.side-menu__brand-copy strong { display: block; font-size: 27px; letter-spacing: -.6px; }
+.side-menu__brand-copy span { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+.side-menu__nav { margin-top: 32px; }
+.side-menu__nav > * + * { margin-top: 13px; }
+
+.side-menu__item {
+  position: relative;
+  width: 100%;
+  height: 68px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: 19px;
+  background: transparent;
+  color: #aab6c9;
+  cursor: default;
+  white-space: nowrap;
+  transition: color 140ms ease, background 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.side-menu__item::before {
+  content: '';
+  position: absolute;
+  left: -11px;
+  top: 19px;
+  width: 4px;
+  height: 26px;
+  border-radius: 4px;
+  background: #7d8aff;
+  opacity: 0;
+}
+
+.side-menu__item.is-active { color: #fff; background: rgba(119,132,255,.10); }
+.side-menu__item.is-active::before { opacity: 1; }
+.side-menu__item.is-focused {
+  color: #fff;
+  border-color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.13);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.055);
+  transform: scale(1.018);
+}
+
+.side-menu__icon {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.side-menu__icon svg,
+.side-search__icon svg {
+  display: block;
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+.side-menu__label {
+  margin-left: 18px;
+  overflow: hidden;
+  opacity: 0;
+  color: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  transition: opacity 110ms ease;
+}
+
+.side-menu.is-expanded .side-menu__label { opacity: 1; }
+.side-menu__active-dot {
+  position: absolute;
+  right: 20px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7d8aff;
+  opacity: 0;
+}
+.side-menu__active-dot.is-visible { opacity: 1; }
+
+.side-search {
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  background: rgba(255,255,255,.055);
+}
+.side-search label { display: block; margin-bottom: 12px; color: #fff; font-size: 15px; font-weight: 800; }
+.side-search__field {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  border: 2px solid #99a5ff;
+  border-radius: 15px;
+  background: rgba(7, 11, 20, .72);
+  box-shadow: 0 0 0 4px rgba(119,132,255,.10);
+}
+.side-search__icon {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #99a5ff;
+  line-height: 0;
+}
+.side-search__icon svg { width: 22px; height: 22px; }
+.side-search input {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 18px;
+}
+.side-search input::placeholder { color: #71809a; }
+.side-search p { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+.side-menu__hint {
+  position: absolute;
+  left: 24px;
+  bottom: 32px;
+  opacity: 0;
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+  transition: opacity 110ms ease;
+}
+.side-menu.is-expanded .side-menu__hint { opacity: 1; }
+.side-menu__hint span { margin-right: 8px; color: #fff; font-weight: 900; }
+
+.side-menu-scrim {
+  position: absolute;
+  z-index: 40;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: rgba(3, 6, 13, .58);
+  transition: opacity 160ms ease, visibility 0ms linear 160ms;
+}
+.side-menu-scrim.is-visible { opacity: 1; visibility: visible; transition-delay: 0ms; }
+
+@keyframes logo-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.015); }
+}
+
+@media screen and (max-width: 1500px) {
+  .side-menu { width: 76px; padding: 20px 12px; }
+  .side-menu.is-expanded { width: 310px; }
+  .side-menu__brand { height: 92px; }
+  .side-menu__avatar { flex-basis: 50px; width: 50px; height: 68px; border-radius: 18px; }
+  .side-menu__avatar img { width: 47px; }
+  .side-menu__brand-copy { margin-left: 15px; }
+  .side-menu__brand-copy strong { font-size: 22px; }
+  .side-menu__brand-copy span { margin-top: 4px; font-size: 12px; }
+  .side-menu__nav { margin-top: 20px; }
+  .side-menu__nav > * + * { margin-top: 9px; }
+  .side-menu__item { height: 54px; padding: 0 3px; border-radius: 15px; }
+  .side-menu__item::before { left: -8px; top: 15px; height: 20px; }
+  .side-menu__icon { flex-basis: 42px; width: 42px; height: 42px; }
+  .side-menu__icon svg { width: 23px; height: 23px; }
+  .side-menu__label { margin-left: 13px; font-size: 15px; }
+  .side-search { margin-top: 18px; padding: 15px; border-radius: 16px; }
+  .side-search__field { height: 48px; padding: 0 11px; border-radius: 12px; }
+  .side-search input { font-size: 15px; }
+  .side-search p { font-size: 10px; }
+  .side-menu__hint { left: 18px; bottom: 20px; font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-menu__avatar img { animation: none; }
 }
 
 .screen--player {
@@ -564,62 +758,81 @@ kbd {
 <body>
   <div id="app" class="app-shell">
     <main id="home-screen" class="screen screen--home" aria-label="Canais ao vivo" tabindex="-1">
-      <header class="topbar">
-        <div class="brand">
-          <div class="brand__mark" aria-hidden="true">T</div>
-          <div>
-            <h1 class="brand__title">TblackTV</h1>
-            <p class="brand__subtitle">TV ao vivo</p>
+      <aside id="side-menu" class="side-menu" aria-label="Menu principal">
+        <div class="side-menu__brand">
+          <div class="side-menu__avatar"><img src="assets/tblack-mascot.png" alt=""></div>
+          <div class="side-menu__brand-copy"><strong>TblackTV</strong><span>TV ao vivo</span></div>
+        </div>
+
+        <nav class="side-menu__nav" aria-label="Navegação do catálogo">
+          <button id="menu-channels" class="side-menu__item is-active" type="button" tabindex="-1" data-menu-item="channels">
+            <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h7v6H4V5Zm9 0h7v6h-7V5ZM4 13h7v6H4v-6Zm9 0h7v6h-7v-6Z"/></svg></span>
+            <span class="side-menu__label">Todos os canais</span>
+          </button>
+          <button id="menu-search" class="side-menu__item" type="button" tabindex="-1" data-menu-item="search">
+            <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20.7 19.3-4.2-4.2a7 7 0 1 0-1.4 1.4l4.2 4.2a1 1 0 0 0 1.4-1.4ZM5 11a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z"/></svg></span>
+            <span class="side-menu__label">Buscar</span>
+            <span id="search-active-dot" class="side-menu__active-dot" aria-hidden="true"></span>
+          </button>
+          <button id="menu-favorites" class="side-menu__item" type="button" tabindex="-1" data-menu-item="favorites" aria-pressed="false">
+            <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1 6.2-5.6-3-5.6 3 1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/></svg></span>
+            <span class="side-menu__label">Meus favoritos</span>
+          </button>
+        </nav>
+
+        <div id="side-search-panel" class="side-search is-hidden">
+          <label for="channel-search">Buscar canal</label>
+          <div class="side-search__field">
+            <span class="side-search__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20.7 19.3-4.2-4.2a7 7 0 1 0-1.4 1.4l4.2 4.2a1 1 0 0 0 1.4-1.4ZM5 11a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z"/></svg></span>
+            <input id="channel-search" type="search" placeholder="Nome do canal" autocomplete="off" tabindex="-1">
           </div>
+          <p>OK aplica a busca · Return limpa</p>
         </div>
 
-        <div class="topbar__status">
-          <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
-          <!-- Incrementar este número a cada publicação usada para teste na TV. -->
-          <span id="test-build-number" class="build-marker">Número de teste: 7</span>
-          <time id="clock" class="clock">--:--</time>
-        </div>
-      </header>
+        <p class="side-menu__hint"><span>→</span> voltar aos canais</p>
+      </aside>
+      <div id="side-menu-scrim" class="side-menu-scrim" aria-hidden="true"></div>
 
-      <section class="hero">
-        <p class="eyebrow">CANAIS GRATUITOS</p>
-        <h2 class="hero__title">O que você quer assistir?</h2>
-        <p class="hero__description">Pesquise, favorite e escolha uma fonte. O catálogo online é atualizado automaticamente.</p>
-      </section>
+      <div class="home-content">
+        <header class="topbar">
+          <div class="brand"><h1 class="brand__title">TblackTV</h1><span class="brand__divider"></span><p class="brand__subtitle">Canais ao vivo</p></div>
+          <div class="topbar__status">
+            <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
+            <time id="clock" class="clock">--:--</time>
+          </div>
+        </header>
 
-      <section class="catalog-toolbar" aria-label="Busca e filtros">
-        <div id="search-control" class="catalog-control catalog-control--search">
-          <span class="catalog-control__icon" aria-hidden="true">⌕</span>
-          <label for="channel-search">Pesquisar canal</label>
-          <input id="channel-search" type="search" placeholder="Digite o nome do canal" autocomplete="off" tabindex="-1">
-        </div>
-        <button id="favorites-control" class="catalog-control catalog-control--favorites" type="button" tabindex="-1" aria-pressed="false">
-          <span class="catalog-control__icon" aria-hidden="true">★</span>
-          <span class="catalog-control__label">Todos os canais</span>
-        </button>
-        <span id="filter-summary" class="catalog-toolbar__summary">Catálogo completo</span>
-      </section>
+        <section class="hero">
+          <div class="hero__copy">
+            <p class="eyebrow">CANAIS GRATUITOS</p>
+            <h2 class="hero__title">O que você quer assistir?</h2>
+            <p class="hero__description">Escolha um canal. Use ← na primeira coluna para abrir busca e favoritos.</p>
+          </div>
+          <img class="hero__mascot" src="assets/tblack-mascot.png" alt="Mascote TblackTV">
+        </section>
 
-      <section class="channel-section" aria-labelledby="channels-heading">
-        <div class="section-heading">
-          <h3 id="channels-heading">Ao vivo agora</h3>
-          <span id="channel-count" class="section-heading__meta"></span>
-        </div>
-        <div id="channel-grid" class="channel-grid channel-grid--loading" role="list" aria-busy="true">
-          <div class="channel-skeleton"><span></span><strong>Preparando canais…</strong></div>
-          <div class="channel-skeleton"><span></span></div>
-          <div class="channel-skeleton"><span></span></div>
-          <div class="channel-skeleton"><span></span></div>
-        </div>
-      </section>
+        <section class="channel-section" aria-labelledby="channels-heading">
+          <div class="section-heading">
+            <div><h3 id="channels-heading">Ao vivo agora</h3><span id="filter-summary" class="section-heading__filter">Catálogo completo</span></div>
+            <span id="channel-count" class="section-heading__meta"></span>
+          </div>
+          <div id="channel-grid" class="channel-grid channel-grid--loading" role="list" aria-busy="true">
+            <div class="channel-skeleton"><span></span><strong>Preparando canais…</strong></div>
+            <div class="channel-skeleton"><span></span></div>
+            <div class="channel-skeleton"><span></span></div>
+            <div class="channel-skeleton"><span></span></div>
+          </div>
+        </section>
 
-      <footer class="helpbar">
-        <span><kbd>← ↑ ↓ →</kbd> navegar</span>
-        <span><kbd>Channel ±</kbd> páginas</span>
-        <span><kbd>OK</kbd> assistir</span>
-        <span><kbd>Play/Pause</kbd> favoritar</span>
-        <span><kbd>Return</kbd> sair</span>
-      </footer>
+        <footer class="helpbar">
+          <span><kbd>←</kbd> menu</span>
+          <span><kbd>↑ ↓ →</kbd> navegar</span>
+          <span><kbd>Channel ±</kbd> páginas</span>
+          <span><kbd>OK</kbd> assistir</span>
+          <span><kbd>Play/Pause</kbd> favoritar</span>
+          <span><kbd>Return</kbd> sair</span>
+        </footer>
+      </div>
     </main>
 
     <section id="player-screen" class="screen screen--player is-hidden" aria-label="Player ao vivo" tabindex="-1">
@@ -3233,9 +3446,8 @@ kbd {
     }
   };
 
-  ChannelGridView.prototype.isFirstVisibleRow = function isFirstVisibleRow(index) {
-    var position = index - (this.pageIndex * this.pageSize);
-    return position >= 0 && position < 4;
+  ChannelGridView.prototype.isFirstColumn = function isFirstColumn(index) {
+    return index >= 0 && index % 4 === 0;
   };
 
   ChannelGridView.prototype.getPageSize = function getCurrentPageSize() {
@@ -3253,7 +3465,7 @@ kbd {
       '<div class="channel-card__header">',
         '<div class="channel-card__logo">' + escapeHtml(channel.shortName) + '</div>',
         '<div class="channel-card__badges">',
-          '<span class="channel-card__favorite" aria-label="' + (isFavorite ? 'Favorito' : 'Não favorito') + '">' + (isFavorite ? '★' : '☆') + '</span>',
+          '<span class="channel-card__favorite" aria-label="' + (isFavorite ? 'Favorito' : 'Não favorito') + '">' + favoriteIcon(isFavorite) + '</span>',
           quality ? '<span class="channel-card__quality">' + escapeHtml(quality) + 'p</span>' : '',
         '</div>',
       '</div>',
@@ -3265,6 +3477,10 @@ kbd {
     ].join('');
 
     return card;
+  }
+
+  function favoriteIcon(isFavorite) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path ' + (isFavorite ? '' : 'fill="none" stroke="currentColor" stroke-width="1.8" ') + 'd="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1 6.2-5.6-3-5.6 3 1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/></svg>';
   }
 
   function escapeHtml(value) {
@@ -3283,53 +3499,78 @@ kbd {
   namespace.ui.ChannelGridView = ChannelGridView;
 }(window.TblackTV));
 </script>
-  <script data-tblacktv-source="js/ui/CatalogControlsView.js">
-(function defineCatalogControlsView(namespace) {
+  <script data-tblacktv-source="js/ui/SidebarView.js">
+(function defineSidebarView(namespace) {
   'use strict';
 
-  function CatalogControlsView(elements) {
+  function SidebarView(elements) {
+    this.menuElement = elements.sideMenu;
+    this.scrimElement = elements.sideMenuScrim;
+    this.searchPanel = elements.sideSearchPanel;
     this.searchInput = elements.searchInput;
-    this.searchControl = elements.searchControl;
-    this.favoritesControl = elements.favoritesControl;
     this.filterSummary = elements.filterSummary;
+    this.searchActiveDot = elements.searchActiveDot;
+    this.items = {
+      channels: elements.menuChannels,
+      search: elements.menuSearch,
+      favorites: elements.menuFavorites
+    };
   }
 
-  CatalogControlsView.prototype.setFocusedControl = function setFocusedControl(controlName) {
-    this.searchControl.classList.toggle('is-focused', controlName === 'search');
-    this.favoritesControl.classList.toggle('is-focused', controlName === 'favorites');
+  SidebarView.prototype.setExpanded = function setExpanded(isExpanded) {
+    this.menuElement.classList.toggle('is-expanded', !!isExpanded);
+    this.scrimElement.classList.toggle('is-visible', !!isExpanded);
+    this.menuElement.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
   };
 
-  CatalogControlsView.prototype.clearFocus = function clearFocus() {
-    this.searchControl.classList.remove('is-focused');
-    this.favoritesControl.classList.remove('is-focused');
+  SidebarView.prototype.setFocusedItem = function setFocusedItem(itemName) {
+    var name;
+    for (name in this.items) {
+      if (this.items.hasOwnProperty(name)) {
+        this.items[name].classList.toggle('is-focused', name === itemName);
+      }
+    }
   };
 
-  CatalogControlsView.prototype.startSearchEditing = function startSearchEditing() {
-    this.searchControl.classList.add('is-editing');
+  SidebarView.prototype.clearFocus = function clearFocus() {
+    this.setFocusedItem('');
+  };
+
+  SidebarView.prototype.startSearchEditing = function startSearchEditing() {
+    var self = this;
+    this.menuElement.classList.add('is-searching');
+    this.searchPanel.classList.remove('is-hidden');
     this.searchInput.setAttribute('tabindex', '0');
-    try { this.searchInput.focus(); } catch (error) {}
+    window.setTimeout(function focusSearchInput() {
+      try { self.searchInput.focus(); } catch (error) {}
+    }, 0);
   };
 
-  CatalogControlsView.prototype.stopSearchEditing = function stopSearchEditing() {
-    this.searchControl.classList.remove('is-editing');
+  SidebarView.prototype.stopSearchEditing = function stopSearchEditing() {
+    this.menuElement.classList.remove('is-searching');
+    this.searchPanel.classList.add('is-hidden');
     this.searchInput.setAttribute('tabindex', '-1');
     try { this.searchInput.blur(); } catch (error) {}
   };
 
-  CatalogControlsView.prototype.setFavoritesOnly = function setFavoritesOnly(isEnabled) {
-    this.favoritesControl.classList.toggle('is-active', !!isEnabled);
-    this.favoritesControl.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
-    this.favoritesControl.querySelector('.catalog-control__label').textContent = isEnabled ? 'Mostrando favoritos' : 'Todos os canais';
+  SidebarView.prototype.updateState = function updateState(query, favoritesOnly) {
+    var hasQuery = !!query;
+    this.items.channels.classList.toggle('is-active', !hasQuery && !favoritesOnly);
+    this.items.search.classList.toggle('is-active', hasQuery && !favoritesOnly);
+    this.items.favorites.classList.toggle('is-active', !!favoritesOnly);
+    this.items.favorites.setAttribute('aria-pressed', favoritesOnly ? 'true' : 'false');
+    this.searchActiveDot.classList.toggle('is-visible', hasQuery);
+
+    if (favoritesOnly) {
+      this.filterSummary.textContent = 'Meus favoritos';
+    } else if (hasQuery) {
+      this.filterSummary.textContent = 'Resultados para “' + query + '”';
+    } else {
+      this.filterSummary.textContent = 'Catálogo completo';
+    }
   };
 
-  CatalogControlsView.prototype.updateSummary = function updateSummary(query, favoritesOnly) {
-    var parts = [];
-    if (query) { parts.push('Busca: “' + query + '”'); }
-    if (favoritesOnly) { parts.push('Somente favoritos'); }
-    this.filterSummary.textContent = parts.length ? parts.join(' • ') : 'Catálogo completo';
-  };
-
-  namespace.ui.CatalogControlsView = CatalogControlsView;
+  namespace.ui.SidebarView = SidebarView;
 }(window.TblackTV));
 </script>
   <script data-tblacktv-source="js/ui/ClockView.js">
@@ -3558,11 +3799,10 @@ kbd {
     this.playerView = options.playerView;
     this.playbackService = options.playbackService;
     this.playerKeyCapture = options.playerKeyCapture;
-    this.catalogControlsView = options.catalogControlsView;
+    this.sidebarView = options.sidebarView;
     this.favoritesService = options.favoritesService;
     this.searchInput = options.searchInput;
-    this.searchControl = options.searchControl;
-    this.favoritesControl = options.favoritesControl;
+    this.menuItems = options.menuItems;
     this.boundKeyHandler = this.onKeyDown.bind(this);
     this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
     this.boundFocusGuard = this.onApplicationFocus.bind(this);
@@ -3571,7 +3811,8 @@ kbd {
     this.lastSourceSwitchAt = 0;
     this.isCapturingPlayerFocus = false;
     this.homeFocusArea = 'grid';
-    this.toolbarControl = 'search';
+    this.sidebarItems = ['channels', 'search', 'favorites'];
+    this.sidebarItemIndex = 0;
     this.searchEditing = false;
   }
 
@@ -3579,7 +3820,7 @@ kbd {
     this.state.setFavorites(this.favoritesService.asLookup());
     this.refreshHome();
     this.bindPlaybackEvents();
-    this.bindCatalogControls();
+    this.bindSidebar();
     window.addEventListener('keydown', this.boundKeyHandler, true);
     document.addEventListener('keydown', this.boundKeyHandler, true);
     if (this.playerKeyCapture) {
@@ -3592,21 +3833,27 @@ kbd {
     registerRemoteKeys();
   };
 
-  AppController.prototype.bindCatalogControls = function bindCatalogControls() {
+  AppController.prototype.bindSidebar = function bindSidebar() {
     var self = this;
+    var itemName;
 
     this.searchInput.addEventListener('input', function onSearchInput() {
+      self.state.setFavoritesOnly(false);
       self.state.setSearchQuery(self.searchInput.value);
       self.refreshHome();
     });
-    this.searchControl.addEventListener('click', function onSearchClick() {
-      self.focusToolbar('search');
-      self.startSearchEditing();
-    });
-    this.favoritesControl.addEventListener('click', function onFavoritesClick() {
-      self.focusToolbar('favorites');
-      self.toggleFavoritesFilter();
-    });
+    for (itemName in this.menuItems) {
+      if (this.menuItems.hasOwnProperty(itemName)) {
+        bindMenuClick(this.menuItems[itemName], itemName);
+      }
+    }
+
+    function bindMenuClick(element, name) {
+      element.addEventListener('click', function onMenuClick() {
+        self.openSidebar(name);
+        self.activateSidebarItem(name);
+      });
+    }
   };
 
   AppController.prototype.updateCatalog = function updateCatalog(channels) {
@@ -3618,12 +3865,11 @@ kbd {
     this.navigation.setItemCount(this.state.channels.length);
     this.navigation.setIndex(this.state.focusedChannelIndex);
     this.gridView.render(this.state.channels, this.state.favoriteIds, this.state.focusedChannelIndex);
-    this.catalogControlsView.setFavoritesOnly(this.state.favoritesOnly);
-    this.catalogControlsView.updateSummary(this.state.searchQuery, this.state.favoritesOnly);
-    if (this.homeFocusArea === 'toolbar') {
-      this.catalogControlsView.setFocusedControl(this.toolbarControl);
+    this.sidebarView.updateState(this.state.searchQuery, this.state.favoritesOnly);
+    if (this.homeFocusArea === 'sidebar') {
+      this.sidebarView.setFocusedItem(this.sidebarItems[this.sidebarItemIndex]);
     } else {
-      this.catalogControlsView.clearFocus();
+      this.sidebarView.clearFocus();
       this.gridView.focus(this.state.focusedChannelIndex);
     }
   };
@@ -3784,7 +4030,7 @@ kbd {
       return;
     }
     if (this.state.screen === 'home') {
-      this.exitApplication();
+      this.handleHomeKey(KEY.BACK);
     } else {
       this.handlePlayerKey(KEY.BACK);
     }
@@ -3835,21 +4081,21 @@ kbd {
   };
 
   AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
-    if (this.homeFocusArea === 'toolbar') {
-      this.handleToolbarKey(keyCode);
+    if (this.homeFocusArea === 'sidebar') {
+      this.handleSidebarKey(keyCode);
       return;
     }
 
     if (keyCode === KEY.LEFT) {
-      this.moveFocus('left');
+      if (this.gridView.isFirstColumn(this.state.focusedChannelIndex)) {
+        this.openSidebar(this.getActiveSidebarItem());
+      } else {
+        this.moveFocus('left');
+      }
     } else if (keyCode === KEY.RIGHT) {
       this.moveFocus('right');
     } else if (keyCode === KEY.UP) {
-      if (this.gridView.isFirstVisibleRow(this.state.focusedChannelIndex)) {
-        this.focusToolbar('search');
-      } else {
-        this.moveFocus('up');
-      }
+      this.moveFocus('up');
     } else if (keyCode === KEY.DOWN) {
       this.moveFocus('down');
     } else if (keyCode === KEY.ENTER) {
@@ -3873,29 +4119,75 @@ kbd {
     this.gridView.focus(nextIndex);
   };
 
-  AppController.prototype.handleToolbarKey = function handleToolbarKey(keyCode) {
-    if (keyCode === KEY.LEFT || keyCode === KEY.RIGHT) {
-      this.toolbarControl = this.toolbarControl === 'search' ? 'favorites' : 'search';
-      this.catalogControlsView.setFocusedControl(this.toolbarControl);
-    } else if (keyCode === KEY.DOWN) {
-      this.homeFocusArea = 'grid';
-      this.catalogControlsView.clearFocus();
-      this.gridView.focus(this.state.focusedChannelIndex);
+  AppController.prototype.handleSidebarKey = function handleSidebarKey(keyCode) {
+    if (keyCode === KEY.UP || keyCode === KEY.DOWN) {
+      this.sidebarItemIndex += keyCode === KEY.DOWN ? 1 : -1;
+      this.sidebarItemIndex = Math.max(0, Math.min(this.sidebarItems.length - 1, this.sidebarItemIndex));
+      this.sidebarView.setFocusedItem(this.sidebarItems[this.sidebarItemIndex]);
+    } else if (keyCode === KEY.RIGHT || keyCode === KEY.BACK) {
+      this.closeSidebar();
     } else if (keyCode === KEY.ENTER) {
-      if (this.toolbarControl === 'search') {
-        this.startSearchEditing();
-      } else {
-        this.toggleFavoritesFilter();
-      }
-    } else if (keyCode === KEY.BACK) {
-      this.exitApplication();
+      this.activateSidebarItem(this.sidebarItems[this.sidebarItemIndex]);
+    } else if (keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.FAVORITE) {
+      this.toggleFocusedFavorite();
+    } else if (keyCode === KEY.CHANNEL_UP || keyCode === KEY.CHANNEL_DOWN) {
+      this.closeSidebar();
+      this.movePage(keyCode === KEY.CHANNEL_UP ? -1 : 1);
     }
+  };
+
+  AppController.prototype.activateSidebarItem = function activateSidebarItem(itemName) {
+    if (itemName === 'search') {
+      this.state.setFavoritesOnly(false);
+      this.refreshHome();
+      this.startSearchEditing();
+    } else if (itemName === 'favorites') {
+      this.searchInput.value = '';
+      this.state.setSearchQuery('');
+      this.state.setFavoritesOnly(true);
+      this.refreshHome();
+      this.closeSidebar();
+    } else if (itemName === 'channels') {
+      this.searchInput.value = '';
+      this.state.setSearchQuery('');
+      this.state.setFavoritesOnly(false);
+      this.refreshHome();
+      this.closeSidebar();
+    }
+  };
+
+  AppController.prototype.getActiveSidebarItem = function getActiveSidebarItem() {
+    if (this.state.favoritesOnly) {
+      return 'favorites';
+    }
+    if (this.state.searchQuery) {
+      return 'search';
+    }
+    return 'channels';
+  };
+
+  AppController.prototype.openSidebar = function openSidebar(itemName) {
+    var index = this.sidebarItems.indexOf(itemName);
+    this.homeFocusArea = 'sidebar';
+    this.sidebarItemIndex = index >= 0 ? index : 0;
+    this.gridView.focus(-1);
+    this.sidebarView.setExpanded(true);
+    this.sidebarView.setFocusedItem(this.sidebarItems[this.sidebarItemIndex]);
+  };
+
+  AppController.prototype.closeSidebar = function closeSidebar() {
+    this.searchEditing = false;
+    this.sidebarView.stopSearchEditing();
+    this.sidebarView.setExpanded(false);
+    this.sidebarView.clearFocus();
+    this.homeFocusArea = 'grid';
+    this.gridView.focus(this.state.focusedChannelIndex);
   };
 
   AppController.prototype.handleSearchEditingKey = function handleSearchEditingKey(keyCode, event) {
     if (keyCode === KEY.ENTER) {
       event.preventDefault();
-      this.stopSearchEditing();
+      this.stopSearchEditing(true);
     } else if (keyCode === KEY.BACK) {
       event.preventDefault();
       if (this.searchInput.value) {
@@ -3903,32 +4195,24 @@ kbd {
         this.state.setSearchQuery('');
         this.refreshHome();
       } else {
-        this.stopSearchEditing();
+        this.stopSearchEditing(false);
       }
     }
   };
 
-  AppController.prototype.focusToolbar = function focusToolbar(controlName) {
-    this.homeFocusArea = 'toolbar';
-    this.toolbarControl = controlName || 'search';
-    this.gridView.focus(-1);
-    this.catalogControlsView.setFocusedControl(this.toolbarControl);
-  };
-
   AppController.prototype.startSearchEditing = function startSearchEditing() {
     this.searchEditing = true;
-    this.catalogControlsView.startSearchEditing();
+    this.sidebarView.startSearchEditing();
   };
 
-  AppController.prototype.stopSearchEditing = function stopSearchEditing() {
+  AppController.prototype.stopSearchEditing = function stopSearchEditing(returnToGrid) {
     this.searchEditing = false;
-    this.catalogControlsView.stopSearchEditing();
-    this.focusToolbar('search');
-  };
-
-  AppController.prototype.toggleFavoritesFilter = function toggleFavoritesFilter() {
-    this.state.setFavoritesOnly(!this.state.favoritesOnly);
-    this.refreshHome();
+    this.sidebarView.stopSearchEditing();
+    if (returnToGrid) {
+      this.closeSidebar();
+    } else {
+      this.sidebarView.setFocusedItem('search');
+    }
   };
 
   AppController.prototype.toggleFocusedFavorite = function toggleFocusedFavorite() {
@@ -4150,7 +4434,7 @@ kbd {
     var state = new namespace.core.AppState(channels);
     var navigation = new namespace.core.SpatialNavigation(channels.length, 4);
     var gridView = new namespace.ui.ChannelGridView(elements.channelGrid, elements.channelCount);
-    var catalogControlsView = new namespace.ui.CatalogControlsView(elements);
+    var sidebarView = new namespace.ui.SidebarView(elements);
     var favoritesService = new namespace.services.FavoritesService();
     var playerView = new namespace.ui.PlayerView(elements);
     var playerFactory = new namespace.services.PlayerFactory(elements, playerProfiles);
@@ -4164,11 +4448,14 @@ kbd {
       playerView: playerView,
       playerKeyCapture: elements.playerKeyCapture,
       playbackService: playbackService,
-      catalogControlsView: catalogControlsView,
+      sidebarView: sidebarView,
       favoritesService: favoritesService,
       searchInput: elements.searchInput,
-      searchControl: elements.searchControl,
-      favoritesControl: elements.favoritesControl
+      menuItems: {
+        channels: elements.menuChannels,
+        search: elements.menuSearch,
+        favorites: elements.menuFavorites
+      }
     });
 
     controller.start();
@@ -4217,9 +4504,14 @@ kbd {
       channelCount: document.getElementById('channel-count'),
       clock: document.getElementById('clock'),
       appStatus: document.getElementById('app-status'),
+      sideMenu: document.getElementById('side-menu'),
+      sideMenuScrim: document.getElementById('side-menu-scrim'),
+      sideSearchPanel: document.getElementById('side-search-panel'),
+      searchActiveDot: document.getElementById('search-active-dot'),
       searchInput: document.getElementById('channel-search'),
-      searchControl: document.getElementById('search-control'),
-      favoritesControl: document.getElementById('favorites-control'),
+      menuChannels: document.getElementById('menu-channels'),
+      menuSearch: document.getElementById('menu-search'),
+      menuFavorites: document.getElementById('menu-favorites'),
       filterSummary: document.getElementById('filter-summary'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),

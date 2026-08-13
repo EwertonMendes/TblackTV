@@ -5,10 +5,10 @@ Hub de canais ao vivo para Smart TVs Samsung antigas, com foco em Tizen 5.0 e na
 ## Instalação pelo GitHub
 
 ```text
-EwertonMendes/TblackTV@v0.3.0
+EwertonMendes/TblackTV@v0.4.0
 ```
 
-Use a tag imutável em vez de `@master`. A Home desta versão mostra `Número de teste: 7`.
+Use a tag imutável em vez de `@master` para evitar misturar arquivos de versões diferentes no cache do TizenBrew.
 
 ## Catálogo online
 
@@ -28,13 +28,14 @@ Somente streams HLS HTTP/HTTPS da lista remota são importados. Iframes foram re
 
 Na Home:
 
-- Setas: navegar pela grade e pelos controles de busca;
+- Cima/Baixo/Direita: navegar somente pela grade de canais;
+- Esquerda na primeira coluna: abrir o menu lateral;
 - Channel +/−: página anterior/próxima;
-- OK: abrir canal ou ativar o controle selecionado;
+- OK: abrir canal ou ativar a opção selecionada no menu;
 - Play/Pause: favoritar ou desfavoritar o canal focado;
 - Return: sair do módulo.
 
-Pressione para cima na primeira linha visível para acessar a pesquisa. Pressione OK no campo para abrir o teclado da TV. O botão com estrela alterna entre catálogo completo e somente favoritos.
+O menu lateral reúne catálogo completo, busca e favoritos. Na grade, Cima e Baixo nunca transferem o foco para o menu. Pressione OK em Buscar para abrir o teclado da TV; Return limpa a consulta e OK aplica o resultado.
 
 No player:
 

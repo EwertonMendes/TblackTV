@@ -37,7 +37,7 @@
     var state = new namespace.core.AppState(channels);
     var navigation = new namespace.core.SpatialNavigation(channels.length, 4);
     var gridView = new namespace.ui.ChannelGridView(elements.channelGrid, elements.channelCount);
-    var catalogControlsView = new namespace.ui.CatalogControlsView(elements);
+    var sidebarView = new namespace.ui.SidebarView(elements);
     var favoritesService = new namespace.services.FavoritesService();
     var playerView = new namespace.ui.PlayerView(elements);
     var playerFactory = new namespace.services.PlayerFactory(elements, playerProfiles);
@@ -51,11 +51,14 @@
       playerView: playerView,
       playerKeyCapture: elements.playerKeyCapture,
       playbackService: playbackService,
-      catalogControlsView: catalogControlsView,
+      sidebarView: sidebarView,
       favoritesService: favoritesService,
       searchInput: elements.searchInput,
-      searchControl: elements.searchControl,
-      favoritesControl: elements.favoritesControl
+      menuItems: {
+        channels: elements.menuChannels,
+        search: elements.menuSearch,
+        favorites: elements.menuFavorites
+      }
     });
 
     controller.start();
@@ -104,9 +107,14 @@
       channelCount: document.getElementById('channel-count'),
       clock: document.getElementById('clock'),
       appStatus: document.getElementById('app-status'),
+      sideMenu: document.getElementById('side-menu'),
+      sideMenuScrim: document.getElementById('side-menu-scrim'),
+      sideSearchPanel: document.getElementById('side-search-panel'),
+      searchActiveDot: document.getElementById('search-active-dot'),
       searchInput: document.getElementById('channel-search'),
-      searchControl: document.getElementById('search-control'),
-      favoritesControl: document.getElementById('favorites-control'),
+      menuChannels: document.getElementById('menu-channels'),
+      menuSearch: document.getElementById('menu-search'),
+      menuFavorites: document.getElementById('menu-favorites'),
       filterSummary: document.getElementById('filter-summary'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),

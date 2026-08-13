@@ -8,75 +8,94 @@
   <style>
     html, body { width: 100%; height: 100%; margin: 0; background: #070b14; color: #f8fafc; font-family: Arial, sans-serif; }
     #app, #home-screen { width: 100%; height: 100%; }
-    #test-build-number { color: #dce2ff; font-weight: 700; }
   </style>
   <script type="text/javascript" defer src="$WEBAPIS/webapis/webapis.js"></script>
 
-  <link rel="stylesheet" href="css/reset.css?v=0.3.0">
-  <link rel="stylesheet" href="css/tokens.css?v=0.3.0">
-  <link rel="stylesheet" href="css/layout.css?v=0.3.0">
-  <link rel="stylesheet" href="css/components.css?v=0.3.0">
-  <link rel="stylesheet" href="css/player.css?v=0.3.0">
+  <link rel="stylesheet" href="css/reset.css?v=0.4.0">
+  <link rel="stylesheet" href="css/tokens.css?v=0.4.0">
+  <link rel="stylesheet" href="css/layout.css?v=0.4.0">
+  <link rel="stylesheet" href="css/components.css?v=0.4.0">
+  <link rel="stylesheet" href="css/sidebar.css?v=0.4.0">
+  <link rel="stylesheet" href="css/player.css?v=0.4.0">
 </head>
 <body>
   <div id="app" class="app-shell">
     <main id="home-screen" class="screen screen--home" aria-label="Canais ao vivo" tabindex="-1">
-      <header class="topbar">
-        <div class="brand">
-          <div class="brand__mark" aria-hidden="true">T</div>
-          <div>
-            <h1 class="brand__title">TblackTV</h1>
-            <p class="brand__subtitle">TV ao vivo</p>
+      <aside id="side-menu" class="side-menu" aria-label="Menu principal">
+        <div class="side-menu__brand">
+          <div class="side-menu__avatar"><img src="assets/tblack-mascot.png" alt=""></div>
+          <div class="side-menu__brand-copy"><strong>TblackTV</strong><span>TV ao vivo</span></div>
+        </div>
+
+        <nav class="side-menu__nav" aria-label="Navegação do catálogo">
+          <button id="menu-channels" class="side-menu__item is-active" type="button" tabindex="-1" data-menu-item="channels">
+            <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h7v6H4V5Zm9 0h7v6h-7V5ZM4 13h7v6H4v-6Zm9 0h7v6h-7v-6Z"/></svg></span>
+            <span class="side-menu__label">Todos os canais</span>
+          </button>
+          <button id="menu-search" class="side-menu__item" type="button" tabindex="-1" data-menu-item="search">
+            <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20.7 19.3-4.2-4.2a7 7 0 1 0-1.4 1.4l4.2 4.2a1 1 0 0 0 1.4-1.4ZM5 11a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z"/></svg></span>
+            <span class="side-menu__label">Buscar</span>
+            <span id="search-active-dot" class="side-menu__active-dot" aria-hidden="true"></span>
+          </button>
+          <button id="menu-favorites" class="side-menu__item" type="button" tabindex="-1" data-menu-item="favorites" aria-pressed="false">
+            <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1 6.2-5.6-3-5.6 3 1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/></svg></span>
+            <span class="side-menu__label">Meus favoritos</span>
+          </button>
+        </nav>
+
+        <div id="side-search-panel" class="side-search is-hidden">
+          <label for="channel-search">Buscar canal</label>
+          <div class="side-search__field">
+            <span class="side-search__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20.7 19.3-4.2-4.2a7 7 0 1 0-1.4 1.4l4.2 4.2a1 1 0 0 0 1.4-1.4ZM5 11a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z"/></svg></span>
+            <input id="channel-search" type="search" placeholder="Nome do canal" autocomplete="off" tabindex="-1">
           </div>
+          <p>OK aplica a busca · Return limpa</p>
         </div>
 
-        <div class="topbar__status">
-          <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
-          <!-- Incrementar este número a cada publicação usada para teste na TV. -->
-          <span id="test-build-number" class="build-marker">Número de teste: 7</span>
-          <time id="clock" class="clock">--:--</time>
-        </div>
-      </header>
+        <p class="side-menu__hint"><span>→</span> voltar aos canais</p>
+      </aside>
+      <div id="side-menu-scrim" class="side-menu-scrim" aria-hidden="true"></div>
 
-      <section class="hero">
-        <p class="eyebrow">CANAIS GRATUITOS</p>
-        <h2 class="hero__title">O que você quer assistir?</h2>
-        <p class="hero__description">Pesquise, favorite e escolha uma fonte. O catálogo online é atualizado automaticamente.</p>
-      </section>
+      <div class="home-content">
+        <header class="topbar">
+          <div class="brand"><h1 class="brand__title">TblackTV</h1><span class="brand__divider"></span><p class="brand__subtitle">Canais ao vivo</p></div>
+          <div class="topbar__status">
+            <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
+            <time id="clock" class="clock">--:--</time>
+          </div>
+        </header>
 
-      <section class="catalog-toolbar" aria-label="Busca e filtros">
-        <div id="search-control" class="catalog-control catalog-control--search">
-          <span class="catalog-control__icon" aria-hidden="true">⌕</span>
-          <label for="channel-search">Pesquisar canal</label>
-          <input id="channel-search" type="search" placeholder="Digite o nome do canal" autocomplete="off" tabindex="-1">
-        </div>
-        <button id="favorites-control" class="catalog-control catalog-control--favorites" type="button" tabindex="-1" aria-pressed="false">
-          <span class="catalog-control__icon" aria-hidden="true">★</span>
-          <span class="catalog-control__label">Todos os canais</span>
-        </button>
-        <span id="filter-summary" class="catalog-toolbar__summary">Catálogo completo</span>
-      </section>
+        <section class="hero">
+          <div class="hero__copy">
+            <p class="eyebrow">CANAIS GRATUITOS</p>
+            <h2 class="hero__title">O que você quer assistir?</h2>
+            <p class="hero__description">Escolha um canal. Use ← na primeira coluna para abrir busca e favoritos.</p>
+          </div>
+          <img class="hero__mascot" src="assets/tblack-mascot.png" alt="Mascote TblackTV">
+        </section>
 
-      <section class="channel-section" aria-labelledby="channels-heading">
-        <div class="section-heading">
-          <h3 id="channels-heading">Ao vivo agora</h3>
-          <span id="channel-count" class="section-heading__meta"></span>
-        </div>
-        <div id="channel-grid" class="channel-grid channel-grid--loading" role="list" aria-busy="true">
-          <div class="channel-skeleton"><span></span><strong>Preparando canais…</strong></div>
-          <div class="channel-skeleton"><span></span></div>
-          <div class="channel-skeleton"><span></span></div>
-          <div class="channel-skeleton"><span></span></div>
-        </div>
-      </section>
+        <section class="channel-section" aria-labelledby="channels-heading">
+          <div class="section-heading">
+            <div><h3 id="channels-heading">Ao vivo agora</h3><span id="filter-summary" class="section-heading__filter">Catálogo completo</span></div>
+            <span id="channel-count" class="section-heading__meta"></span>
+          </div>
+          <div id="channel-grid" class="channel-grid channel-grid--loading" role="list" aria-busy="true">
+            <div class="channel-skeleton"><span></span><strong>Preparando canais…</strong></div>
+            <div class="channel-skeleton"><span></span></div>
+            <div class="channel-skeleton"><span></span></div>
+            <div class="channel-skeleton"><span></span></div>
+          </div>
+        </section>
 
-      <footer class="helpbar">
-        <span><kbd>← ↑ ↓ →</kbd> navegar</span>
-        <span><kbd>Channel ±</kbd> páginas</span>
-        <span><kbd>OK</kbd> assistir</span>
-        <span><kbd>Play/Pause</kbd> favoritar</span>
-        <span><kbd>Return</kbd> sair</span>
-      </footer>
+        <footer class="helpbar">
+          <span><kbd>←</kbd> menu</span>
+          <span><kbd>↑ ↓ →</kbd> navegar</span>
+          <span><kbd>Channel ±</kbd> páginas</span>
+          <span><kbd>OK</kbd> assistir</span>
+          <span><kbd>Play/Pause</kbd> favoritar</span>
+          <span><kbd>Return</kbd> sair</span>
+        </footer>
+      </div>
     </main>
 
     <section id="player-screen" class="screen screen--player is-hidden" aria-label="Player ao vivo" tabindex="-1">
@@ -148,25 +167,25 @@
     </section>
   </div>
 
-  <script src="js/bootstrap.js?v=0.3.0"></script>
-  <script src="js/config/EmbeddedCatalog.js?v=0.3.0"></script>
-  <script src="js/core/EventBus.js?v=0.3.0"></script>
-  <script src="js/core/AppState.js?v=0.3.0"></script>
-  <script src="js/core/SpatialNavigation.js?v=0.3.0"></script>
-  <script src="js/services/adapters/AvPlayAdapter.js?v=0.3.0"></script>
-  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.3.0"></script>
-  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.3.0"></script>
-  <script src="js/services/CatalogService.js?v=0.3.0"></script>
-  <script src="js/services/RemotePlaylistCatalogService.js?v=0.3.0"></script>
-  <script src="js/services/FavoritesService.js?v=0.3.0"></script>
-  <script src="js/services/SourceResolver.js?v=0.3.0"></script>
-  <script src="js/services/PlayerFactory.js?v=0.3.0"></script>
-  <script src="js/services/PlaybackService.js?v=0.3.0"></script>
-  <script src="js/ui/ChannelGridView.js?v=0.3.0"></script>
-  <script src="js/ui/CatalogControlsView.js?v=0.3.0"></script>
-  <script src="js/ui/ClockView.js?v=0.3.0"></script>
-  <script src="js/ui/PlayerView.js?v=0.3.0"></script>
-  <script src="js/controllers/AppController.js?v=0.3.0"></script>
-  <script src="js/main.js?v=0.3.0"></script>
+  <script src="js/bootstrap.js?v=0.4.0"></script>
+  <script src="js/config/EmbeddedCatalog.js?v=0.4.0"></script>
+  <script src="js/core/EventBus.js?v=0.4.0"></script>
+  <script src="js/core/AppState.js?v=0.4.0"></script>
+  <script src="js/core/SpatialNavigation.js?v=0.4.0"></script>
+  <script src="js/services/adapters/AvPlayAdapter.js?v=0.4.0"></script>
+  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.4.0"></script>
+  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.4.0"></script>
+  <script src="js/services/CatalogService.js?v=0.4.0"></script>
+  <script src="js/services/RemotePlaylistCatalogService.js?v=0.4.0"></script>
+  <script src="js/services/FavoritesService.js?v=0.4.0"></script>
+  <script src="js/services/SourceResolver.js?v=0.4.0"></script>
+  <script src="js/services/PlayerFactory.js?v=0.4.0"></script>
+  <script src="js/services/PlaybackService.js?v=0.4.0"></script>
+  <script src="js/ui/ChannelGridView.js?v=0.4.0"></script>
+  <script src="js/ui/SidebarView.js?v=0.4.0"></script>
+  <script src="js/ui/ClockView.js?v=0.4.0"></script>
+  <script src="js/ui/PlayerView.js?v=0.4.0"></script>
+  <script src="js/controllers/AppController.js?v=0.4.0"></script>
+  <script src="js/main.js?v=0.4.0"></script>
 </body>
 </html>

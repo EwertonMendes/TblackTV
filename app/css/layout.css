@@ -17,7 +17,6 @@ html, body {
 
 .screen--home {
   position: relative;
-  padding: 54px 76px 42px;
   background:
     radial-gradient(circle at 78% 0%, rgba(76, 91, 211, .22), transparent 34%),
     radial-gradient(circle at 10% 100%, rgba(34, 170, 148, .10), transparent 30%),
@@ -37,9 +36,16 @@ html, body {
   background-size: 52px 52px;
 }
 
+.home-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 54px 76px 42px 136px;
+}
+
 .topbar,
 .hero,
-.catalog-toolbar,
 .channel-section,
 .helpbar { position: relative; z-index: 1; }
 
@@ -51,29 +57,12 @@ html, body {
 }
 
 .brand { display: flex; align-items: center; }
-.brand > * + * { margin-left: 18px; }
-.brand__mark {
-  width: 62px; height: 62px; border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 34px; font-weight: 800;
-  background: linear-gradient(135deg, #7180ff, #8e5cff);
-  box-shadow: 0 12px 34px rgba(107,124,255,.32);
-}
 .brand__title { font-size: 28px; line-height: 1.05; letter-spacing: -.5px; }
-.brand__subtitle { margin-top: 6px; color: var(--muted); font-size: 16px; }
+.brand__divider { width: 1px; height: 26px; margin: 0 16px; background: rgba(255,255,255,.18); }
+.brand__subtitle { color: var(--muted); font-size: 16px; }
 
 .topbar__status { display: flex; align-items: center; }
 .topbar__status > * + * { margin-left: 28px; }
-.build-marker {
-  padding: 9px 13px;
-  border: 1px solid rgba(153, 165, 255, .42);
-  border-radius: 9px;
-  background: rgba(113, 128, 255, .10);
-  color: #dce2ff;
-  font-size: 15px;
-  font-weight: 700;
-  white-space: nowrap;
-}
 .status-pill {
   display: flex; align-items: center;
   padding: 11px 16px; border-radius: 999px;
@@ -83,26 +72,25 @@ html, body {
 .status-pill--warning .status-dot { background: #f2b84b; box-shadow: 0 0 0 5px rgba(242,184,75,.12); }
 .clock { min-width: 86px; text-align: right; font-size: 24px; font-weight: 700; letter-spacing: .4px; }
 
-.hero { margin-top: 22px; }
+.hero { display: flex; align-items: center; justify-content: space-between; height: 120px; margin-top: 12px; overflow: hidden; }
+.hero__copy { position: relative; z-index: 1; }
 .eyebrow { color: #99a5ff; font-weight: 800; font-size: 16px; letter-spacing: 2.4px; }
 .hero__title { margin-top: 10px; font-size: 48px; line-height: 1.04; letter-spacing: -1.8px; }
 .hero__description { margin-top: 10px; max-width: 1000px; color: var(--muted); font-size: 18px; line-height: 1.4; }
-
-.catalog-toolbar {
-  display: flex;
-  align-items: center;
-  margin-top: 22px;
+.hero__mascot {
+  position: absolute;
+  right: 52px;
+  top: -34px;
+  width: 150px;
+  height: auto;
+  opacity: .22;
+  pointer-events: none;
+  animation: mascot-float 5200ms ease-in-out infinite;
 }
-.catalog-toolbar > * + * { margin-left: 16px; }
-.catalog-toolbar__summary {
-  margin-left: auto !important;
-  color: var(--muted);
-  font-size: 15px;
-  white-space: nowrap;
-}
-.channel-section { margin-top: 22px; }
+.channel-section { margin-top: 18px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .section-heading h3 { font-size: 25px; letter-spacing: -.4px; }
+.section-heading__filter { display: inline-block; margin-top: 5px; color: #99a5ff; font-size: 14px; }
 .section-heading__meta { color: var(--muted); font-size: 16px; }
 
 .channel-grid {
@@ -123,7 +111,7 @@ html, body {
 
 .helpbar {
   position: absolute;
-  left: 76px; right: 76px; bottom: 40px;
+  left: 136px; right: 76px; bottom: 40px;
   display: flex; align-items: center;
   color: var(--muted); font-size: 16px;
 }
@@ -138,28 +126,35 @@ kbd {
 
 .is-hidden { display: none !important; }
 
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
 @media screen and (max-width: 1500px) {
-  .screen--home { padding: 28px 40px 24px; }
+  .home-content { padding: 28px 40px 24px 104px; }
   .topbar { height: 60px; }
-  .brand > * + * { margin-left: 12px; }
-  .brand__mark { width: 48px; height: 48px; border-radius: 14px; font-size: 26px; }
   .brand__title { font-size: 22px; }
-  .brand__subtitle { margin-top: 3px; font-size: 13px; }
+  .brand__divider { height: 20px; margin: 0 12px; }
+  .brand__subtitle { font-size: 13px; }
   .topbar__status > * + * { margin-left: 18px; }
-  .build-marker { padding: 7px 10px; font-size: 12px; }
   .status-pill { padding: 8px 12px; font-size: 13px; }
   .clock { font-size: 20px; }
-  .hero { margin-top: 18px; }
+  .hero { height: 104px; margin-top: 10px; }
+  .hero__mascot { right: 34px; top: -24px; width: 125px; }
   .eyebrow { font-size: 13px; letter-spacing: 2px; }
   .hero__title { margin-top: 8px; font-size: 42px; letter-spacing: -1.4px; }
   .hero__description { margin-top: 10px; font-size: 17px; }
-  .catalog-toolbar { margin-top: 14px; }
-  .channel-section { margin-top: 18px; }
+  .channel-section { margin-top: 12px; }
   .section-heading { margin-bottom: 12px; }
   .section-heading h3 { font-size: 20px; }
   .channel-grid { margin-right: -18px; margin-bottom: -18px; }
   .channel-card { margin-right: 18px; margin-bottom: 18px; }
-  .helpbar { left: 40px; right: 40px; bottom: 18px; font-size: 13px; }
+  .helpbar { left: 104px; right: 40px; bottom: 18px; font-size: 13px; }
   .helpbar > * + * { margin-left: 22px; }
   kbd { min-height: 26px; padding: 0 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__mascot { animation: none; }
 }

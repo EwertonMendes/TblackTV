@@ -25,11 +25,10 @@
     this.playerView = options.playerView;
     this.playbackService = options.playbackService;
     this.playerKeyCapture = options.playerKeyCapture;
-    this.catalogControlsView = options.catalogControlsView;
+    this.sidebarView = options.sidebarView;
     this.favoritesService = options.favoritesService;
     this.searchInput = options.searchInput;
-    this.searchControl = options.searchControl;
-    this.favoritesControl = options.favoritesControl;
+    this.menuItems = options.menuItems;
     this.boundKeyHandler = this.onKeyDown.bind(this);
     this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
     this.boundFocusGuard = this.onApplicationFocus.bind(this);
@@ -38,7 +37,8 @@
     this.lastSourceSwitchAt = 0;
     this.isCapturingPlayerFocus = false;
     this.homeFocusArea = 'grid';
-    this.toolbarControl = 'search';
+    this.sidebarItems = ['channels', 'search', 'favorites'];
+    this.sidebarItemIndex = 0;
     this.searchEditing = false;
   }
 
@@ -46,7 +46,7 @@
     this.state.setFavorites(this.favoritesService.asLookup());
     this.refreshHome();
     this.bindPlaybackEvents();
-    this.bindCatalogControls();
+    this.bindSidebar();
     window.addEventListener('keydown', this.boundKeyHandler, true);
     document.addEventListener('keydown', this.boundKeyHandler, true);
     if (this.playerKeyCapture) {
@@ -59,21 +59,27 @@
     registerRemoteKeys();
   };
 
-  AppController.prototype.bindCatalogControls = function bindCatalogControls() {
+  AppController.prototype.bindSidebar = function bindSidebar() {
     var self = this;
+    var itemName;
 
     this.searchInput.addEventListener('input', function onSearchInput() {
+      self.state.setFavoritesOnly(false);
       self.state.setSearchQuery(self.searchInput.value);
       self.refreshHome();
     });
-    this.searchControl.addEventListener('click', function onSearchClick() {
-      self.focusToolbar('search');
-      self.startSearchEditing();
-    });
-    this.favoritesControl.addEventListener('click', function onFavoritesClick() {
-      self.focusToolbar('favorites');
-      self.toggleFavoritesFilter();
-    });
+    for (itemName in this.menuItems) {
+      if (this.menuItems.hasOwnProperty(itemName)) {
+        bindMenuClick(this.menuItems[itemName], itemName);
+      }
+    }
+
+    function bindMenuClick(element, name) {
+      element.addEventListener('click', function onMenuClick() {
+        self.openSidebar(name);
+        self.activateSidebarItem(name);
+      });
+    }
   };
 
   AppController.prototype.updateCatalog = function updateCatalog(channels) {
@@ -85,12 +91,11 @@
     this.navigation.setItemCount(this.state.channels.length);
     this.navigation.setIndex(this.state.focusedChannelIndex);
     this.gridView.render(this.state.channels, this.state.favoriteIds, this.state.focusedChannelIndex);
-    this.catalogControlsView.setFavoritesOnly(this.state.favoritesOnly);
-    this.catalogControlsView.updateSummary(this.state.searchQuery, this.state.favoritesOnly);
-    if (this.homeFocusArea === 'toolbar') {
-      this.catalogControlsView.setFocusedControl(this.toolbarControl);
+    this.sidebarView.updateState(this.state.searchQuery, this.state.favoritesOnly);
+    if (this.homeFocusArea === 'sidebar') {
+      this.sidebarView.setFocusedItem(this.sidebarItems[this.sidebarItemIndex]);
     } else {
-      this.catalogControlsView.clearFocus();
+      this.sidebarView.clearFocus();
       this.gridView.focus(this.state.focusedChannelIndex);
     }
   };
@@ -251,7 +256,7 @@
       return;
     }
     if (this.state.screen === 'home') {
-      this.exitApplication();
+      this.handleHomeKey(KEY.BACK);
     } else {
       this.handlePlayerKey(KEY.BACK);
     }
@@ -302,21 +307,21 @@
   };
 
   AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
-    if (this.homeFocusArea === 'toolbar') {
-      this.handleToolbarKey(keyCode);
+    if (this.homeFocusArea === 'sidebar') {
+      this.handleSidebarKey(keyCode);
       return;
     }
 
     if (keyCode === KEY.LEFT) {
-      this.moveFocus('left');
+      if (this.gridView.isFirstColumn(this.state.focusedChannelIndex)) {
+        this.openSidebar(this.getActiveSidebarItem());
+      } else {
+        this.moveFocus('left');
+      }
     } else if (keyCode === KEY.RIGHT) {
       this.moveFocus('right');
     } else if (keyCode === KEY.UP) {
-      if (this.gridView.isFirstVisibleRow(this.state.focusedChannelIndex)) {
-        this.focusToolbar('search');
-      } else {
-        this.moveFocus('up');
-      }
+      this.moveFocus('up');
     } else if (keyCode === KEY.DOWN) {
       this.moveFocus('down');
     } else if (keyCode === KEY.ENTER) {
@@ -340,29 +345,75 @@
     this.gridView.focus(nextIndex);
   };
 
-  AppController.prototype.handleToolbarKey = function handleToolbarKey(keyCode) {
-    if (keyCode === KEY.LEFT || keyCode === KEY.RIGHT) {
-      this.toolbarControl = this.toolbarControl === 'search' ? 'favorites' : 'search';
-      this.catalogControlsView.setFocusedControl(this.toolbarControl);
-    } else if (keyCode === KEY.DOWN) {
-      this.homeFocusArea = 'grid';
-      this.catalogControlsView.clearFocus();
-      this.gridView.focus(this.state.focusedChannelIndex);
+  AppController.prototype.handleSidebarKey = function handleSidebarKey(keyCode) {
+    if (keyCode === KEY.UP || keyCode === KEY.DOWN) {
+      this.sidebarItemIndex += keyCode === KEY.DOWN ? 1 : -1;
+      this.sidebarItemIndex = Math.max(0, Math.min(this.sidebarItems.length - 1, this.sidebarItemIndex));
+      this.sidebarView.setFocusedItem(this.sidebarItems[this.sidebarItemIndex]);
+    } else if (keyCode === KEY.RIGHT || keyCode === KEY.BACK) {
+      this.closeSidebar();
     } else if (keyCode === KEY.ENTER) {
-      if (this.toolbarControl === 'search') {
-        this.startSearchEditing();
-      } else {
-        this.toggleFavoritesFilter();
-      }
-    } else if (keyCode === KEY.BACK) {
-      this.exitApplication();
+      this.activateSidebarItem(this.sidebarItems[this.sidebarItemIndex]);
+    } else if (keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.FAVORITE) {
+      this.toggleFocusedFavorite();
+    } else if (keyCode === KEY.CHANNEL_UP || keyCode === KEY.CHANNEL_DOWN) {
+      this.closeSidebar();
+      this.movePage(keyCode === KEY.CHANNEL_UP ? -1 : 1);
     }
+  };
+
+  AppController.prototype.activateSidebarItem = function activateSidebarItem(itemName) {
+    if (itemName === 'search') {
+      this.state.setFavoritesOnly(false);
+      this.refreshHome();
+      this.startSearchEditing();
+    } else if (itemName === 'favorites') {
+      this.searchInput.value = '';
+      this.state.setSearchQuery('');
+      this.state.setFavoritesOnly(true);
+      this.refreshHome();
+      this.closeSidebar();
+    } else if (itemName === 'channels') {
+      this.searchInput.value = '';
+      this.state.setSearchQuery('');
+      this.state.setFavoritesOnly(false);
+      this.refreshHome();
+      this.closeSidebar();
+    }
+  };
+
+  AppController.prototype.getActiveSidebarItem = function getActiveSidebarItem() {
+    if (this.state.favoritesOnly) {
+      return 'favorites';
+    }
+    if (this.state.searchQuery) {
+      return 'search';
+    }
+    return 'channels';
+  };
+
+  AppController.prototype.openSidebar = function openSidebar(itemName) {
+    var index = this.sidebarItems.indexOf(itemName);
+    this.homeFocusArea = 'sidebar';
+    this.sidebarItemIndex = index >= 0 ? index : 0;
+    this.gridView.focus(-1);
+    this.sidebarView.setExpanded(true);
+    this.sidebarView.setFocusedItem(this.sidebarItems[this.sidebarItemIndex]);
+  };
+
+  AppController.prototype.closeSidebar = function closeSidebar() {
+    this.searchEditing = false;
+    this.sidebarView.stopSearchEditing();
+    this.sidebarView.setExpanded(false);
+    this.sidebarView.clearFocus();
+    this.homeFocusArea = 'grid';
+    this.gridView.focus(this.state.focusedChannelIndex);
   };
 
   AppController.prototype.handleSearchEditingKey = function handleSearchEditingKey(keyCode, event) {
     if (keyCode === KEY.ENTER) {
       event.preventDefault();
-      this.stopSearchEditing();
+      this.stopSearchEditing(true);
     } else if (keyCode === KEY.BACK) {
       event.preventDefault();
       if (this.searchInput.value) {
@@ -370,32 +421,24 @@
         this.state.setSearchQuery('');
         this.refreshHome();
       } else {
-        this.stopSearchEditing();
+        this.stopSearchEditing(false);
       }
     }
   };
 
-  AppController.prototype.focusToolbar = function focusToolbar(controlName) {
-    this.homeFocusArea = 'toolbar';
-    this.toolbarControl = controlName || 'search';
-    this.gridView.focus(-1);
-    this.catalogControlsView.setFocusedControl(this.toolbarControl);
-  };
-
   AppController.prototype.startSearchEditing = function startSearchEditing() {
     this.searchEditing = true;
-    this.catalogControlsView.startSearchEditing();
+    this.sidebarView.startSearchEditing();
   };
 
-  AppController.prototype.stopSearchEditing = function stopSearchEditing() {
+  AppController.prototype.stopSearchEditing = function stopSearchEditing(returnToGrid) {
     this.searchEditing = false;
-    this.catalogControlsView.stopSearchEditing();
-    this.focusToolbar('search');
-  };
-
-  AppController.prototype.toggleFavoritesFilter = function toggleFavoritesFilter() {
-    this.state.setFavoritesOnly(!this.state.favoritesOnly);
-    this.refreshHome();
+    this.sidebarView.stopSearchEditing();
+    if (returnToGrid) {
+      this.closeSidebar();
+    } else {
+      this.sidebarView.setFocusedItem('search');
+    }
   };
 
   AppController.prototype.toggleFocusedFavorite = function toggleFocusedFavorite() {

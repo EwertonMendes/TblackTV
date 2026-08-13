@@ -220,22 +220,17 @@ run('focus recovery cannot call itself recursively', function () {
   assert.strictEqual(controller.isCapturingPlayerFocus, false);
 });
 
-run('all iframe catalog entries use the simple profile and contain no autoplay controls', function () {
+run('the active catalog contains only direct HLS or M3U sources', function () {
   var catalog = JSON.parse(fs.readFileSync(path.join(root, 'app/config/channels.json'), 'utf8'));
-  var profiles = JSON.parse(fs.readFileSync(path.join(root, 'app/config/player-profiles.json'), 'utf8'));
   var iframeCount = 0;
 
-  assert.deepStrictEqual(profiles.profiles.map(function getId(profile) { return profile.id; }), ['simple-iframe']);
   catalog.channels.forEach(function eachChannel(channel) {
     channel.sources.forEach(function eachSource(source) {
-      if (source.type !== 'iframe') { return; }
-      iframeCount += 1;
-      assert.strictEqual(source.playerProfile, 'simple-iframe');
-      assert.strictEqual(source.controls, undefined);
-      assert.strictEqual(/(?:\?|&)autoplay=/.test(source.url), false);
+      if (source.type === 'iframe') { iframeCount += 1; }
+      assert.strictEqual(source.type === 'hls' || source.type === 'm3u', true);
     });
   });
-  assert.strictEqual(iframeCount > 0, true);
+  assert.strictEqual(iframeCount, 0);
 });
 
 console.log('\n' + passed + ' tests passed.');

@@ -13,9 +13,10 @@ var stylePaths = [
   'app/css/tokens.css',
   'app/css/layout.css',
   'app/css/components.css',
+  'app/css/sidebar.css',
   'app/css/player.css'
 ];
-var stylesheetPattern = /\s*<link rel="stylesheet" href="css\/(?:reset|tokens|layout|components|player)\.css\?v=[^"]+">/g;
+var stylesheetPattern = /\s*<link rel="stylesheet" href="css\/(?:reset|tokens|layout|components|sidebar|player)\.css\?v=[^"]+">/g;
 var localScriptPattern = /<script src="(js\/[^"]+?)(?:\?v=[^"]+)?"><\/script>/g;
 var catalog = readJson('app/config/channels.json');
 var profiles = readJson('app/config/player-profiles.json');
@@ -29,7 +30,6 @@ html = fs.readFileSync(templatePath, 'utf8');
 
 html = html.replace(stylesheetPattern, '');
 html = html.replace('</head>', '  <style id="tblacktv-bundled-styles">\n' + styles + '\n  </style>\n</head>');
-html = html.replace(/Número de teste: \d+/g, 'Número de teste: ' + packageJson.testBuild);
 html = html.replace(/\?v=\d+\.\d+\.\d+/g, '?v=' + packageJson.version);
 html = html.replace(localScriptPattern, function inlineLocalScript(match, relativePath) {
   var source = fs.readFileSync(path.join(root, 'app', relativePath), 'utf8').trim();
@@ -37,7 +37,7 @@ html = html.replace(localScriptPattern, function inlineLocalScript(match, relati
 });
 
 fs.writeFileSync(outputPath, html, 'utf8');
-console.log('Generated ' + packageJson.appPath + ' with ' + catalog.channels.length + ' embedded channels for test ' + packageJson.testBuild + '.');
+console.log('Generated ' + packageJson.appPath + ' with ' + catalog.channels.length + ' embedded channels.');
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(root, relativePath), 'utf8'));

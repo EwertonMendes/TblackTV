@@ -85,9 +85,8 @@
     }
   };
 
-  ChannelGridView.prototype.isFirstVisibleRow = function isFirstVisibleRow(index) {
-    var position = index - (this.pageIndex * this.pageSize);
-    return position >= 0 && position < 4;
+  ChannelGridView.prototype.isFirstColumn = function isFirstColumn(index) {
+    return index >= 0 && index % 4 === 0;
   };
 
   ChannelGridView.prototype.getPageSize = function getCurrentPageSize() {
@@ -105,7 +104,7 @@
       '<div class="channel-card__header">',
         '<div class="channel-card__logo">' + escapeHtml(channel.shortName) + '</div>',
         '<div class="channel-card__badges">',
-          '<span class="channel-card__favorite" aria-label="' + (isFavorite ? 'Favorito' : 'Não favorito') + '">' + (isFavorite ? '★' : '☆') + '</span>',
+          '<span class="channel-card__favorite" aria-label="' + (isFavorite ? 'Favorito' : 'Não favorito') + '">' + favoriteIcon(isFavorite) + '</span>',
           quality ? '<span class="channel-card__quality">' + escapeHtml(quality) + 'p</span>' : '',
         '</div>',
       '</div>',
@@ -117,6 +116,10 @@
     ].join('');
 
     return card;
+  }
+
+  function favoriteIcon(isFavorite) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path ' + (isFavorite ? '' : 'fill="none" stroke="currentColor" stroke-width="1.8" ') + 'd="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1 6.2-5.6-3-5.6 3 1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/></svg>';
   }
 
   function escapeHtml(value) {
