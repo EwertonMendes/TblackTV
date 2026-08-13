@@ -6,113 +6,9 @@
     "schemaVersion": 1,
     "profiles": [
       {
-        "id": "youtube-postmessage",
+        "id": "simple-iframe",
         "kind": "iframe",
-        "startup": {
-          "postMessageFormat": "json",
-          "urlParams": {
-            "autoplay": "1",
-            "enablejsapi": "1",
-            "playsinline": "1"
-          },
-          "postMessages": [
-            {
-              "message": {
-                "event": "listening"
-              },
-              "delaysMs": [
-                0,
-                500
-              ]
-            },
-            {
-              "message": {
-                "event": "command",
-                "func": "addEventListener",
-                "args": [
-                  "onStateChange"
-                ]
-              },
-              "delaysMs": [
-                50,
-                550
-              ]
-            },
-            {
-              "message": {
-                "event": "command",
-                "func": "playVideo",
-                "args": []
-              },
-              "delaysMs": [
-                100,
-                700,
-                1600
-              ]
-            }
-          ],
-          "verification": {
-            "type": "postMessage",
-            "origin": "https://www.youtube.com",
-            "eventField": "event",
-            "eventValue": "onStateChange",
-            "stateField": "info",
-            "playingValues": [
-              1
-            ]
-          },
-          "timeoutMs": 6000,
-          "manualFallback": "postMessage"
-        },
-        "controls": {
-          "strategy": "postMessage",
-          "targetOrigin": "https://www.youtube.com",
-          "play": {
-            "event": "command",
-            "func": "playVideo",
-            "args": []
-          },
-          "pause": {
-            "event": "command",
-            "func": "pauseVideo",
-            "args": []
-          }
-        }
-      },
-      {
-        "id": "same-origin-html5",
-        "kind": "iframe",
-        "startup": {
-          "sameOrigin": {
-            "mediaSelector": "video",
-            "playSelector": "[data-action=play], .vjs-big-play-button, .plyr__control--overlaid"
-          },
-          "verification": {
-            "type": "sameOriginMedia",
-            "mediaSelector": "video"
-          },
-          "timeoutMs": 5000,
-          "manualFallback": "sameOrigin"
-        }
-      },
-      {
-        "id": "opaque-iframe",
-        "kind": "iframe",
-        "startup": {
-          "securityMode": "interaction-shield",
-          "tizenPolicy": "block",
-          "urlParams": {
-            "autoplay": "1",
-            "playsinline": "1"
-          },
-          "verification": {
-            "type": "none"
-          },
-          "timeoutMs": 5000,
-          "manualFallback": "timedInteraction",
-          "interactionWindowMs": 6000,
-          "manualCompletion": "assume-playing"
-        }
+        "description": "Iframe nativo, sem autoplay, verificação ou automação do provedor."
       }
     ]
   };
@@ -146,23 +42,9 @@
             "id": "youtube-embed",
             "label": "YouTube oficial • iframe",
             "type": "iframe",
-            "url": "https://www.youtube.com/embed/live_stream?channel=UCSv9d0kQegylHWpP83jWSQg&autoplay=1&enablejsapi=1",
-            "playerProfile": "youtube-postmessage",
-            "timeoutMs": 20000,
-            "controls": {
-              "strategy": "postMessage",
-              "targetOrigin": "https://www.youtube.com",
-              "play": {
-                "event": "command",
-                "func": "playVideo",
-                "args": []
-              },
-              "pause": {
-                "event": "command",
-                "func": "pauseVideo",
-                "args": []
-              }
-            }
+            "url": "https://www.youtube.com/embed/live_stream?channel=UCSv9d0kQegylHWpP83jWSQg",
+            "playerProfile": "simple-iframe",
+            "timeoutMs": 20000
           }
         ]
       },
@@ -259,7 +141,7 @@
             "label": "RD Canais • player direto",
             "type": "iframe",
             "url": "https://localhost.tattoo/globo/player.php?id=6120663&lat=-22.9068467&long=-43.1728965",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           },
           {
@@ -267,7 +149,7 @@
             "label": "RD Canais • página alternativa",
             "type": "iframe",
             "url": "https://rdcanais.net/globorj",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           },
           {
@@ -275,7 +157,7 @@
             "label": "Arlequina • página alternativa",
             "type": "iframe",
             "url": "https://alerquina54104.embedtv.lat/eab811eb-8ba6-4c3a-b5b1-bd0add5e2913",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           },
           {
@@ -283,7 +165,7 @@
             "label": "Rede Canais • página alternativa",
             "type": "iframe",
             "url": "https://outbound-proxy-us-east1-0-blob-usercontent-client-id-7775691497.googleapis.com.de/player3/ch.php?categoria=live&canal=boborj",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           }
         ]
@@ -301,7 +183,7 @@
             "label": "Rede Canais • página alternativa",
             "type": "iframe",
             "url": "https://redecanaistv.vision/%70%6C%61%79%65%72%33/%63%68.%70%68%70?%63%61%74%65%67%6F%72%69%61=%6C%69%76%65&%63%61%6E%61%6C=%70%72%65%6D%69%65%72%65%63%6C%75%62%65%73",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           },
           {
@@ -309,7 +191,7 @@
             "label": "RD Canais • página alternativa",
             "type": "iframe",
             "url": "https://rdcanais.net/premiereclubes",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           },
           {
@@ -317,7 +199,7 @@
             "label": "Arlequina • página alternativa",
             "type": "iframe",
             "url": "https://alerquina54104.embedtv.lat/88b3ca0b-04f1-4b7a-a65c-d186b23e5cc5",
-            "playerProfile": "opaque-iframe",
+            "playerProfile": "simple-iframe",
             "timeoutMs": 8000
           }
         ]

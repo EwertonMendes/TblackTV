@@ -28,7 +28,9 @@
     this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
     this.boundFocusGuard = this.onApplicationFocus.bind(this);
     this.lastHandledEvent = null;
+    this.lastBackActionAt = 0;
     this.lastSourceSwitchAt = 0;
+    this.isCapturingPlayerFocus = false;
   }
 
   AppController.prototype.start = function start() {
@@ -165,6 +167,10 @@
       }
     }
 
+    if (keyCode === KEY.BACK && !this.acceptBackAction()) {
+      return;
+    }
+
     if (this.state.screen === 'home') {
       this.handleHomeKey(keyCode);
       return;
@@ -176,15 +182,18 @@
   AppController.prototype.onHardwareBack = function onHardwareBack(event) {
     var keyName = event && (event.keyName || (event.detail && event.detail.keyName));
 
+    if (event && event.type === 'tizenhwkey' && keyName !== 'back') {
+      return;
+    }
     if (this.lastHandledEvent === event) {
       return;
     }
     this.lastHandledEvent = event;
-    if (event && event.type === 'tizenhwkey' && keyName !== 'back') {
-      return;
-    }
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
+    }
+    if (!this.acceptBackAction()) {
+      return;
     }
     if (this.state.screen === 'home') {
       this.exitApplication();
@@ -193,8 +202,21 @@
     }
   };
 
+  AppController.prototype.acceptBackAction = function acceptBackAction() {
+    var now = Date.now ? Date.now() : new Date().getTime();
+
+    /* Some Tizen/TizenBrew combinations deliver one physical Return press as
+       both keydown and tizenhwkey/backbutton. Treat that burst as one action,
+       otherwise the first event returns Home and the second exits the app. */
+    if (now - this.lastBackActionAt < 1200) {
+      return false;
+    }
+    this.lastBackActionAt = now;
+    return true;
+  };
+
   AppController.prototype.onApplicationFocus = function onApplicationFocus(event) {
-    if (this.state.screen !== 'player' || this.state.iframeInteractionActive) {
+    if (this.state.screen !== 'player' || this.state.iframeInteractionActive || this.isCapturingPlayerFocus) {
       return;
     }
     if (event.target !== this.playerKeyCapture) {
@@ -209,11 +231,15 @@
       return;
     }
     function focusCapture() {
-      if (self.state.screen === 'player' && !self.state.iframeInteractionActive) {
+      if (self.state.screen === 'player' && !self.state.iframeInteractionActive && !self.isCapturingPlayerFocus) {
+        self.isCapturingPlayerFocus = true;
         try {
           window.focus();
           self.playerKeyCapture.focus();
-        } catch (error) {}
+        } catch (error) {
+        } finally {
+          self.isCapturingPlayerFocus = false;
+        }
       }
     }
     focusCapture();

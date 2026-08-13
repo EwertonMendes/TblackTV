@@ -91,14 +91,12 @@
   };
 
   PlayerView.prototype.showInteractionMode = function showInteractionMode(durationMs) {
-    var seconds = Math.round((durationMs || 6000) / 1000);
-
     this.hideLoading();
     this.hideActivation();
     this.hideError();
     this.clearOverlayTimer();
     this.elements.overlay.classList.remove('is-dimmed');
-    this.elements.interactionBannerText.textContent = 'Acione o Play — controle do TblackTV retorna em ' + seconds + ' segundos';
+    this.elements.interactionBannerText.textContent = 'Controle do iframe ativo — pressione OK novamente no player. Return volta ao TblackTV.';
     this.elements.interactionBanner.classList.remove('is-hidden');
   };
 
@@ -108,7 +106,7 @@
 
   PlayerView.prototype.setRetryInteractionAvailable = function setRetryInteractionAvailable() {
     this.elements.playStateIcon.textContent = '▶';
-    this.elements.playStateLabel.textContent = 'OK para tentar o Play novamente';
+    this.elements.playStateLabel.textContent = 'OK para interagir com o player';
     this.showOverlay();
   };
 
