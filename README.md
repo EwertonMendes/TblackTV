@@ -4,52 +4,76 @@ Hub de canais ao vivo para Smart TVs Samsung antigas, com foco em Tizen 5.0 e na
 
 ## Instalação pelo GitHub
 
-No TizenBrew, adicione o módulo:
-
 ```text
-EwertonMendes/TblackTV@v0.2.6
+EwertonMendes/TblackTV@v0.3.0
 ```
 
-Prefira uma tag imutável a `@master`. Cada versão de teste recebe um novo `appPath` e um número visível na Home para evitar misturas de manifesto, HTML, CSS e JavaScript mantidos em cache pelo CDN.
+Use a tag imutável em vez de `@master`. A Home desta versão mostra `Número de teste: 7`.
+
+## Catálogo online
+
+O catálogo local é exibido imediatamente e, em segundo plano, o app lê a lista brasileira do IPTV-org diretamente do GitHub:
+
+```text
+https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u
+```
+
+Cada entrada da M3U vira um canal. Entradas com o mesmo `tvg-id`, ou com o mesmo nome normalizado quando não há identificador, são agrupadas como fontes alternativas. As fontes são ordenadas por resolução: 1080 antes de 720, depois 576, 480 e assim por diante. Em empate, a fonte oficial e HTTPS têm preferência.
+
+A lista remota é atualizada em cada inicialização. Se GitHub, DNS ou CORS falharem, o app usa a última cópia salva na TV; se ainda não houver cache, os seis canais locais continuam funcionando.
+
+Somente streams HLS HTTP/HTTPS da lista remota são importados. Iframes foram removidos do catálogo, embora o adapter continue no código para possível uso futuro.
 
 ## Controle
 
 Na Home:
 
-- Setas: navegar;
-- OK: abrir o canal;
+- Setas: navegar pela grade e pelos controles de busca;
+- Channel +/−: página anterior/próxima;
+- OK: abrir canal ou ativar o controle selecionado;
+- Play/Pause: favoritar ou desfavoritar o canal focado;
 - Return: sair do módulo.
+
+Pressione para cima na primeira linha visível para acessar a pesquisa. Pressione OK no campo para abrir o teclado da TV. O botão com estrela alterna entre catálogo completo e somente favoritos.
 
 No player:
 
 - Esquerda/Direita: fonte anterior/próxima;
 - Channel +/−: próximo/anterior canal;
-- Return: voltar para a Home;
-- OK em mídia direta: Play/Pause;
-- OK em iframe: entregar o foco ao player incorporado para uma tentativa manual de Play.
+- OK ou Play/Pause: pausar/continuar;
+- Return: voltar à Home.
 
-Algumas combinações de Tizen e provedor não aceitam interação dentro do iframe. Nesse caso, use Return ou troque de fonte e prefira uma fonte HLS/M3U/vídeo direto.
+## Adicionando outra lista M3U
 
-## Estrutura
+Edite `app/config/channels.json` e acrescente um item em `remotePlaylists`:
 
-- `app/config/channels.json`: catálogo e fontes;
-- `app/config/player-profiles.json`: perfil declarativo simples para iframe;
-- `app/js/config/EmbeddedCatalog.js`: fallback empacotado contra DNS, CORS e JSON indisponível;
-- `app/config/playlists/`: playlists M3U locais;
-- `app/js/core/`: estado, eventos e navegação espacial;
-- `app/js/services/`: catálogo, resolução de fontes, players e fallback;
-- `app/js/ui/`: views;
-- `app/js/controllers/`: coordenação da aplicação.
+```json
+{
+  "id": "minha-lista-br",
+  "label": "Minha lista",
+  "url": "https://exemplo.com/canais-br.m3u",
+  "enabled": true,
+  "timeoutMs": 15000
+}
+```
 
-HLS, DASH e vídeo direto usam Samsung AVPlay quando disponível e HTML5 como fallback. Fontes incorporadas usam um iframe padrão. O app não injeta autoplay, não envia `postMessage`, não acessa o DOM do provedor e não considera a ausência de confirmação de reprodução um erro.
+Use IDs únicos. Se a nova lista usar os mesmos `tvg-id`, as URLs serão acrescentadas ao canal existente. Sem `tvg-id`, o app tenta mesclar pelo nome sem acentos, diferenças de maiúsculas ou pontuação. URLs repetidas não são adicionadas duas vezes.
 
-## Adicionando um canal
+O parser entende o formato:
 
-Edite `app/config/channels.json` e adicione um objeto em `channels`:
+```text
+#EXTINF:-1 tvg-id="MeuCanal.br@SD",Meu Canal (1080p)
+https://exemplo.com/meu-canal/index.m3u8
+```
+
+## Adicionando um canal local
+
+Adicione um objeto em `channels`:
 
 ```json
 {
   "id": "meu-canal",
+  "tvgId": "MeuCanal.br@SD",
   "name": "Meu Canal",
   "shortName": "MC",
   "category": "TV aberta",
@@ -58,50 +82,31 @@ Edite `app/config/channels.json` e adicione um objeto em `channels`:
   "sources": [
     {
       "id": "principal",
-      "label": "Fonte principal",
+      "label": "Fonte principal • 1080p",
       "type": "hls",
       "url": "https://exemplo.com/live/index.m3u8",
+      "quality": 1080,
+      "official": true,
       "timeoutMs": 20000
-    },
-    {
-      "id": "alternativa",
-      "label": "Player incorporado",
-      "type": "iframe",
-      "url": "https://provedor.example/player/canal",
-      "playerProfile": "simple-iframe",
-      "timeoutMs": 10000
     }
   ]
 }
 ```
 
-Tipos aceitos:
+O `tvgId` permite mesclar esse canal com as listas remotas. Fontes locais aceitas no catálogo atual são `hls` e `m3u`.
 
-- `hls`: manifesto `.m3u8`;
-- `dash`: manifesto `.mpd`;
-- `video`: mídia direta, como MP4;
-- `m3u`: playlist com uma ou mais URLs de mídia;
-- `iframe`: URL do `src` de uma página incorporável, sem o HTML `<iframe>` completo.
+## Organização e performance
 
-A ordem de `sources` define a prioridade. Esquerda/Direita sempre permite escolher outra fonte, inclusive durante loading ou depois de um erro. Use `enabled: false` para ignorar temporariamente uma fonte.
+O catálogo completo pode ter centenas de canais, mas a grade cria somente oito cards por página na resolução da TV — quatro em viewports menores. Busca, favoritos e navegação atuam sobre todos os canais sem manter centenas de elementos no DOM.
 
-### Iframe simples
+Favoritos são armazenados em `localStorage` usando o ID estável do canal e sobrevivem ao fechamento do app. Canais favoritos aparecem primeiro e podem ser isolados pelo filtro da Home.
 
-Todas as fontes iframe usam `playerProfile: "simple-iframe"`. A URL é aberta sem alterações. O evento `load` significa somente que a página incorporada foi entregue; o TblackTV não tenta determinar se o vídeo interno está tocando.
+## Build
 
-O iframe começa sem interação para o controle continuar no TblackTV. Depois que a página carregar, OK foca o iframe; pressione OK novamente para acionar o Play interno. Return é tratado também pelos eventos nativos de Back do Tizen. A documentação da Samsung alerta que a interação com iframe em TV pode não ser suportada e pode abrir o navegador, comportamento controlado pelo Web Engine/provedor, não pelo aplicativo.
-
-Não existe forma confiável de simultaneamente permitir um clique real em um iframe cross-origin e impedir popups ou navegação iniciados por esse clique. Para reprodução previsível na TV, prefira AVPlay com uma URL direta autorizada.
-
-## Inicialização resiliente
-
-O relógio e o marcador de versão iniciam sem depender da rede. Os JSONs são carregados com timeout; em falha de DNS, CDN, HTTP, CORS ou conteúdo inválido, o app usa a última cópia válida e depois `EmbeddedCatalog.js`. Assim a Home continua com canais e navegação.
-
-Depois de alterar o catálogo ou perfis, gere novamente a entrada autocontida da TV:
+Depois de alterar a configuração:
 
 ```text
 npm run build-tv-entry
-npm test
 ```
 
-O build sincroniza automaticamente o catálogo incorporado e produz o arquivo definido por `appPath` no `package.json`.
+O build sincroniza `EmbeddedCatalog.js` e gera o HTML autocontido indicado por `appPath` no `package.json`.

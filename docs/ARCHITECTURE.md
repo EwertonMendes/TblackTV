@@ -11,9 +11,13 @@
 
 ## Fluxo
 
-`channels.json → CatalogService → PlaybackService → SourceResolver → PlayerFactory → Adapter`
+`channels.json → CatalogService → RemotePlaylistCatalogService → AppState → PlaybackService → SourceResolver → PlayerFactory → Adapter`
 
 `CatalogService` busca perfis e canais com timeout. A inicialização usa `JSON atual → última cópia válida → EmbeddedCatalog`, portanto DNS, CORS ou um JSON corrompido não deixam a Home vazia.
+
+`RemotePlaylistCatalogService` atualiza em paralelo as listas declaradas em `remotePlaylists`. Ele guarda a M3U bruta em `localStorage`, importa somente HLS HTTP/HTTPS, agrupa por `tvg-id` ou nome normalizado, remove URLs duplicadas e ordena fontes pela resolução numérica. Novas listas usam o mesmo pipeline e adicionam fontes aos canais existentes.
+
+`FavoritesService` persiste IDs de canais. `AppState` aplica busca, filtro de favoritos e ordenação sem alterar o catálogo original. `ChannelGridView` pagina e renderiza apenas a janela visível para limitar DOM e memória no Tizen 5.
 
 `SourceResolver` entrega fontes diretas e expande playlists M3U. `PlaybackService` controla tentativa, timeout e fallback. O `AppController` mantém Return, Channel ± e Esquerda/Direita prioritários em loading e erro.
 

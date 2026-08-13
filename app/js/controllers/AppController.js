@@ -13,7 +13,8 @@
     MEDIA_PLAY_PAUSE: 10252,
     MEDIA_STOP: 413,
     CHANNEL_UP: 427,
-    CHANNEL_DOWN: 428
+    CHANNEL_DOWN: 428,
+    FAVORITE: 70
   };
 
   function AppController(options) {
@@ -24,6 +25,11 @@
     this.playerView = options.playerView;
     this.playbackService = options.playbackService;
     this.playerKeyCapture = options.playerKeyCapture;
+    this.catalogControlsView = options.catalogControlsView;
+    this.favoritesService = options.favoritesService;
+    this.searchInput = options.searchInput;
+    this.searchControl = options.searchControl;
+    this.favoritesControl = options.favoritesControl;
     this.boundKeyHandler = this.onKeyDown.bind(this);
     this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
     this.boundFocusGuard = this.onApplicationFocus.bind(this);
@@ -31,12 +37,16 @@
     this.lastBackActionAt = 0;
     this.lastSourceSwitchAt = 0;
     this.isCapturingPlayerFocus = false;
+    this.homeFocusArea = 'grid';
+    this.toolbarControl = 'search';
+    this.searchEditing = false;
   }
 
   AppController.prototype.start = function start() {
-    this.gridView.render(this.state.channels);
-    this.gridView.focus(this.state.focusedChannelIndex);
+    this.state.setFavorites(this.favoritesService.asLookup());
+    this.refreshHome();
     this.bindPlaybackEvents();
+    this.bindCatalogControls();
     window.addEventListener('keydown', this.boundKeyHandler, true);
     document.addEventListener('keydown', this.boundKeyHandler, true);
     if (this.playerKeyCapture) {
@@ -47,6 +57,42 @@
     document.addEventListener('backbutton', this.boundHardwareBackHandler, true);
     document.addEventListener('focusin', this.boundFocusGuard, true);
     registerRemoteKeys();
+  };
+
+  AppController.prototype.bindCatalogControls = function bindCatalogControls() {
+    var self = this;
+
+    this.searchInput.addEventListener('input', function onSearchInput() {
+      self.state.setSearchQuery(self.searchInput.value);
+      self.refreshHome();
+    });
+    this.searchControl.addEventListener('click', function onSearchClick() {
+      self.focusToolbar('search');
+      self.startSearchEditing();
+    });
+    this.favoritesControl.addEventListener('click', function onFavoritesClick() {
+      self.focusToolbar('favorites');
+      self.toggleFavoritesFilter();
+    });
+  };
+
+  AppController.prototype.updateCatalog = function updateCatalog(channels) {
+    this.state.setCatalog(channels);
+    this.refreshHome();
+  };
+
+  AppController.prototype.refreshHome = function refreshHome() {
+    this.navigation.setItemCount(this.state.channels.length);
+    this.navigation.setIndex(this.state.focusedChannelIndex);
+    this.gridView.render(this.state.channels, this.state.favoriteIds, this.state.focusedChannelIndex);
+    this.catalogControlsView.setFavoritesOnly(this.state.favoritesOnly);
+    this.catalogControlsView.updateSummary(this.state.searchQuery, this.state.favoritesOnly);
+    if (this.homeFocusArea === 'toolbar') {
+      this.catalogControlsView.setFocusedControl(this.toolbarControl);
+    } else {
+      this.catalogControlsView.clearFocus();
+      this.gridView.focus(this.state.focusedChannelIndex);
+    }
   };
 
   AppController.prototype.bindPlaybackEvents = function bindPlaybackEvents() {
@@ -160,6 +206,11 @@
     this.lastHandledEvent = event;
     keyCode = normalizeKeyCode(event);
 
+    if (this.state.screen === 'home' && this.searchEditing) {
+      this.handleSearchEditingKey(keyCode, event);
+      return;
+    }
+
     if (isApplicationKey(keyCode)) {
       event.preventDefault();
       if (typeof event.stopPropagation === 'function') {
@@ -191,6 +242,10 @@
     this.lastHandledEvent = event;
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
+    }
+    if (this.state.screen === 'home' && this.searchEditing) {
+      this.handleSearchEditingKey(KEY.BACK, event || { preventDefault: function preventDefault() {} });
+      return;
     }
     if (!this.acceptBackAction()) {
       return;
@@ -247,19 +302,110 @@
   };
 
   AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
+    if (this.homeFocusArea === 'toolbar') {
+      this.handleToolbarKey(keyCode);
+      return;
+    }
+
     if (keyCode === KEY.LEFT) {
       this.moveFocus('left');
     } else if (keyCode === KEY.RIGHT) {
       this.moveFocus('right');
     } else if (keyCode === KEY.UP) {
-      this.moveFocus('up');
+      if (this.gridView.isFirstVisibleRow(this.state.focusedChannelIndex)) {
+        this.focusToolbar('search');
+      } else {
+        this.moveFocus('up');
+      }
     } else if (keyCode === KEY.DOWN) {
       this.moveFocus('down');
     } else if (keyCode === KEY.ENTER) {
       this.openFocusedChannel();
+    } else if (keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.FAVORITE) {
+      this.toggleFocusedFavorite();
+    } else if (keyCode === KEY.CHANNEL_UP || keyCode === KEY.CHANNEL_DOWN) {
+      this.movePage(keyCode === KEY.CHANNEL_UP ? -1 : 1);
     } else if (keyCode === KEY.BACK) {
       this.exitApplication();
     }
+  };
+
+  AppController.prototype.movePage = function movePage(direction) {
+    var pageSize = this.gridView.getPageSize();
+    var nextIndex = this.state.focusedChannelIndex + (direction * pageSize);
+
+    nextIndex = Math.max(0, Math.min(this.state.channels.length - 1, nextIndex));
+    this.navigation.setIndex(nextIndex);
+    this.state.focusChannel(nextIndex);
+    this.gridView.focus(nextIndex);
+  };
+
+  AppController.prototype.handleToolbarKey = function handleToolbarKey(keyCode) {
+    if (keyCode === KEY.LEFT || keyCode === KEY.RIGHT) {
+      this.toolbarControl = this.toolbarControl === 'search' ? 'favorites' : 'search';
+      this.catalogControlsView.setFocusedControl(this.toolbarControl);
+    } else if (keyCode === KEY.DOWN) {
+      this.homeFocusArea = 'grid';
+      this.catalogControlsView.clearFocus();
+      this.gridView.focus(this.state.focusedChannelIndex);
+    } else if (keyCode === KEY.ENTER) {
+      if (this.toolbarControl === 'search') {
+        this.startSearchEditing();
+      } else {
+        this.toggleFavoritesFilter();
+      }
+    } else if (keyCode === KEY.BACK) {
+      this.exitApplication();
+    }
+  };
+
+  AppController.prototype.handleSearchEditingKey = function handleSearchEditingKey(keyCode, event) {
+    if (keyCode === KEY.ENTER) {
+      event.preventDefault();
+      this.stopSearchEditing();
+    } else if (keyCode === KEY.BACK) {
+      event.preventDefault();
+      if (this.searchInput.value) {
+        this.searchInput.value = '';
+        this.state.setSearchQuery('');
+        this.refreshHome();
+      } else {
+        this.stopSearchEditing();
+      }
+    }
+  };
+
+  AppController.prototype.focusToolbar = function focusToolbar(controlName) {
+    this.homeFocusArea = 'toolbar';
+    this.toolbarControl = controlName || 'search';
+    this.gridView.focus(-1);
+    this.catalogControlsView.setFocusedControl(this.toolbarControl);
+  };
+
+  AppController.prototype.startSearchEditing = function startSearchEditing() {
+    this.searchEditing = true;
+    this.catalogControlsView.startSearchEditing();
+  };
+
+  AppController.prototype.stopSearchEditing = function stopSearchEditing() {
+    this.searchEditing = false;
+    this.catalogControlsView.stopSearchEditing();
+    this.focusToolbar('search');
+  };
+
+  AppController.prototype.toggleFavoritesFilter = function toggleFavoritesFilter() {
+    this.state.setFavoritesOnly(!this.state.favoritesOnly);
+    this.refreshHome();
+  };
+
+  AppController.prototype.toggleFocusedFavorite = function toggleFocusedFavorite() {
+    var channel = this.state.getFocusedChannel();
+    if (!channel) {
+      return;
+    }
+    this.favoritesService.toggle(channel.id);
+    this.state.setFavorites(this.favoritesService.asLookup());
+    this.refreshHome();
   };
 
   AppController.prototype.handlePlayerKey = function handlePlayerKey(keyCode) {
@@ -322,6 +468,9 @@
   };
 
   AppController.prototype.openFocusedChannel = function openFocusedChannel() {
+    if (!this.state.getFocusedChannel()) {
+      return;
+    }
     this.state.selectFocusedChannel();
     this.playCurrentChannel();
   };
@@ -359,6 +508,8 @@
     this.navigation.setIndex(this.state.focusedChannelIndex);
     this.gridView.focus(this.state.focusedChannelIndex);
     this.playerView.hide();
+    this.homeFocusArea = 'grid';
+    this.refreshHome();
   };
 
   AppController.prototype.exitApplication = function exitApplication() {

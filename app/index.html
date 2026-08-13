@@ -12,11 +12,11 @@
   </style>
   <script type="text/javascript" defer src="$WEBAPIS/webapis/webapis.js"></script>
 
-  <link rel="stylesheet" href="css/reset.css?v=0.2.6">
-  <link rel="stylesheet" href="css/tokens.css?v=0.2.6">
-  <link rel="stylesheet" href="css/layout.css?v=0.2.6">
-  <link rel="stylesheet" href="css/components.css?v=0.2.6">
-  <link rel="stylesheet" href="css/player.css?v=0.2.6">
+  <link rel="stylesheet" href="css/reset.css?v=0.3.0">
+  <link rel="stylesheet" href="css/tokens.css?v=0.3.0">
+  <link rel="stylesheet" href="css/layout.css?v=0.3.0">
+  <link rel="stylesheet" href="css/components.css?v=0.3.0">
+  <link rel="stylesheet" href="css/player.css?v=0.3.0">
 </head>
 <body>
   <div id="app" class="app-shell">
@@ -33,7 +33,7 @@
         <div class="topbar__status">
           <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
           <!-- Incrementar este número a cada publicação usada para teste na TV. -->
-          <span id="test-build-number" class="build-marker">Número de teste: 6</span>
+          <span id="test-build-number" class="build-marker">Número de teste: 7</span>
           <time id="clock" class="clock">--:--</time>
         </div>
       </header>
@@ -41,7 +41,20 @@
       <section class="hero">
         <p class="eyebrow">CANAIS GRATUITOS</p>
         <h2 class="hero__title">O que você quer assistir?</h2>
-        <p class="hero__description">Escolha um canal e aperte OK. Interface otimizada para o controle da TV.</p>
+        <p class="hero__description">Pesquise, favorite e escolha uma fonte. O catálogo online é atualizado automaticamente.</p>
+      </section>
+
+      <section class="catalog-toolbar" aria-label="Busca e filtros">
+        <div id="search-control" class="catalog-control catalog-control--search">
+          <span class="catalog-control__icon" aria-hidden="true">⌕</span>
+          <label for="channel-search">Pesquisar canal</label>
+          <input id="channel-search" type="search" placeholder="Digite o nome do canal" autocomplete="off" tabindex="-1">
+        </div>
+        <button id="favorites-control" class="catalog-control catalog-control--favorites" type="button" tabindex="-1" aria-pressed="false">
+          <span class="catalog-control__icon" aria-hidden="true">★</span>
+          <span class="catalog-control__label">Todos os canais</span>
+        </button>
+        <span id="filter-summary" class="catalog-toolbar__summary">Catálogo completo</span>
       </section>
 
       <section class="channel-section" aria-labelledby="channels-heading">
@@ -59,7 +72,9 @@
 
       <footer class="helpbar">
         <span><kbd>← ↑ ↓ →</kbd> navegar</span>
+        <span><kbd>Channel ±</kbd> páginas</span>
         <span><kbd>OK</kbd> assistir</span>
+        <span><kbd>Play/Pause</kbd> favoritar</span>
         <span><kbd>Return</kbd> sair</span>
       </footer>
     </main>
@@ -133,22 +148,25 @@
     </section>
   </div>
 
-  <script src="js/bootstrap.js?v=0.2.6"></script>
-  <script src="js/config/EmbeddedCatalog.js?v=0.2.6"></script>
-  <script src="js/core/EventBus.js?v=0.2.6"></script>
-  <script src="js/core/AppState.js?v=0.2.6"></script>
-  <script src="js/core/SpatialNavigation.js?v=0.2.6"></script>
-  <script src="js/services/adapters/AvPlayAdapter.js?v=0.2.6"></script>
-  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.2.6"></script>
-  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.2.6"></script>
-  <script src="js/services/CatalogService.js?v=0.2.6"></script>
-  <script src="js/services/SourceResolver.js?v=0.2.6"></script>
-  <script src="js/services/PlayerFactory.js?v=0.2.6"></script>
-  <script src="js/services/PlaybackService.js?v=0.2.6"></script>
-  <script src="js/ui/ChannelGridView.js?v=0.2.6"></script>
-  <script src="js/ui/ClockView.js?v=0.2.6"></script>
-  <script src="js/ui/PlayerView.js?v=0.2.6"></script>
-  <script src="js/controllers/AppController.js?v=0.2.6"></script>
-  <script src="js/main.js?v=0.2.6"></script>
+  <script src="js/bootstrap.js?v=0.3.0"></script>
+  <script src="js/config/EmbeddedCatalog.js?v=0.3.0"></script>
+  <script src="js/core/EventBus.js?v=0.3.0"></script>
+  <script src="js/core/AppState.js?v=0.3.0"></script>
+  <script src="js/core/SpatialNavigation.js?v=0.3.0"></script>
+  <script src="js/services/adapters/AvPlayAdapter.js?v=0.3.0"></script>
+  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.3.0"></script>
+  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.3.0"></script>
+  <script src="js/services/CatalogService.js?v=0.3.0"></script>
+  <script src="js/services/RemotePlaylistCatalogService.js?v=0.3.0"></script>
+  <script src="js/services/FavoritesService.js?v=0.3.0"></script>
+  <script src="js/services/SourceResolver.js?v=0.3.0"></script>
+  <script src="js/services/PlayerFactory.js?v=0.3.0"></script>
+  <script src="js/services/PlaybackService.js?v=0.3.0"></script>
+  <script src="js/ui/ChannelGridView.js?v=0.3.0"></script>
+  <script src="js/ui/CatalogControlsView.js?v=0.3.0"></script>
+  <script src="js/ui/ClockView.js?v=0.3.0"></script>
+  <script src="js/ui/PlayerView.js?v=0.3.0"></script>
+  <script src="js/controllers/AppController.js?v=0.3.0"></script>
+  <script src="js/main.js?v=0.3.0"></script>
 </body>
 </html>

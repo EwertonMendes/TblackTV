@@ -105,17 +105,26 @@
         label: pendingLabel ? parentSource.label + ' • ' + pendingLabel : parentSource.label,
         type: inferSourceType(line),
         url: resolveUrl(parentSource.url, line),
+        quality: readQuality(pendingLabel) || parentSource.quality || 0,
         timeoutMs: parentSource.timeoutMs
       });
       pendingLabel = '';
     }
 
+    entries.sort(function highestQualityFirst(left, right) {
+      return (right.quality || 0) - (left.quality || 0);
+    });
     return entries;
   }
 
   function readExtInfLabel(line) {
     var commaIndex = line.indexOf(',');
     return commaIndex >= 0 ? line.slice(commaIndex + 1).trim() : '';
+  }
+
+  function readQuality(label) {
+    var match = /\((\d{3,4})[pi]\)/i.exec(label || '');
+    return match ? parseInt(match[1], 10) || 0 : 0;
   }
 
   function inferSourceType(url) {

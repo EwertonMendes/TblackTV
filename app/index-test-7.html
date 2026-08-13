@@ -77,6 +77,7 @@ html, body {
 
 .topbar,
 .hero,
+.catalog-toolbar,
 .channel-section,
 .helpbar { position: relative; z-index: 1; }
 
@@ -120,12 +121,24 @@ html, body {
 .status-pill--warning .status-dot { background: #f2b84b; box-shadow: 0 0 0 5px rgba(242,184,75,.12); }
 .clock { min-width: 86px; text-align: right; font-size: 24px; font-weight: 700; letter-spacing: .4px; }
 
-.hero { margin-top: 36px; }
+.hero { margin-top: 22px; }
 .eyebrow { color: #99a5ff; font-weight: 800; font-size: 16px; letter-spacing: 2.4px; }
-.hero__title { margin-top: 14px; font-size: 58px; line-height: 1.04; letter-spacing: -2.1px; }
-.hero__description { margin-top: 18px; max-width: 830px; color: var(--muted); font-size: 21px; line-height: 1.45; }
+.hero__title { margin-top: 10px; font-size: 48px; line-height: 1.04; letter-spacing: -1.8px; }
+.hero__description { margin-top: 10px; max-width: 1000px; color: var(--muted); font-size: 18px; line-height: 1.4; }
 
-.channel-section { margin-top: 36px; }
+.catalog-toolbar {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+}
+.catalog-toolbar > * + * { margin-left: 16px; }
+.catalog-toolbar__summary {
+  margin-left: auto !important;
+  color: var(--muted);
+  font-size: 15px;
+  white-space: nowrap;
+}
+.channel-section { margin-top: 22px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .section-heading h3 { font-size: 25px; letter-spacing: -.4px; }
 .section-heading__meta { color: var(--muted); font-size: 16px; }
@@ -178,6 +191,7 @@ kbd {
   .eyebrow { font-size: 13px; letter-spacing: 2px; }
   .hero__title { margin-top: 8px; font-size: 42px; letter-spacing: -1.4px; }
   .hero__description { margin-top: 10px; font-size: 17px; }
+  .catalog-toolbar { margin-top: 14px; }
   .channel-section { margin-top: 18px; }
   .section-heading { margin-bottom: 12px; }
   .section-heading h3 { font-size: 20px; }
@@ -237,6 +251,20 @@ kbd {
   color: #ffe5eb; font-size: 13px; font-weight: 800; letter-spacing: 1.2px;
 }
 .channel-card__live span { width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--live); }
+.channel-card__badges { display: flex; align-items: center; position: relative; z-index: 2; }
+.channel-card__badges > * + * { margin-left: 9px; }
+.channel-card__favorite {
+  width: 38px; height: 38px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: #b8c3d5; background: rgba(4, 8, 18, .42);
+  font-size: 23px;
+}
+.channel-card.is-favorite .channel-card__favorite { color: #ffd65a; background: rgba(255, 214, 90, .13); }
+.channel-card__quality {
+  padding: 8px 10px; border-radius: 9px;
+  color: #dce5f3; background: rgba(4, 8, 18, .42);
+  font-size: 12px; font-weight: 800;
+}
 .channel-card__body { position: relative; z-index: 1; margin-top: 16px; min-width: 0; }
 .channel-card__category { color: #a9b5c9; font-size: 13px; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; }
 .channel-card__name { margin-top: 5px; font-size: 27px; line-height: 1.15; letter-spacing: -.7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -277,6 +305,53 @@ kbd {
 .channel-skeleton strong { font-size: 18px; font-weight: 600; }
 @keyframes skeleton-pulse { to { transform: translateX(100%); } }
 
+.catalog-control {
+  height: 62px;
+  border: 2px solid rgba(255,255,255,.10);
+  border-radius: 17px;
+  background: rgba(255,255,255,.055);
+  color: #eef3fb;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+.catalog-control.is-focused {
+  border-color: #fff;
+  background: rgba(255,255,255,.12);
+  transform: scale(1.018);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+}
+.catalog-control__icon { color: #ffd65a; font-size: 25px; }
+.catalog-control--search {
+  width: 610px;
+  display: flex; align-items: center;
+  padding: 0 19px;
+}
+.catalog-control--search > * + * { margin-left: 13px; }
+.catalog-control--search label { color: #e7edf7; font-size: 16px; font-weight: 700; white-space: nowrap; }
+.catalog-control--search input {
+  flex: 1; min-width: 0;
+  border: 0; outline: 0; background: transparent;
+  color: #fff; font-size: 17px;
+}
+.catalog-control--search input::placeholder { color: #7f8ca2; }
+.catalog-control--search.is-editing { border-color: #99a5ff; background: rgba(99, 113, 220, .16); }
+.catalog-control--favorites {
+  min-width: 250px;
+  padding: 0 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: default;
+}
+.catalog-control--favorites > * + * { margin-left: 11px; }
+.catalog-control--favorites .catalog-control__label { font-size: 16px; font-weight: 800; }
+.catalog-control--favorites.is-active { background: rgba(255, 214, 90, .13); border-color: rgba(255, 214, 90, .65); }
+.empty-catalog {
+  width: 100%; min-height: 210px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 2px dashed rgba(255,255,255,.12); border-radius: 20px;
+  color: var(--muted);
+}
+.empty-catalog strong { color: #fff; font-size: 25px; }
+.empty-catalog span { margin-top: 10px; font-size: 17px; }
+
 @media screen and (max-width: 1500px) {
   .channel-card {
     width: calc(25% - 18px);
@@ -289,6 +364,8 @@ kbd {
   .channel-card.is-focused { transform: scale(1.025); }
   .channel-card__logo { width: 52px; height: 52px; border-radius: 15px; font-size: 16px; }
   .channel-card__live { font-size: 10px; letter-spacing: .9px; }
+  .channel-card__favorite { width: 30px; height: 30px; border-radius: 9px; font-size: 18px; }
+  .channel-card__quality { padding: 6px 7px; font-size: 9px; }
   .channel-card__body { margin-top: 10px; }
   .channel-card__category { font-size: 10px; }
   .channel-card__name { margin-top: 3px; font-size: 21px; }
@@ -296,6 +373,11 @@ kbd {
   .channel-skeleton { width: calc(25% - 18px); height: 185px; margin-right: 18px; margin-bottom: 18px; padding: 18px; border-radius: 18px; }
   .channel-skeleton span { width: 52px; height: 52px; margin-bottom: 22px; border-radius: 15px; }
   .channel-skeleton strong { font-size: 14px; }
+  .catalog-control { height: 48px; border-radius: 13px; }
+  .catalog-control--search { width: 480px; padding: 0 14px; }
+  .catalog-control--search label, .catalog-control--search input, .catalog-control--favorites .catalog-control__label { font-size: 13px; }
+  .catalog-control--favorites { min-width: 205px; padding: 0 14px; }
+  .catalog-toolbar__summary { font-size: 12px; }
 }
 
 .screen--player {
@@ -494,7 +576,7 @@ kbd {
         <div class="topbar__status">
           <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
           <!-- Incrementar este número a cada publicação usada para teste na TV. -->
-          <span id="test-build-number" class="build-marker">Número de teste: 6</span>
+          <span id="test-build-number" class="build-marker">Número de teste: 7</span>
           <time id="clock" class="clock">--:--</time>
         </div>
       </header>
@@ -502,7 +584,20 @@ kbd {
       <section class="hero">
         <p class="eyebrow">CANAIS GRATUITOS</p>
         <h2 class="hero__title">O que você quer assistir?</h2>
-        <p class="hero__description">Escolha um canal e aperte OK. Interface otimizada para o controle da TV.</p>
+        <p class="hero__description">Pesquise, favorite e escolha uma fonte. O catálogo online é atualizado automaticamente.</p>
+      </section>
+
+      <section class="catalog-toolbar" aria-label="Busca e filtros">
+        <div id="search-control" class="catalog-control catalog-control--search">
+          <span class="catalog-control__icon" aria-hidden="true">⌕</span>
+          <label for="channel-search">Pesquisar canal</label>
+          <input id="channel-search" type="search" placeholder="Digite o nome do canal" autocomplete="off" tabindex="-1">
+        </div>
+        <button id="favorites-control" class="catalog-control catalog-control--favorites" type="button" tabindex="-1" aria-pressed="false">
+          <span class="catalog-control__icon" aria-hidden="true">★</span>
+          <span class="catalog-control__label">Todos os canais</span>
+        </button>
+        <span id="filter-summary" class="catalog-toolbar__summary">Catálogo completo</span>
       </section>
 
       <section class="channel-section" aria-labelledby="channels-heading">
@@ -520,7 +615,9 @@ kbd {
 
       <footer class="helpbar">
         <span><kbd>← ↑ ↓ →</kbd> navegar</span>
+        <span><kbd>Channel ±</kbd> páginas</span>
         <span><kbd>OK</kbd> assistir</span>
+        <span><kbd>Play/Pause</kbd> favoritar</span>
         <span><kbd>Return</kbd> sair</span>
       </footer>
     </main>
@@ -626,9 +723,19 @@ kbd {
 
   namespace.config.embeddedCatalog = {
     "schemaVersion": 1,
+    "remotePlaylists": [
+      {
+        "id": "iptv-org-br",
+        "label": "IPTV-org Brasil",
+        "url": "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u",
+        "enabled": true,
+        "timeoutMs": 15000
+      }
+    ],
     "channels": [
       {
         "id": "tv-brasil",
+        "tvgId": "TVBrasil.br@SD",
         "name": "TV Brasil",
         "shortName": "TV",
         "category": "TV aberta",
@@ -637,30 +744,26 @@ kbd {
         "sources": [
           {
             "id": "ebc-hls",
-            "label": "EBC • HLS oficial",
+            "label": "EBC • HLS oficial • 720p",
             "type": "hls",
             "url": "https://tvbrasil-stream.ebc.com.br/index.m3u8",
+            "quality": 720,
+            "official": true,
             "timeoutMs": 20000
           },
           {
             "id": "local-m3u",
-            "label": "Playlist M3U • Exemplo",
+            "label": "Playlist M3U local",
             "type": "m3u",
             "url": "config/playlists/tv-brasil.m3u",
-            "timeoutMs": 20000
-          },
-          {
-            "id": "youtube-embed",
-            "label": "YouTube oficial • iframe",
-            "type": "iframe",
-            "url": "https://www.youtube.com/embed/live_stream?channel=UCSv9d0kQegylHWpP83jWSQg",
-            "playerProfile": "simple-iframe",
+            "quality": 720,
             "timeoutMs": 20000
           }
         ]
       },
       {
         "id": "canal-gov",
+        "tvgId": "CanalGov.br@SD",
         "name": "Canal Gov",
         "shortName": "GOV",
         "category": "Notícias",
@@ -671,12 +774,14 @@ kbd {
             "id": "ebc-hls",
             "label": "EBC • HLS oficial",
             "type": "hls",
-            "url": "https://canalgov-stream.ebc.com.br/index.m3u8"
+            "url": "https://canalgov-stream.ebc.com.br/index.m3u8",
+            "official": true
           }
         ]
       },
       {
         "id": "canal-educacao",
+        "tvgId": "CanalEducacao.br@SD",
         "name": "Canal Educação",
         "shortName": "EDU",
         "category": "Educação",
@@ -687,12 +792,14 @@ kbd {
             "id": "ebc-hls",
             "label": "EBC • HLS oficial",
             "type": "hls",
-            "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8"
+            "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8",
+            "official": true
           }
         ]
       },
       {
         "id": "tv-cultura",
+        "tvgId": "TVCultura.br@SD",
         "name": "TV Cultura",
         "shortName": "CULT",
         "category": "TV aberta",
@@ -703,12 +810,14 @@ kbd {
             "id": "tvcultura-hls",
             "label": "TV Cultura • HLS oficial",
             "type": "hls",
-            "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8"
+            "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8",
+            "official": true
           }
         ]
       },
       {
         "id": "tv-camara",
+        "tvgId": "TVCamara.br@SD",
         "name": "TV Câmara",
         "shortName": "CAM",
         "category": "Legislativo",
@@ -717,14 +826,17 @@ kbd {
         "sources": [
           {
             "id": "camara-hls",
-            "label": "Câmara dos Deputados • HLS oficial",
+            "label": "Câmara dos Deputados • HLS oficial • 1080p",
             "type": "hls",
-            "url": "https://stream3.camara.gov.br/tv1/manifest.m3u8"
+            "url": "https://stream3.camara.gov.br/tv1/manifest.m3u8",
+            "quality": 1080,
+            "official": true
           }
         ]
       },
       {
         "id": "tv-parana-turismo",
+        "tvgId": "TVParanaTurismo.br@SD",
         "name": "TV Paraná Turismo",
         "shortName": "PR",
         "category": "TV pública",
@@ -735,83 +847,8 @@ kbd {
             "id": "parana-hls",
             "label": "Governo do Paraná • HLS oficial",
             "type": "hls",
-            "url": "https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8"
-          }
-        ]
-      },
-      {
-        "id": "globo-rj",
-        "name": "Globo RJ",
-        "shortName": "Globo",
-        "category": "TV aberta",
-        "accent": "#00378b",
-        "description": "Programação da TV Globo para o Rio de Janeiro: jornalismo local, novelas, esportes e entretenimento.",
-        "sources": [
-          {
-            "id": "rdcanais-player-direct",
-            "label": "RD Canais • player direto",
-            "type": "iframe",
-            "url": "https://localhost.tattoo/globo/player.php?id=6120663&lat=-22.9068467&long=-43.1728965",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "rdcanais-wrapper",
-            "label": "RD Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://rdcanais.net/globorj",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "alerquina-wrapper",
-            "label": "Arlequina • página alternativa",
-            "type": "iframe",
-            "url": "https://alerquina54104.embedtv.lat/eab811eb-8ba6-4c3a-b5b1-bd0add5e2913",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "redecanais-wrapper",
-            "label": "Rede Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://outbound-proxy-us-east1-0-blob-usercontent-client-id-7775691497.googleapis.com.de/player3/ch.php?categoria=live&canal=boborj",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          }
-        ]
-      },
-      {
-        "id": "premiere-clubes",
-        "name": "Premiere Clubes",
-        "shortName": "PREMIERE",
-        "category": "Esportes",
-        "accent": "#288f43",
-        "description": "Transmissão de jogos de futebol ao vivo, incluindo campeonatos nacionais e internacionais.",
-        "sources": [
-          {
-            "id": "redecanais-wrapper",
-            "label": "Rede Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://redecanaistv.vision/%70%6C%61%79%65%72%33/%63%68.%70%68%70?%63%61%74%65%67%6F%72%69%61=%6C%69%76%65&%63%61%6E%61%6C=%70%72%65%6D%69%65%72%65%63%6C%75%62%65%73",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "rdcanais-wrapper",
-            "label": "RD Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://rdcanais.net/premiereclubes",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "alerquina-wrapper",
-            "label": "Arlequina • página alternativa",
-            "type": "iframe",
-            "url": "https://alerquina54104.embedtv.lat/88b3ca0b-04f1-4b7a-a65c-d186b23e5cc5",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
+            "url": "https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8",
+            "official": true
           }
         ]
       }
@@ -851,7 +888,11 @@ kbd {
   'use strict';
 
   function AppState(channels) {
+    this.allChannels = channels || [];
     this.channels = channels || [];
+    this.favoriteIds = {};
+    this.searchQuery = '';
+    this.favoritesOnly = false;
     this.focusedChannelIndex = 0;
     this.currentChannelIndex = null;
     this.currentSourceIndex = 0;
@@ -861,6 +902,63 @@ kbd {
     this.requiresUserAction = false;
     this.iframeInteractionActive = false;
   }
+
+  AppState.prototype.setCatalog = function setCatalog(channels) {
+    var focused = this.getFocusedChannel();
+    var current = this.getCurrentChannel();
+
+    this.allChannels = channels || [];
+    this.applyFilters(focused && focused.id, current && current.id);
+  };
+
+  AppState.prototype.setFavorites = function setFavorites(favoriteIds) {
+    var focused = this.getFocusedChannel();
+    var current = this.getCurrentChannel();
+    this.favoriteIds = favoriteIds || {};
+    this.applyFilters(focused && focused.id, current && current.id);
+  };
+
+  AppState.prototype.setSearchQuery = function setSearchQuery(query) {
+    var focused = this.getFocusedChannel();
+    this.searchQuery = query || '';
+    this.applyFilters(focused && focused.id, null);
+  };
+
+  AppState.prototype.setFavoritesOnly = function setFavoritesOnly(isEnabled) {
+    var focused = this.getFocusedChannel();
+    this.favoritesOnly = !!isEnabled;
+    this.applyFilters(focused && focused.id, null);
+  };
+
+  AppState.prototype.applyFilters = function applyFilters(focusedId, currentId) {
+    var self = this;
+    var query = normalizeText(this.searchQuery);
+
+    this.channels = this.allChannels.filter(function includeChannel(channel) {
+      if (self.favoritesOnly && !self.favoriteIds[channel.id]) {
+        return false;
+      }
+      return !query || normalizeText(channel.name + ' ' + channel.category).indexOf(query) >= 0;
+    }).sort(function favoritesFirst(left, right) {
+      var leftFavorite = !!self.favoriteIds[left.id];
+      var rightFavorite = !!self.favoriteIds[right.id];
+      if (leftFavorite !== rightFavorite) {
+        return leftFavorite ? -1 : 1;
+      }
+      return normalizeText(left.name).localeCompare(normalizeText(right.name));
+    });
+
+    this.focusedChannelIndex = findChannelIndex(this.channels, focusedId);
+    if (this.focusedChannelIndex < 0) {
+      this.focusedChannelIndex = 0;
+    }
+    if (currentId) {
+      this.currentChannelIndex = findChannelIndex(this.channels, currentId);
+      if (this.currentChannelIndex < 0) {
+        this.currentChannelIndex = null;
+      }
+    }
+  };
 
   AppState.prototype.getFocusedChannel = function getFocusedChannel() {
     return this.channels[this.focusedChannelIndex] || null;
@@ -912,6 +1010,27 @@ kbd {
     }
   };
 
+  function findChannelIndex(channels, id) {
+    var index;
+    if (!id) {
+      return -1;
+    }
+    for (index = 0; index < channels.length; index += 1) {
+      if (channels[index].id === id) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  function normalizeText(value) {
+    return String(value || '').toLowerCase()
+      .replace(/[áàâãä]/g, 'a').replace(/[éèêë]/g, 'e')
+      .replace(/[íìîï]/g, 'i').replace(/[óòôõö]/g, 'o')
+      .replace(/[úùûü]/g, 'u').replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
   namespace.core.AppState = AppState;
 }(window.TblackTV));
 </script>
@@ -928,6 +1047,16 @@ kbd {
   SpatialNavigation.prototype.setIndex = function setIndex(index) {
     if (index >= 0 && index < this.itemCount) {
       this.index = index;
+    }
+    return this.index;
+  };
+
+  SpatialNavigation.prototype.setItemCount = function setItemCount(itemCount) {
+    this.itemCount = Math.max(0, itemCount || 0);
+    if (!this.itemCount) {
+      this.index = 0;
+    } else if (this.index >= this.itemCount) {
+      this.index = this.itemCount - 1;
     }
     return this.index;
   };
@@ -1831,6 +1960,489 @@ kbd {
   namespace.services.CatalogService = CatalogService;
 }(window.TblackTV));
 </script>
+  <script data-tblacktv-source="js/services/RemotePlaylistCatalogService.js">
+(function defineRemotePlaylistCatalogService(namespace) {
+  'use strict';
+
+  var DEFAULT_TIMEOUT_MS = 15000;
+  var CACHE_PREFIX = 'tblacktv.remote-playlist.';
+
+  function RemotePlaylistCatalogService(requestFactory) {
+    this.requestFactory = requestFactory || createRequest;
+  }
+
+  RemotePlaylistCatalogService.prototype.load = function load(playlists, localChannels, callbacks) {
+    var self = this;
+    var enabled = (playlists || []).filter(function onlyEnabled(item) {
+      return item && item.enabled !== false && item.url;
+    });
+    var pending = enabled.length;
+    var documents = [];
+    var warnings = [];
+
+    if (!pending) {
+      callbacks.onSuccess(clone(localChannels || []), { remoteCount: 0, warnings: [] });
+      return;
+    }
+
+    enabled.forEach(function loadPlaylist(playlist) {
+      self.fetchPlaylist(playlist, function onResult(content, fromCache, errorMessage) {
+        if (content) {
+          try {
+            documents.push({
+              playlist: playlist,
+              entries: parsePlaylist(content, playlist)
+            });
+            if (fromCache) {
+              warnings.push(playlist.label + ' carregada do cache local.');
+            }
+          } catch (error) {
+            warnings.push(playlist.label + ': ' + (error.message || error));
+          }
+        } else if (errorMessage) {
+          warnings.push(errorMessage);
+        }
+
+        pending -= 1;
+        if (callbacks.onProgress) {
+          callbacks.onProgress(enabled.length - pending, enabled.length);
+        }
+        if (!pending) {
+          callbacks.onSuccess(mergeCatalogs(localChannels || [], documents), {
+            remoteCount: documents.length,
+            warnings: warnings
+          });
+        }
+      });
+    });
+  };
+
+  RemotePlaylistCatalogService.prototype.fetchPlaylist = function fetchPlaylist(playlist, callback) {
+    var request = this.requestFactory();
+    var timeoutId;
+    var completed = false;
+    var cacheKey = CACHE_PREFIX + playlist.id;
+
+    function finish(content, fromCache, errorMessage) {
+      if (completed) {
+        return;
+      }
+      completed = true;
+      window.clearTimeout(timeoutId);
+      callback(content, fromCache, errorMessage);
+    }
+
+    function fallback(message) {
+      var cached = readCache(cacheKey);
+      if (cached) {
+        finish(cached, true, message);
+      } else {
+        finish('', false, message);
+      }
+    }
+
+    request.onreadystatechange = function onReadyStateChange() {
+      if (request.readyState !== 4 || completed) {
+        return;
+      }
+      if (isSuccessfulStatus(request.status) && request.responseText) {
+        writeCache(cacheKey, request.responseText);
+        finish(request.responseText, false, '');
+      } else {
+        fallback(playlist.label + ' respondeu com HTTP ' + request.status + '.');
+      }
+    };
+    request.onerror = function onRequestError() {
+      fallback('Não foi possível atualizar ' + playlist.label + '.');
+    };
+    request.ontimeout = function onRequestTimeout() {
+      fallback('A atualização de ' + playlist.label + ' excedeu o tempo limite.');
+    };
+
+    timeoutId = window.setTimeout(function onFallbackTimeout() {
+      try { request.abort(); } catch (error) {}
+      fallback('A atualização de ' + playlist.label + ' excedeu o tempo limite.');
+    }, playlist.timeoutMs || DEFAULT_TIMEOUT_MS);
+
+    try {
+      request.open('GET', withCacheBuster(playlist.url), true);
+      request.timeout = playlist.timeoutMs || DEFAULT_TIMEOUT_MS;
+      request.send();
+    } catch (error) {
+      fallback('Não foi possível abrir ' + playlist.label + '.');
+    }
+  };
+
+  function parsePlaylist(content, playlist) {
+    var lines = String(content || '').replace(/\r/g, '').split('\n');
+    var entries = [];
+    var metadata = null;
+    var referrer = '';
+    var userAgent = '';
+    var index;
+    var line;
+
+    for (index = 0; index < lines.length; index += 1) {
+      line = lines[index].trim();
+      if (!line) {
+        continue;
+      }
+      if (line.indexOf('#EXTINF:') === 0) {
+        metadata = parseExtInf(line);
+        referrer = '';
+        userAgent = '';
+        continue;
+      }
+      if (line.indexOf('#EXTVLCOPT:http-referrer=') === 0) {
+        referrer = line.slice('#EXTVLCOPT:http-referrer='.length).trim();
+        continue;
+      }
+      if (line.indexOf('#EXTVLCOPT:http-user-agent=') === 0) {
+        userAgent = line.slice('#EXTVLCOPT:http-user-agent='.length).trim();
+        continue;
+      }
+      if (line.charAt(0) === '#') {
+        continue;
+      }
+      if (metadata && isHlsUrl(line)) {
+        entries.push(createEntry(metadata, line, playlist, referrer, userAgent, entries.length));
+      }
+      metadata = null;
+      referrer = '';
+      userAgent = '';
+    }
+
+    if (!entries.length) {
+      throw new Error('A playlist não contém streams HLS compatíveis.');
+    }
+    return entries;
+  }
+
+  function parseExtInf(line) {
+    var commaIndex = findMetadataComma(line);
+    var attributesText = commaIndex >= 0 ? line.slice(0, commaIndex) : line;
+    var title = commaIndex >= 0 ? line.slice(commaIndex + 1).trim() : 'Canal';
+    return {
+      tvgId: readAttribute(attributesText, 'tvg-id'),
+      group: readAttribute(attributesText, 'group-title'),
+      title: title,
+      name: cleanTitle(title),
+      quality: readQuality(title),
+      availability: readAvailability(title)
+    };
+  }
+
+  function findMetadataComma(line) {
+    var inQuotes = false;
+    var index;
+    var character;
+    for (index = 0; index < line.length; index += 1) {
+      character = line.charAt(index);
+      if (character === '"') {
+        inQuotes = !inQuotes;
+      } else if (character === ',' && !inQuotes) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  function readAttribute(text, name) {
+    var expression = new RegExp('(?:^|\\s)' + name + '="([^"]*)"', 'i');
+    var match = expression.exec(text);
+    return match ? match[1].trim() : '';
+  }
+
+  function createEntry(metadata, url, playlist, referrer, userAgent, index) {
+    var source = {
+      id: playlist.id + '-' + (index + 1),
+      label: playlist.label + ' • HLS' + (metadata.quality ? ' • ' + metadata.quality + 'p' : ''),
+      type: 'hls',
+      url: normalizeProtocol(url),
+      quality: metadata.quality,
+      catalogOrigin: playlist.id,
+      timeoutMs: 20000
+    };
+    if (referrer) {
+      source.referrer = referrer;
+    }
+    if (userAgent) {
+      source.userAgent = userAgent;
+    }
+    return {
+      tvgId: metadata.tvgId,
+      name: metadata.name,
+      category: metadata.group || inferCategory(metadata.name),
+      availability: metadata.availability,
+      source: source
+    };
+  }
+
+  function mergeCatalogs(localChannels, documents) {
+    var channels = clone(localChannels);
+    var byTvgId = {};
+    var byName = {};
+
+    channels.forEach(function indexLocal(channel) {
+      indexChannel(channel, byTvgId, byName);
+    });
+
+    documents.forEach(function mergeDocument(document) {
+      document.entries.forEach(function mergeEntry(entry) {
+        var tvgKey = normalizeTvgId(entry.tvgId);
+        var nameKey = normalizeText(entry.name);
+        var channel = (tvgKey && byTvgId[tvgKey]) || byName[nameKey];
+
+        if (!channel) {
+          channel = createChannel(entry);
+          channels.push(channel);
+          indexChannel(channel, byTvgId, byName);
+        } else if (entry.tvgId && !channel.tvgId) {
+          channel.tvgId = entry.tvgId;
+          byTvgId[tvgKey] = channel;
+        }
+        addSource(channel, entry.source);
+      });
+    });
+
+    channels.forEach(finalizeChannel);
+    channels.sort(compareChannels);
+    return channels;
+  }
+
+  function createChannel(entry) {
+    var stableKey = (normalizeTvgId(entry.tvgId) || normalizeText(entry.name)).replace(/\s+/g, '-');
+    return {
+      id: 'iptv-' + stableKey,
+      tvgId: entry.tvgId,
+      name: entry.name,
+      shortName: createShortName(entry.name),
+      category: entry.category,
+      accent: createAccent(stableKey),
+      description: 'Canal carregado da lista brasileira atualizada.',
+      sources: []
+    };
+  }
+
+  function indexChannel(channel, byTvgId, byName) {
+    var tvgKey = normalizeTvgId(channel.tvgId);
+    var nameKey = normalizeText(channel.name);
+    if (tvgKey) {
+      byTvgId[tvgKey] = channel;
+    }
+    if (nameKey) {
+      byName[nameKey] = channel;
+    }
+  }
+
+  function addSource(channel, source) {
+    var duplicate = channel.sources.some(function sameUrl(existing) {
+      return existing.url === source.url;
+    });
+    if (!duplicate) {
+      channel.sources.push(source);
+    }
+  }
+
+  function finalizeChannel(channel) {
+    var bestQuality;
+    channel.sources.sort(compareSources);
+    bestQuality = channel.sources.length ? numericQuality(channel.sources[0]) : 0;
+    if (channel.id.indexOf('iptv-') === 0) {
+      channel.description = channel.sources.length + (channel.sources.length === 1 ? ' fonte' : ' fontes') +
+        (bestQuality ? ' • melhor qualidade ' + bestQuality + 'p' : '') + ' • catálogo online';
+    }
+  }
+
+  function compareSources(left, right) {
+    var qualityDifference = numericQuality(right) - numericQuality(left);
+    if (qualityDifference) {
+      return qualityDifference;
+    }
+    if (!!left.official !== !!right.official) {
+      return left.official ? -1 : 1;
+    }
+    if (isSecure(left.url) !== isSecure(right.url)) {
+      return isSecure(left.url) ? -1 : 1;
+    }
+    return left.label.localeCompare(right.label);
+  }
+
+  function compareChannels(left, right) {
+    return normalizeText(left.name).localeCompare(normalizeText(right.name));
+  }
+
+  function readQuality(title) {
+    var matches = String(title).match(/\((\d{3,4})[pi]\)/ig);
+    var best = 0;
+    (matches || []).forEach(function pickHighest(item) {
+      var value = parseInt(item.replace(/\D/g, ''), 10) || 0;
+      best = Math.max(best, value);
+    });
+    return best;
+  }
+
+  function cleanTitle(title) {
+    return String(title)
+      .replace(/\s*\(\d{3,4}[pi]\)/ig, '')
+      .replace(/\s*\[(?:Geo-blocked|Not 24\/7)\]/ig, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function readAvailability(title) {
+    if (/\[Geo-blocked\]/i.test(title)) { return 'Geo-blocked'; }
+    if (/\[Not 24\/7\]/i.test(title)) { return 'Not 24/7'; }
+    return '';
+  }
+
+  function inferCategory(name) {
+    var value = normalizeText(name);
+    if (/sport|futebol|combate|n sports|ge fast/.test(value)) { return 'Esportes'; }
+    if (/news|noticia|jovem pan|cnn/.test(value)) { return 'Notícias'; }
+    if (/kids|cartoon|infantil|gloob/.test(value)) { return 'Infantil'; }
+    if (/camara|senado|assembleia|gov/.test(value)) { return 'Público'; }
+    if (/gospel|igreja|relig|evangel/.test(value)) { return 'Religioso'; }
+    if (/music|musica|radio/.test(value)) { return 'Música'; }
+    return 'TV Brasil';
+  }
+
+  function createShortName(name) {
+    var words = String(name).replace(/[^A-Za-zÀ-ÿ0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+    var initials;
+    if (words.length > 1) {
+      initials = words.map(function firstLetter(word) { return word.charAt(0); }).join('');
+      return initials.slice(0, 6).toUpperCase();
+    }
+    return String(name).slice(0, 6).toUpperCase();
+  }
+
+  function createAccent(value) {
+    var colors = ['#3159c7', '#7b4dcc', '#087f72', '#b15b27', '#a33d65', '#22709b', '#54742a'];
+    var hash = 0;
+    var index;
+    for (index = 0; index < value.length; index += 1) {
+      hash = ((hash << 5) - hash + value.charCodeAt(index)) | 0;
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  function normalizeTvgId(value) {
+    return normalizeText(String(value || '').replace(/@(SD|HD)$/i, ''));
+  }
+
+  function normalizeText(value) {
+    return String(value || '').toLowerCase()
+      .replace(/[áàâãä]/g, 'a').replace(/[éèêë]/g, 'e')
+      .replace(/[íìîï]/g, 'i').replace(/[óòôõö]/g, 'o')
+      .replace(/[úùûü]/g, 'u').replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
+  function numericQuality(source) {
+    return typeof source.quality === 'number' ? source.quality : parseInt(source.quality, 10) || 0;
+  }
+
+  function isHlsUrl(url) {
+    var value = String(url || '').toLowerCase();
+    return /^https?:\/\//.test(value) && /\.m3u8(?:[?#]|$)/.test(value);
+  }
+
+  function isSecure(url) {
+    return String(url || '').indexOf('https://') === 0;
+  }
+
+  function normalizeProtocol(url) {
+    return String(url).indexOf('//') === 0 ? 'https:' + url : String(url);
+  }
+
+  function withCacheBuster(url) {
+    return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'tblacktv=' + new Date().getTime();
+  }
+
+  function readCache(key) {
+    try {
+      return window.localStorage ? window.localStorage.getItem(key) : '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function writeCache(key, content) {
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem(key, content);
+      }
+    } catch (error) {}
+  }
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function isSuccessfulStatus(status) {
+    return status === 0 || (status >= 200 && status < 300);
+  }
+
+  function createRequest() {
+    return new XMLHttpRequest();
+  }
+
+  namespace.services.RemotePlaylistCatalogService = RemotePlaylistCatalogService;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/services/FavoritesService.js">
+(function defineFavoritesService(namespace) {
+  'use strict';
+
+  var STORAGE_KEY = 'tblacktv.favorites.v1';
+
+  function FavoritesService() {
+    this.favoriteIds = readFavoriteIds();
+  }
+
+  FavoritesService.prototype.has = function has(channelId) {
+    return this.favoriteIds.indexOf(channelId) >= 0;
+  };
+
+  FavoritesService.prototype.toggle = function toggle(channelId) {
+    var index = this.favoriteIds.indexOf(channelId);
+    if (index >= 0) {
+      this.favoriteIds.splice(index, 1);
+    } else {
+      this.favoriteIds.push(channelId);
+    }
+    this.save();
+    return this.has(channelId);
+  };
+
+  FavoritesService.prototype.asLookup = function asLookup() {
+    var result = {};
+    this.favoriteIds.forEach(function addId(id) { result[id] = true; });
+    return result;
+  };
+
+  FavoritesService.prototype.save = function save() {
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.favoriteIds));
+      }
+    } catch (error) {}
+  };
+
+  function readFavoriteIds() {
+    var value;
+    try {
+      value = window.localStorage ? JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]') : [];
+      return Array.isArray(value) ? value.filter(function onlyStrings(id) { return typeof id === 'string'; }) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  namespace.services.FavoritesService = FavoritesService;
+}(window.TblackTV));
+</script>
   <script data-tblacktv-source="js/services/SourceResolver.js">
 (function defineSourceResolver(namespace) {
   'use strict';
@@ -1939,17 +2551,26 @@ kbd {
         label: pendingLabel ? parentSource.label + ' • ' + pendingLabel : parentSource.label,
         type: inferSourceType(line),
         url: resolveUrl(parentSource.url, line),
+        quality: readQuality(pendingLabel) || parentSource.quality || 0,
         timeoutMs: parentSource.timeoutMs
       });
       pendingLabel = '';
     }
 
+    entries.sort(function highestQualityFirst(left, right) {
+      return (right.quality || 0) - (left.quality || 0);
+    });
     return entries;
   }
 
   function readExtInfLabel(line) {
     var commaIndex = line.indexOf(',');
     return commaIndex >= 0 ? line.slice(commaIndex + 1).trim() : '';
+  }
+
+  function readQuality(label) {
+    var match = /\((\d{3,4})[pi]\)/i.exec(label || '');
+    return match ? parseInt(match[1], 10) || 0 : 0;
   }
 
   function inferSourceType(url) {
@@ -2531,33 +3152,80 @@ kbd {
   function ChannelGridView(gridElement, countElement) {
     this.gridElement = gridElement;
     this.countElement = countElement;
+    this.channels = [];
+    this.favoriteIds = {};
     this.cardElements = [];
+    this.pageIndex = 0;
+    this.pageSize = getPageSize();
   }
 
-  ChannelGridView.prototype.render = function render(channels) {
+  ChannelGridView.prototype.render = function render(channels, favoriteIds, focusedIndex) {
+    this.channels = channels || [];
+    this.favoriteIds = favoriteIds || {};
+    this.pageSize = getPageSize();
+    this.pageIndex = Math.floor((focusedIndex || 0) / this.pageSize);
+    this.renderPage();
+    this.focus(focusedIndex || 0);
+  };
+
+  ChannelGridView.prototype.renderPage = function renderPage() {
     var fragment = document.createDocumentFragment();
+    var start = this.pageIndex * this.pageSize;
+    var end = Math.min(start + this.pageSize, this.channels.length);
     var index;
 
     this.gridElement.innerHTML = '';
     this.gridElement.classList.remove('channel-grid--loading');
+    this.gridElement.classList.remove('channel-grid--empty');
     this.gridElement.setAttribute('aria-busy', 'false');
     this.cardElements = [];
 
-    for (index = 0; index < channels.length; index += 1) {
-      var card = createCard(channels[index], index);
+    if (!this.channels.length) {
+      this.gridElement.classList.add('channel-grid--empty');
+      this.gridElement.innerHTML = '<div class="empty-catalog"><strong>Nenhum canal encontrado</strong><span>Altere a busca ou desative o filtro de favoritos.</span></div>';
+      this.updateCount();
+      return;
+    }
+
+    for (index = start; index < end; index += 1) {
+      var card = createCard(this.channels[index], index, !!this.favoriteIds[this.channels[index].id]);
       this.cardElements.push(card);
       fragment.appendChild(card);
     }
 
     this.gridElement.appendChild(fragment);
-    this.countElement.textContent = channels.length + (channels.length === 1 ? ' canal' : ' canais');
+    this.updateCount();
+  };
+
+  ChannelGridView.prototype.updateCount = function updateCount() {
+    var pageCount = Math.max(1, Math.ceil(this.channels.length / this.pageSize));
+    var countText = this.channels.length + (this.channels.length === 1 ? ' canal' : ' canais');
+    if (this.channels.length > this.pageSize) {
+      countText += ' • página ' + (this.pageIndex + 1) + ' de ' + pageCount;
+    }
+    this.countElement.textContent = countText;
   };
 
   ChannelGridView.prototype.focus = function focus(index) {
+    var targetPage;
     var currentIndex;
 
+    if (index < 0) {
+      for (currentIndex = 0; currentIndex < this.cardElements.length; currentIndex += 1) {
+        this.cardElements[currentIndex].classList.remove('is-focused');
+      }
+      return;
+    }
+
+    targetPage = Math.floor((index || 0) / this.pageSize);
+
+    if (this.channels.length && targetPage !== this.pageIndex) {
+      this.pageIndex = targetPage;
+      this.renderPage();
+    }
+
     for (currentIndex = 0; currentIndex < this.cardElements.length; currentIndex += 1) {
-      if (currentIndex === index) {
+      if (parseInt(this.cardElements[currentIndex].getAttribute('data-index'), 10) === index) {
         this.cardElements[currentIndex].classList.add('is-focused');
       } else {
         this.cardElements[currentIndex].classList.remove('is-focused');
@@ -2565,16 +3233,29 @@ kbd {
     }
   };
 
-  function createCard(channel, index) {
+  ChannelGridView.prototype.isFirstVisibleRow = function isFirstVisibleRow(index) {
+    var position = index - (this.pageIndex * this.pageSize);
+    return position >= 0 && position < 4;
+  };
+
+  ChannelGridView.prototype.getPageSize = function getCurrentPageSize() {
+    return this.pageSize;
+  };
+
+  function createCard(channel, index, isFavorite) {
     var card = document.createElement('article');
-    card.className = 'channel-card';
+    var quality = channel.sources && channel.sources[0] && channel.sources[0].quality;
+    card.className = 'channel-card' + (isFavorite ? ' is-favorite' : '');
     card.setAttribute('role', 'listitem');
     card.setAttribute('data-index', index);
     card.style.setProperty('--channel-accent', channel.accent);
     card.innerHTML = [
       '<div class="channel-card__header">',
         '<div class="channel-card__logo">' + escapeHtml(channel.shortName) + '</div>',
-        '<div class="channel-card__live"><span></span> AO VIVO</div>',
+        '<div class="channel-card__badges">',
+          '<span class="channel-card__favorite" aria-label="' + (isFavorite ? 'Favorito' : 'Não favorito') + '">' + (isFavorite ? '★' : '☆') + '</span>',
+          quality ? '<span class="channel-card__quality">' + escapeHtml(quality) + 'p</span>' : '',
+        '</div>',
       '</div>',
       '<div class="channel-card__body">',
         '<p class="channel-card__category">' + escapeHtml(channel.category) + '</p>',
@@ -2595,7 +3276,60 @@ kbd {
       .replace(/'/g, '&#039;');
   }
 
+  function getPageSize() {
+    return window.innerWidth && window.innerWidth <= 1500 ? 4 : 8;
+  }
+
   namespace.ui.ChannelGridView = ChannelGridView;
+}(window.TblackTV));
+</script>
+  <script data-tblacktv-source="js/ui/CatalogControlsView.js">
+(function defineCatalogControlsView(namespace) {
+  'use strict';
+
+  function CatalogControlsView(elements) {
+    this.searchInput = elements.searchInput;
+    this.searchControl = elements.searchControl;
+    this.favoritesControl = elements.favoritesControl;
+    this.filterSummary = elements.filterSummary;
+  }
+
+  CatalogControlsView.prototype.setFocusedControl = function setFocusedControl(controlName) {
+    this.searchControl.classList.toggle('is-focused', controlName === 'search');
+    this.favoritesControl.classList.toggle('is-focused', controlName === 'favorites');
+  };
+
+  CatalogControlsView.prototype.clearFocus = function clearFocus() {
+    this.searchControl.classList.remove('is-focused');
+    this.favoritesControl.classList.remove('is-focused');
+  };
+
+  CatalogControlsView.prototype.startSearchEditing = function startSearchEditing() {
+    this.searchControl.classList.add('is-editing');
+    this.searchInput.setAttribute('tabindex', '0');
+    try { this.searchInput.focus(); } catch (error) {}
+  };
+
+  CatalogControlsView.prototype.stopSearchEditing = function stopSearchEditing() {
+    this.searchControl.classList.remove('is-editing');
+    this.searchInput.setAttribute('tabindex', '-1');
+    try { this.searchInput.blur(); } catch (error) {}
+  };
+
+  CatalogControlsView.prototype.setFavoritesOnly = function setFavoritesOnly(isEnabled) {
+    this.favoritesControl.classList.toggle('is-active', !!isEnabled);
+    this.favoritesControl.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+    this.favoritesControl.querySelector('.catalog-control__label').textContent = isEnabled ? 'Mostrando favoritos' : 'Todos os canais';
+  };
+
+  CatalogControlsView.prototype.updateSummary = function updateSummary(query, favoritesOnly) {
+    var parts = [];
+    if (query) { parts.push('Busca: “' + query + '”'); }
+    if (favoritesOnly) { parts.push('Somente favoritos'); }
+    this.filterSummary.textContent = parts.length ? parts.join(' • ') : 'Catálogo completo';
+  };
+
+  namespace.ui.CatalogControlsView = CatalogControlsView;
 }(window.TblackTV));
 </script>
   <script data-tblacktv-source="js/ui/ClockView.js">
@@ -2812,7 +3546,8 @@ kbd {
     MEDIA_PLAY_PAUSE: 10252,
     MEDIA_STOP: 413,
     CHANNEL_UP: 427,
-    CHANNEL_DOWN: 428
+    CHANNEL_DOWN: 428,
+    FAVORITE: 70
   };
 
   function AppController(options) {
@@ -2823,6 +3558,11 @@ kbd {
     this.playerView = options.playerView;
     this.playbackService = options.playbackService;
     this.playerKeyCapture = options.playerKeyCapture;
+    this.catalogControlsView = options.catalogControlsView;
+    this.favoritesService = options.favoritesService;
+    this.searchInput = options.searchInput;
+    this.searchControl = options.searchControl;
+    this.favoritesControl = options.favoritesControl;
     this.boundKeyHandler = this.onKeyDown.bind(this);
     this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
     this.boundFocusGuard = this.onApplicationFocus.bind(this);
@@ -2830,12 +3570,16 @@ kbd {
     this.lastBackActionAt = 0;
     this.lastSourceSwitchAt = 0;
     this.isCapturingPlayerFocus = false;
+    this.homeFocusArea = 'grid';
+    this.toolbarControl = 'search';
+    this.searchEditing = false;
   }
 
   AppController.prototype.start = function start() {
-    this.gridView.render(this.state.channels);
-    this.gridView.focus(this.state.focusedChannelIndex);
+    this.state.setFavorites(this.favoritesService.asLookup());
+    this.refreshHome();
     this.bindPlaybackEvents();
+    this.bindCatalogControls();
     window.addEventListener('keydown', this.boundKeyHandler, true);
     document.addEventListener('keydown', this.boundKeyHandler, true);
     if (this.playerKeyCapture) {
@@ -2846,6 +3590,42 @@ kbd {
     document.addEventListener('backbutton', this.boundHardwareBackHandler, true);
     document.addEventListener('focusin', this.boundFocusGuard, true);
     registerRemoteKeys();
+  };
+
+  AppController.prototype.bindCatalogControls = function bindCatalogControls() {
+    var self = this;
+
+    this.searchInput.addEventListener('input', function onSearchInput() {
+      self.state.setSearchQuery(self.searchInput.value);
+      self.refreshHome();
+    });
+    this.searchControl.addEventListener('click', function onSearchClick() {
+      self.focusToolbar('search');
+      self.startSearchEditing();
+    });
+    this.favoritesControl.addEventListener('click', function onFavoritesClick() {
+      self.focusToolbar('favorites');
+      self.toggleFavoritesFilter();
+    });
+  };
+
+  AppController.prototype.updateCatalog = function updateCatalog(channels) {
+    this.state.setCatalog(channels);
+    this.refreshHome();
+  };
+
+  AppController.prototype.refreshHome = function refreshHome() {
+    this.navigation.setItemCount(this.state.channels.length);
+    this.navigation.setIndex(this.state.focusedChannelIndex);
+    this.gridView.render(this.state.channels, this.state.favoriteIds, this.state.focusedChannelIndex);
+    this.catalogControlsView.setFavoritesOnly(this.state.favoritesOnly);
+    this.catalogControlsView.updateSummary(this.state.searchQuery, this.state.favoritesOnly);
+    if (this.homeFocusArea === 'toolbar') {
+      this.catalogControlsView.setFocusedControl(this.toolbarControl);
+    } else {
+      this.catalogControlsView.clearFocus();
+      this.gridView.focus(this.state.focusedChannelIndex);
+    }
   };
 
   AppController.prototype.bindPlaybackEvents = function bindPlaybackEvents() {
@@ -2959,6 +3739,11 @@ kbd {
     this.lastHandledEvent = event;
     keyCode = normalizeKeyCode(event);
 
+    if (this.state.screen === 'home' && this.searchEditing) {
+      this.handleSearchEditingKey(keyCode, event);
+      return;
+    }
+
     if (isApplicationKey(keyCode)) {
       event.preventDefault();
       if (typeof event.stopPropagation === 'function') {
@@ -2990,6 +3775,10 @@ kbd {
     this.lastHandledEvent = event;
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
+    }
+    if (this.state.screen === 'home' && this.searchEditing) {
+      this.handleSearchEditingKey(KEY.BACK, event || { preventDefault: function preventDefault() {} });
+      return;
     }
     if (!this.acceptBackAction()) {
       return;
@@ -3046,19 +3835,110 @@ kbd {
   };
 
   AppController.prototype.handleHomeKey = function handleHomeKey(keyCode) {
+    if (this.homeFocusArea === 'toolbar') {
+      this.handleToolbarKey(keyCode);
+      return;
+    }
+
     if (keyCode === KEY.LEFT) {
       this.moveFocus('left');
     } else if (keyCode === KEY.RIGHT) {
       this.moveFocus('right');
     } else if (keyCode === KEY.UP) {
-      this.moveFocus('up');
+      if (this.gridView.isFirstVisibleRow(this.state.focusedChannelIndex)) {
+        this.focusToolbar('search');
+      } else {
+        this.moveFocus('up');
+      }
     } else if (keyCode === KEY.DOWN) {
       this.moveFocus('down');
     } else if (keyCode === KEY.ENTER) {
       this.openFocusedChannel();
+    } else if (keyCode === KEY.MEDIA_PLAY_PAUSE || keyCode === KEY.MEDIA_PLAY || keyCode === KEY.FAVORITE) {
+      this.toggleFocusedFavorite();
+    } else if (keyCode === KEY.CHANNEL_UP || keyCode === KEY.CHANNEL_DOWN) {
+      this.movePage(keyCode === KEY.CHANNEL_UP ? -1 : 1);
     } else if (keyCode === KEY.BACK) {
       this.exitApplication();
     }
+  };
+
+  AppController.prototype.movePage = function movePage(direction) {
+    var pageSize = this.gridView.getPageSize();
+    var nextIndex = this.state.focusedChannelIndex + (direction * pageSize);
+
+    nextIndex = Math.max(0, Math.min(this.state.channels.length - 1, nextIndex));
+    this.navigation.setIndex(nextIndex);
+    this.state.focusChannel(nextIndex);
+    this.gridView.focus(nextIndex);
+  };
+
+  AppController.prototype.handleToolbarKey = function handleToolbarKey(keyCode) {
+    if (keyCode === KEY.LEFT || keyCode === KEY.RIGHT) {
+      this.toolbarControl = this.toolbarControl === 'search' ? 'favorites' : 'search';
+      this.catalogControlsView.setFocusedControl(this.toolbarControl);
+    } else if (keyCode === KEY.DOWN) {
+      this.homeFocusArea = 'grid';
+      this.catalogControlsView.clearFocus();
+      this.gridView.focus(this.state.focusedChannelIndex);
+    } else if (keyCode === KEY.ENTER) {
+      if (this.toolbarControl === 'search') {
+        this.startSearchEditing();
+      } else {
+        this.toggleFavoritesFilter();
+      }
+    } else if (keyCode === KEY.BACK) {
+      this.exitApplication();
+    }
+  };
+
+  AppController.prototype.handleSearchEditingKey = function handleSearchEditingKey(keyCode, event) {
+    if (keyCode === KEY.ENTER) {
+      event.preventDefault();
+      this.stopSearchEditing();
+    } else if (keyCode === KEY.BACK) {
+      event.preventDefault();
+      if (this.searchInput.value) {
+        this.searchInput.value = '';
+        this.state.setSearchQuery('');
+        this.refreshHome();
+      } else {
+        this.stopSearchEditing();
+      }
+    }
+  };
+
+  AppController.prototype.focusToolbar = function focusToolbar(controlName) {
+    this.homeFocusArea = 'toolbar';
+    this.toolbarControl = controlName || 'search';
+    this.gridView.focus(-1);
+    this.catalogControlsView.setFocusedControl(this.toolbarControl);
+  };
+
+  AppController.prototype.startSearchEditing = function startSearchEditing() {
+    this.searchEditing = true;
+    this.catalogControlsView.startSearchEditing();
+  };
+
+  AppController.prototype.stopSearchEditing = function stopSearchEditing() {
+    this.searchEditing = false;
+    this.catalogControlsView.stopSearchEditing();
+    this.focusToolbar('search');
+  };
+
+  AppController.prototype.toggleFavoritesFilter = function toggleFavoritesFilter() {
+    this.state.setFavoritesOnly(!this.state.favoritesOnly);
+    this.refreshHome();
+  };
+
+  AppController.prototype.toggleFocusedFavorite = function toggleFocusedFavorite() {
+    var channel = this.state.getFocusedChannel();
+    if (!channel) {
+      return;
+    }
+    this.favoritesService.toggle(channel.id);
+    this.state.setFavorites(this.favoritesService.asLookup());
+    this.refreshHome();
   };
 
   AppController.prototype.handlePlayerKey = function handlePlayerKey(keyCode) {
@@ -3121,6 +4001,9 @@ kbd {
   };
 
   AppController.prototype.openFocusedChannel = function openFocusedChannel() {
+    if (!this.state.getFocusedChannel()) {
+      return;
+    }
     this.state.selectFocusedChannel();
     this.playCurrentChannel();
   };
@@ -3158,6 +4041,8 @@ kbd {
     this.navigation.setIndex(this.state.focusedChannelIndex);
     this.gridView.focus(this.state.focusedChannelIndex);
     this.playerView.hide();
+    this.homeFocusArea = 'grid';
+    this.refreshHome();
   };
 
   AppController.prototype.exitApplication = function exitApplication() {
@@ -3248,8 +4133,9 @@ kbd {
       fallbackDocuments
       ).loadEmbedded(
       function onCatalogReady(catalog) {
-        buildApplication(elements, catalog.channels, catalog.profiles);
-        setAppStatus(elements, 'Pronto', false);
+        var controller = buildApplication(elements, catalog.channels, catalog.profiles);
+        setAppStatus(elements, 'Atualizando catálogo', false);
+        loadRemotePlaylists(elements, controller, catalog.channels, fallbackDocuments.catalog.remotePlaylists || []);
       },
       function onCatalogError(message) {
         setAppStatus(elements, 'Catálogo indisponível', true);
@@ -3264,6 +4150,8 @@ kbd {
     var state = new namespace.core.AppState(channels);
     var navigation = new namespace.core.SpatialNavigation(channels.length, 4);
     var gridView = new namespace.ui.ChannelGridView(elements.channelGrid, elements.channelCount);
+    var catalogControlsView = new namespace.ui.CatalogControlsView(elements);
+    var favoritesService = new namespace.services.FavoritesService();
     var playerView = new namespace.ui.PlayerView(elements);
     var playerFactory = new namespace.services.PlayerFactory(elements, playerProfiles);
     var sourceResolver = new namespace.services.SourceResolver();
@@ -3275,10 +4163,34 @@ kbd {
       gridView: gridView,
       playerView: playerView,
       playerKeyCapture: elements.playerKeyCapture,
-      playbackService: playbackService
+      playbackService: playbackService,
+      catalogControlsView: catalogControlsView,
+      favoritesService: favoritesService,
+      searchInput: elements.searchInput,
+      searchControl: elements.searchControl,
+      favoritesControl: elements.favoritesControl
     });
 
     controller.start();
+    return controller;
+  }
+
+  function loadRemotePlaylists(elements, controller, localChannels, playlists) {
+    var service = new namespace.services.RemotePlaylistCatalogService();
+
+    service.load(playlists, localChannels, {
+      onProgress: function onProgress(completed, total) {
+        setAppStatus(elements, 'Atualizando listas ' + completed + '/' + total, false);
+      },
+      onSuccess: function onSuccess(channels, result) {
+        controller.updateCatalog(channels);
+        if (result.warnings.length) {
+          setAppStatus(elements, result.remoteCount ? 'Catálogo em cache' : 'Catálogo local', true);
+        } else {
+          setAppStatus(elements, 'Online • ' + channels.length + ' canais', false);
+        }
+      }
+    });
   }
 
   function showStartupError(elements, message) {
@@ -3305,6 +4217,10 @@ kbd {
       channelCount: document.getElementById('channel-count'),
       clock: document.getElementById('clock'),
       appStatus: document.getElementById('app-status'),
+      searchInput: document.getElementById('channel-search'),
+      searchControl: document.getElementById('search-control'),
+      favoritesControl: document.getElementById('favorites-control'),
+      filterSummary: document.getElementById('filter-summary'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),
       iframePlayer: document.getElementById('iframe-player'),

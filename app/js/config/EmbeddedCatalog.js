@@ -15,9 +15,19 @@
 
   namespace.config.embeddedCatalog = {
     "schemaVersion": 1,
+    "remotePlaylists": [
+      {
+        "id": "iptv-org-br",
+        "label": "IPTV-org Brasil",
+        "url": "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u",
+        "enabled": true,
+        "timeoutMs": 15000
+      }
+    ],
     "channels": [
       {
         "id": "tv-brasil",
+        "tvgId": "TVBrasil.br@SD",
         "name": "TV Brasil",
         "shortName": "TV",
         "category": "TV aberta",
@@ -26,30 +36,26 @@
         "sources": [
           {
             "id": "ebc-hls",
-            "label": "EBC • HLS oficial",
+            "label": "EBC • HLS oficial • 720p",
             "type": "hls",
             "url": "https://tvbrasil-stream.ebc.com.br/index.m3u8",
+            "quality": 720,
+            "official": true,
             "timeoutMs": 20000
           },
           {
             "id": "local-m3u",
-            "label": "Playlist M3U • Exemplo",
+            "label": "Playlist M3U local",
             "type": "m3u",
             "url": "config/playlists/tv-brasil.m3u",
-            "timeoutMs": 20000
-          },
-          {
-            "id": "youtube-embed",
-            "label": "YouTube oficial • iframe",
-            "type": "iframe",
-            "url": "https://www.youtube.com/embed/live_stream?channel=UCSv9d0kQegylHWpP83jWSQg",
-            "playerProfile": "simple-iframe",
+            "quality": 720,
             "timeoutMs": 20000
           }
         ]
       },
       {
         "id": "canal-gov",
+        "tvgId": "CanalGov.br@SD",
         "name": "Canal Gov",
         "shortName": "GOV",
         "category": "Notícias",
@@ -60,12 +66,14 @@
             "id": "ebc-hls",
             "label": "EBC • HLS oficial",
             "type": "hls",
-            "url": "https://canalgov-stream.ebc.com.br/index.m3u8"
+            "url": "https://canalgov-stream.ebc.com.br/index.m3u8",
+            "official": true
           }
         ]
       },
       {
         "id": "canal-educacao",
+        "tvgId": "CanalEducacao.br@SD",
         "name": "Canal Educação",
         "shortName": "EDU",
         "category": "Educação",
@@ -76,12 +84,14 @@
             "id": "ebc-hls",
             "label": "EBC • HLS oficial",
             "type": "hls",
-            "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8"
+            "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8",
+            "official": true
           }
         ]
       },
       {
         "id": "tv-cultura",
+        "tvgId": "TVCultura.br@SD",
         "name": "TV Cultura",
         "shortName": "CULT",
         "category": "TV aberta",
@@ -92,12 +102,14 @@
             "id": "tvcultura-hls",
             "label": "TV Cultura • HLS oficial",
             "type": "hls",
-            "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8"
+            "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8",
+            "official": true
           }
         ]
       },
       {
         "id": "tv-camara",
+        "tvgId": "TVCamara.br@SD",
         "name": "TV Câmara",
         "shortName": "CAM",
         "category": "Legislativo",
@@ -106,14 +118,17 @@
         "sources": [
           {
             "id": "camara-hls",
-            "label": "Câmara dos Deputados • HLS oficial",
+            "label": "Câmara dos Deputados • HLS oficial • 1080p",
             "type": "hls",
-            "url": "https://stream3.camara.gov.br/tv1/manifest.m3u8"
+            "url": "https://stream3.camara.gov.br/tv1/manifest.m3u8",
+            "quality": 1080,
+            "official": true
           }
         ]
       },
       {
         "id": "tv-parana-turismo",
+        "tvgId": "TVParanaTurismo.br@SD",
         "name": "TV Paraná Turismo",
         "shortName": "PR",
         "category": "TV pública",
@@ -124,83 +139,8 @@
             "id": "parana-hls",
             "label": "Governo do Paraná • HLS oficial",
             "type": "hls",
-            "url": "https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8"
-          }
-        ]
-      },
-      {
-        "id": "globo-rj",
-        "name": "Globo RJ",
-        "shortName": "Globo",
-        "category": "TV aberta",
-        "accent": "#00378b",
-        "description": "Programação da TV Globo para o Rio de Janeiro: jornalismo local, novelas, esportes e entretenimento.",
-        "sources": [
-          {
-            "id": "rdcanais-player-direct",
-            "label": "RD Canais • player direto",
-            "type": "iframe",
-            "url": "https://localhost.tattoo/globo/player.php?id=6120663&lat=-22.9068467&long=-43.1728965",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "rdcanais-wrapper",
-            "label": "RD Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://rdcanais.net/globorj",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "alerquina-wrapper",
-            "label": "Arlequina • página alternativa",
-            "type": "iframe",
-            "url": "https://alerquina54104.embedtv.lat/eab811eb-8ba6-4c3a-b5b1-bd0add5e2913",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "redecanais-wrapper",
-            "label": "Rede Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://outbound-proxy-us-east1-0-blob-usercontent-client-id-7775691497.googleapis.com.de/player3/ch.php?categoria=live&canal=boborj",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          }
-        ]
-      },
-      {
-        "id": "premiere-clubes",
-        "name": "Premiere Clubes",
-        "shortName": "PREMIERE",
-        "category": "Esportes",
-        "accent": "#288f43",
-        "description": "Transmissão de jogos de futebol ao vivo, incluindo campeonatos nacionais e internacionais.",
-        "sources": [
-          {
-            "id": "redecanais-wrapper",
-            "label": "Rede Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://redecanaistv.vision/%70%6C%61%79%65%72%33/%63%68.%70%68%70?%63%61%74%65%67%6F%72%69%61=%6C%69%76%65&%63%61%6E%61%6C=%70%72%65%6D%69%65%72%65%63%6C%75%62%65%73",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "rdcanais-wrapper",
-            "label": "RD Canais • página alternativa",
-            "type": "iframe",
-            "url": "https://rdcanais.net/premiereclubes",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
-          },
-          {
-            "id": "alerquina-wrapper",
-            "label": "Arlequina • página alternativa",
-            "type": "iframe",
-            "url": "https://alerquina54104.embedtv.lat/88b3ca0b-04f1-4b7a-a65c-d186b23e5cc5",
-            "playerProfile": "simple-iframe",
-            "timeoutMs": 8000
+            "url": "https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8",
+            "official": true
           }
         ]
       }

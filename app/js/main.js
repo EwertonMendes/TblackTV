@@ -20,8 +20,9 @@
       fallbackDocuments
       ).loadEmbedded(
       function onCatalogReady(catalog) {
-        buildApplication(elements, catalog.channels, catalog.profiles);
-        setAppStatus(elements, 'Pronto', false);
+        var controller = buildApplication(elements, catalog.channels, catalog.profiles);
+        setAppStatus(elements, 'Atualizando catálogo', false);
+        loadRemotePlaylists(elements, controller, catalog.channels, fallbackDocuments.catalog.remotePlaylists || []);
       },
       function onCatalogError(message) {
         setAppStatus(elements, 'Catálogo indisponível', true);
@@ -36,6 +37,8 @@
     var state = new namespace.core.AppState(channels);
     var navigation = new namespace.core.SpatialNavigation(channels.length, 4);
     var gridView = new namespace.ui.ChannelGridView(elements.channelGrid, elements.channelCount);
+    var catalogControlsView = new namespace.ui.CatalogControlsView(elements);
+    var favoritesService = new namespace.services.FavoritesService();
     var playerView = new namespace.ui.PlayerView(elements);
     var playerFactory = new namespace.services.PlayerFactory(elements, playerProfiles);
     var sourceResolver = new namespace.services.SourceResolver();
@@ -47,10 +50,34 @@
       gridView: gridView,
       playerView: playerView,
       playerKeyCapture: elements.playerKeyCapture,
-      playbackService: playbackService
+      playbackService: playbackService,
+      catalogControlsView: catalogControlsView,
+      favoritesService: favoritesService,
+      searchInput: elements.searchInput,
+      searchControl: elements.searchControl,
+      favoritesControl: elements.favoritesControl
     });
 
     controller.start();
+    return controller;
+  }
+
+  function loadRemotePlaylists(elements, controller, localChannels, playlists) {
+    var service = new namespace.services.RemotePlaylistCatalogService();
+
+    service.load(playlists, localChannels, {
+      onProgress: function onProgress(completed, total) {
+        setAppStatus(elements, 'Atualizando listas ' + completed + '/' + total, false);
+      },
+      onSuccess: function onSuccess(channels, result) {
+        controller.updateCatalog(channels);
+        if (result.warnings.length) {
+          setAppStatus(elements, result.remoteCount ? 'Catálogo em cache' : 'Catálogo local', true);
+        } else {
+          setAppStatus(elements, 'Online • ' + channels.length + ' canais', false);
+        }
+      }
+    });
   }
 
   function showStartupError(elements, message) {
@@ -77,6 +104,10 @@
       channelCount: document.getElementById('channel-count'),
       clock: document.getElementById('clock'),
       appStatus: document.getElementById('app-status'),
+      searchInput: document.getElementById('channel-search'),
+      searchControl: document.getElementById('search-control'),
+      favoritesControl: document.getElementById('favorites-control'),
+      filterSummary: document.getElementById('filter-summary'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),
       iframePlayer: document.getElementById('iframe-player'),

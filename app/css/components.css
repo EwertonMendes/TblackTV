@@ -47,6 +47,20 @@
   color: #ffe5eb; font-size: 13px; font-weight: 800; letter-spacing: 1.2px;
 }
 .channel-card__live span { width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--live); }
+.channel-card__badges { display: flex; align-items: center; position: relative; z-index: 2; }
+.channel-card__badges > * + * { margin-left: 9px; }
+.channel-card__favorite {
+  width: 38px; height: 38px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: #b8c3d5; background: rgba(4, 8, 18, .42);
+  font-size: 23px;
+}
+.channel-card.is-favorite .channel-card__favorite { color: #ffd65a; background: rgba(255, 214, 90, .13); }
+.channel-card__quality {
+  padding: 8px 10px; border-radius: 9px;
+  color: #dce5f3; background: rgba(4, 8, 18, .42);
+  font-size: 12px; font-weight: 800;
+}
 .channel-card__body { position: relative; z-index: 1; margin-top: 16px; min-width: 0; }
 .channel-card__category { color: #a9b5c9; font-size: 13px; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; }
 .channel-card__name { margin-top: 5px; font-size: 27px; line-height: 1.15; letter-spacing: -.7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -87,6 +101,53 @@
 .channel-skeleton strong { font-size: 18px; font-weight: 600; }
 @keyframes skeleton-pulse { to { transform: translateX(100%); } }
 
+.catalog-control {
+  height: 62px;
+  border: 2px solid rgba(255,255,255,.10);
+  border-radius: 17px;
+  background: rgba(255,255,255,.055);
+  color: #eef3fb;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+.catalog-control.is-focused {
+  border-color: #fff;
+  background: rgba(255,255,255,.12);
+  transform: scale(1.018);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+}
+.catalog-control__icon { color: #ffd65a; font-size: 25px; }
+.catalog-control--search {
+  width: 610px;
+  display: flex; align-items: center;
+  padding: 0 19px;
+}
+.catalog-control--search > * + * { margin-left: 13px; }
+.catalog-control--search label { color: #e7edf7; font-size: 16px; font-weight: 700; white-space: nowrap; }
+.catalog-control--search input {
+  flex: 1; min-width: 0;
+  border: 0; outline: 0; background: transparent;
+  color: #fff; font-size: 17px;
+}
+.catalog-control--search input::placeholder { color: #7f8ca2; }
+.catalog-control--search.is-editing { border-color: #99a5ff; background: rgba(99, 113, 220, .16); }
+.catalog-control--favorites {
+  min-width: 250px;
+  padding: 0 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: default;
+}
+.catalog-control--favorites > * + * { margin-left: 11px; }
+.catalog-control--favorites .catalog-control__label { font-size: 16px; font-weight: 800; }
+.catalog-control--favorites.is-active { background: rgba(255, 214, 90, .13); border-color: rgba(255, 214, 90, .65); }
+.empty-catalog {
+  width: 100%; min-height: 210px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 2px dashed rgba(255,255,255,.12); border-radius: 20px;
+  color: var(--muted);
+}
+.empty-catalog strong { color: #fff; font-size: 25px; }
+.empty-catalog span { margin-top: 10px; font-size: 17px; }
+
 @media screen and (max-width: 1500px) {
   .channel-card {
     width: calc(25% - 18px);
@@ -99,6 +160,8 @@
   .channel-card.is-focused { transform: scale(1.025); }
   .channel-card__logo { width: 52px; height: 52px; border-radius: 15px; font-size: 16px; }
   .channel-card__live { font-size: 10px; letter-spacing: .9px; }
+  .channel-card__favorite { width: 30px; height: 30px; border-radius: 9px; font-size: 18px; }
+  .channel-card__quality { padding: 6px 7px; font-size: 9px; }
   .channel-card__body { margin-top: 10px; }
   .channel-card__category { font-size: 10px; }
   .channel-card__name { margin-top: 3px; font-size: 21px; }
@@ -106,4 +169,9 @@
   .channel-skeleton { width: calc(25% - 18px); height: 185px; margin-right: 18px; margin-bottom: 18px; padding: 18px; border-radius: 18px; }
   .channel-skeleton span { width: 52px; height: 52px; margin-bottom: 22px; border-radius: 15px; }
   .channel-skeleton strong { font-size: 14px; }
+  .catalog-control { height: 48px; border-radius: 13px; }
+  .catalog-control--search { width: 480px; padding: 0 14px; }
+  .catalog-control--search label, .catalog-control--search input, .catalog-control--favorites .catalog-control__label { font-size: 13px; }
+  .catalog-control--favorites { min-width: 205px; padding: 0 14px; }
+  .catalog-toolbar__summary { font-size: 12px; }
 }

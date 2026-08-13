@@ -14,6 +14,16 @@
     return this.index;
   };
 
+  SpatialNavigation.prototype.setItemCount = function setItemCount(itemCount) {
+    this.itemCount = Math.max(0, itemCount || 0);
+    if (!this.itemCount) {
+      this.index = 0;
+    } else if (this.index >= this.itemCount) {
+      this.index = this.itemCount - 1;
+    }
+    return this.index;
+  };
+
   SpatialNavigation.prototype.move = function move(direction) {
     var next = this.index;
     var rowStart;
