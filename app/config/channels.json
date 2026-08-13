@@ -130,7 +130,7 @@
     {
       "id": "globo-rj",
       "name": "Globo RJ",
-      "shortName": "Globo",
+      "shortName": "GlOBO",
       "category": "TV aberta",
       "accent": "#00378b",
       "description": "Programação da TV Globo para o Rio de Janeiro: jornalismo local, novelas, esportes e entretenimento.",
@@ -164,6 +164,40 @@
           "label": "Rede Canais • página alternativa",
           "type": "iframe",
           "url": "https://outbound-proxy-us-east1-0-blob-usercontent-client-id-7775691497.googleapis.com.de/player3/ch.php?categoria=live&canal=boborj",
+          "playerProfile": "opaque-iframe",
+          "timeoutMs": 8000
+        }
+      ]
+    },
+    {
+      "id": "premiere-clubes",
+      "name": "Premiere Clubes",
+      "shortName": "PREMIERE",
+      "category": "Esportes",
+      "accent": "#288f43",
+      "description": "Transmissão de jogos de futebol ao vivo, incluindo campeonatos nacionais e internacionais.",
+      "sources": [
+        {
+          "id": "alerquina-wrapper",
+          "label": "Arlequina • página alternativa",
+          "type": "iframe",
+          "url": "https://alerquina54104.embedtv.lat/88b3ca0b-04f1-4b7a-a65c-d186b23e5cc5",
+          "playerProfile": "opaque-iframe",
+          "timeoutMs": 8000
+        },
+        {
+          "id": "redecanais-wrapper",
+          "label": "Rede Canais • página alternativa",
+          "type": "iframe",
+          "url": "https://redecanaistv.vision/%70%6C%61%79%65%72%33/%63%68.%70%68%70?%63%61%74%65%67%6F%72%69%61=%6C%69%76%65&%63%61%6E%61%6C=%70%72%65%6D%69%65%72%65%63%6C%75%62%65%73",
+          "playerProfile": "opaque-iframe",
+          "timeoutMs": 8000
+        },
+        {
+          "id": "rdcanais-wrapper",
+          "label": "RD Canais • página alternativa",
+          "type": "iframe",
+          "url": "https://rdcanais.net/premiereclubes",
           "playerProfile": "opaque-iframe",
           "timeoutMs": 8000
         }
