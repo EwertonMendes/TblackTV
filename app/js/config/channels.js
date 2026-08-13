@@ -49,6 +49,54 @@
           url: 'https://canaleducacao-stream.ebc.com.br/index.m3u8'
         }
       ]
+    },
+    {
+      id: 'tv-cultura',
+      name: 'TV Cultura',
+      shortName: 'CULT',
+      category: 'TV aberta',
+      accent: '#2159a8',
+      description: 'Cultura, educação, jornalismo e programação infantil.',
+      sources: [
+        {
+          id: 'tvcultura-main',
+          label: 'TV Cultura • Oficial',
+          type: 'hls',
+          url: 'https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8'
+        }
+      ]
+    },
+    {
+      id: 'tv-camara',
+      name: 'TV Câmara',
+      shortName: 'CAM',
+      category: 'Legislativo',
+      accent: '#007c73',
+      description: 'Sessões, debates e notícias da Câmara dos Deputados.',
+      sources: [
+        {
+          id: 'camara-main',
+          label: 'Câmara dos Deputados • Oficial',
+          type: 'hls',
+          url: 'https://stream3.camara.gov.br/tv1/manifest.m3u8'
+        }
+      ]
+    },
+    {
+      id: 'tv-parana-turismo',
+      name: 'TV Paraná Turismo',
+      shortName: 'PR',
+      category: 'TV pública',
+      accent: '#d17818',
+      description: 'Turismo, cultura, notícias e programação do Paraná.',
+      sources: [
+        {
+          id: 'parana-main',
+          label: 'Governo do Paraná • Oficial',
+          type: 'hls',
+          url: 'https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8'
+        }
+      ]
     }
   ];
-}(window.SportsHub));
+}(window.TblackTV));

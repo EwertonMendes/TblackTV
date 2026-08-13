@@ -61,18 +61,19 @@ html, body {
 .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px rgba(69,212,131,.12); }
 .clock { min-width: 86px; text-align: right; font-size: 24px; font-weight: 700; letter-spacing: .4px; }
 
-.hero { margin-top: 70px; }
+.hero { margin-top: 36px; }
 .eyebrow { color: #99a5ff; font-weight: 800; font-size: 16px; letter-spacing: 2.4px; }
 .hero__title { margin-top: 14px; font-size: 58px; line-height: 1.04; letter-spacing: -2.1px; }
 .hero__description { margin-top: 18px; max-width: 830px; color: var(--muted); font-size: 21px; line-height: 1.45; }
 
-.channel-section { margin-top: 66px; }
+.channel-section { margin-top: 36px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .section-heading h3 { font-size: 25px; letter-spacing: -.4px; }
 .section-heading__meta { color: var(--muted); font-size: 16px; }
 
 .channel-grid {
   display: flex;
+  flex-wrap: wrap;
   gap: 26px;
   align-items: stretch;
 }

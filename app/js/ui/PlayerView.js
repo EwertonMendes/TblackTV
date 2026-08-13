@@ -72,4 +72,4 @@
   };
 
   namespace.ui.PlayerView = PlayerView;
-}(window.SportsHub));
+}(window.TblackTV));

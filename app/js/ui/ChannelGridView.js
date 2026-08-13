@@ -67,4 +67,4 @@
   }
 
   namespace.ui.ChannelGridView = ChannelGridView;
-}(window.SportsHub));
+}(window.TblackTV));

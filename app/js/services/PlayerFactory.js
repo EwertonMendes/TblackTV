@@ -13,4 +13,4 @@
   };
 
   namespace.services.PlayerFactory = PlayerFactory;
-}(window.SportsHub));
+}(window.TblackTV));

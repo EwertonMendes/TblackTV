@@ -185,4 +185,4 @@
   };
 
   namespace.controllers.AppController = AppController;
-}(window.SportsHub));
+}(window.TblackTV));

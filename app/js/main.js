@@ -47,4 +47,4 @@
   } else {
     init();
   }
-}(window.SportsHub));
+}(window.TblackTV));

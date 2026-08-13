@@ -133,4 +133,4 @@
   }
 
   namespace.adapters.AvPlayAdapter = AvPlayAdapter;
-}(window.SportsHub));
+}(window.TblackTV));

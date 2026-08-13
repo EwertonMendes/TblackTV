@@ -79,4 +79,4 @@
   };
 
   namespace.services.PlaybackService = PlaybackService;
-}(window.SportsHub));
+}(window.TblackTV));

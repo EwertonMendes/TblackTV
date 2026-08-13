@@ -22,4 +22,4 @@
   };
 
   namespace.core.EventBus = EventBus;
-}(window.SportsHub));
+}(window.TblackTV));

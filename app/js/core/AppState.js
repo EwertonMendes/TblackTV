@@ -49,4 +49,4 @@
   };
 
   namespace.core.AppState = AppState;
-}(window.SportsHub));
+}(window.TblackTV));

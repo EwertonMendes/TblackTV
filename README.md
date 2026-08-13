@@ -1,4 +1,4 @@
-# Sports Hub TV — TizenBrew
+# TblackTV — TizenBrew
 
 Protótipo de hub de canais ao vivo, desenhado para Samsung Tizen e navegação 100% por controle remoto.
 
@@ -7,16 +7,21 @@ Protótipo de hub de canais ao vivo, desenhado para Samsung Tizen e navegação 
 1. Crie um repositório **público** no GitHub.
 2. Envie o conteúdo deste ZIP para a **raiz** do repositório (o `package.json` deve ficar na raiz).
 3. Na TV abra **TizenBrew → Module Manager → Add GitHub Module**.
-4. Informe `SEU_USUARIO/NOME_DO_REPOSITORIO`.
-5. Volte para a Home do TizenBrew e abra **Sports Hub TV**.
+4. Informe `EwertonMendes/TblackTV`.
+5. Volte para a Home do TizenBrew e abra **TblackTV**.
 
 ## Canais incluídos para teste
 
 - TV Brasil — stream público oficial EBC
 - Canal Gov — stream público oficial EBC
 - Canal Educação — stream público oficial EBC
+- TV Cultura — stream oficial publicado pela emissora
+- TV Câmara — stream oficial da Câmara dos Deputados
+- TV Paraná Turismo — stream oficial do Governo do Paraná
 
 As URLs ficam centralizadas em `app/js/config/channels.js` para facilitar troca, adição de fontes e manutenção.
+
+Globo, SBT, Record e Band não estão no catálogo enquanto seus sinais oficiais dependerem de autenticação, geolocalização, DRM, tokens temporários ou players proprietários. O projeto não utiliza retransmissões de terceiros nem URLs não autorizadas para contornar essas restrições.
 
 ## Controle
 

@@ -86,4 +86,4 @@
   }
 
   namespace.adapters.Html5VideoAdapter = Html5VideoAdapter;
-}(window.SportsHub));
+}(window.TblackTV));

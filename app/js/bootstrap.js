@@ -1,7 +1,7 @@
 (function bootstrapNamespace(global) {
   'use strict';
 
-  global.SportsHub = global.SportsHub || {
+  global.TblackTV = global.TblackTV || {
     config: {},
     core: {},
     services: {},

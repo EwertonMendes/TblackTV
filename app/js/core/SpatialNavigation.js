@@ -40,4 +40,4 @@
   }
 
   namespace.core.SpatialNavigation = SpatialNavigation;
-}(window.SportsHub));
+}(window.TblackTV));
