@@ -40,6 +40,7 @@ O projeto usa JavaScript compatível com engines Tizen antigas e evita dependên
 
 - `app/config/channels.json`: catálogo de canais e fontes
 - `app/config/player-profiles.json`: estratégias reutilizáveis de autoplay para iframe
+- `app/js/config/EmbeddedCatalog.js`: fallback empacotado para inicialização sem JSON/DNS
 - `app/config/playlists/`: playlists M3U locais opcionais
 - `core/`: estado, eventos e navegação espacial
 - `services/`: catálogo, resolução de fontes e regras de fallback
@@ -93,6 +94,12 @@ Cada canal pode ter quantas `sources` forem necessárias. IDs devem ser únicos 
 - `m3u`: playlist de texto `.m3u`. Cada URL interna é tentada em sequência antes do fallback para a próxima fonte do canal.
 
 Uma fonte pode ser temporariamente ignorada com `"enabled": false`. `timeoutMs` controla quanto tempo o player aguarda pelo início. Para uma playlist M3U remota, `resolveTimeoutMs` controla o carregamento do arquivo; o servidor precisa permitir CORS.
+
+### Inicialização resiliente
+
+O relógio inicia antes de qualquer acesso de rede. Os dois JSONs de configuração são carregados em paralelo com timeout de 3,5 segundos. Se houver falha de DNS, CDN, HTTP, CORS ou JSON inválido, o app tenta a última cópia válida salva na TV e, depois, o catálogo incorporado em `app/js/config/EmbeddedCatalog.js`. A Home indica `Catálogo local`, mas navega normalmente.
+
+Ao alterar `channels.json` ou `player-profiles.json`, execute `npm run sync-catalog`. `npm test` compara os documentos e falha se houver qualquer divergência. Essa duplicação intencional impede que uma requisição de configuração deixe a aplicação vazia.
 
 ### Perfis de autoplay para iframe
 

@@ -30,7 +30,6 @@
     this.gridView.render(this.state.channels);
     this.gridView.focus(this.state.focusedChannelIndex);
     this.bindPlaybackEvents();
-    this.startClock();
     document.addEventListener('keydown', this.boundKeyHandler);
   };
 
@@ -276,24 +275,6 @@
     }
 
     window.history.back();
-  };
-
-  AppController.prototype.startClock = function startClock() {
-    var clock = document.getElementById('clock');
-
-    function updateClock() {
-      var date = new Date();
-      var hours = pad(date.getHours());
-      var minutes = pad(date.getMinutes());
-      clock.textContent = hours + ':' + minutes;
-    }
-
-    function pad(value) {
-      return value < 10 ? '0' + value : String(value);
-    }
-
-    updateClock();
-    window.setInterval(updateClock, 30000);
   };
 
   function isApplicationKey(keyCode) {

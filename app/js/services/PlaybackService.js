@@ -106,7 +106,8 @@
       }
     }, source.timeoutMs || DEFAULT_START_TIMEOUT_MS);
 
-    this.player.load(source, {
+    try {
+      this.player.load(source, {
       onReady: function onReady() {
         if (!self.isCurrentOperation(operationId)) {
           return;
@@ -168,7 +169,12 @@
           }
         }
       }
-    });
+      });
+    } catch (error) {
+      if (this.isCurrentOperation(operationId)) {
+        this.handleResolvedSourceFailure(error.message || 'O player falhou ao abrir esta fonte.');
+      }
+    }
   };
 
   PlaybackService.prototype.handleAutoplayBlocked = function handleAutoplayBlocked(message) {

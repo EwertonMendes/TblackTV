@@ -34,47 +34,106 @@
     sameOriginMedia: true
   };
 
-  function CatalogService(catalogUrl, profilesUrl, requestFactory) {
+  var DEFAULT_REQUEST_TIMEOUT_MS = 3500;
+  var CACHE_KEY = 'tblacktv.catalog.v1';
+
+  function CatalogService(catalogUrl, profilesUrl, requestFactory, fallbackDocuments) {
     this.catalogUrl = catalogUrl;
     this.profilesUrl = profilesUrl;
     this.requestFactory = requestFactory || createRequest;
+    this.fallbackDocuments = fallbackDocuments || {};
   }
 
   CatalogService.prototype.load = function load(onSuccess, onError) {
     var self = this;
+    var completed = false;
+    var catalogDocument = null;
+    var profileDocument = null;
 
-    loadJson(this.profilesUrl, this.requestFactory, function onProfilesLoaded(profileDocument) {
+    function deliver(catalog, profileDocument, origin, warning) {
       var profiles;
+      var channels;
 
-      try {
-        profiles = validateProfiles(profileDocument);
-      } catch (error) {
-        onError('Perfis de player inválidos: ' + (error.message || error));
+      if (completed) {
         return;
       }
+      profiles = validateProfiles(cloneDocument(profileDocument));
+      channels = validateCatalog(cloneDocument(catalog), profiles);
 
-      loadJson(self.catalogUrl, self.requestFactory, function onCatalogLoaded(catalog) {
+      completed = true;
+      if (origin === 'network') {
+        writeCache(catalog, profileDocument);
+      }
+      onSuccess({
+        channels: channels,
+        profiles: profiles,
+        origin: origin,
+        warning: warning || ''
+      });
+    }
+
+    function succeed(catalog, profileDocument) {
+      try {
+        deliver(catalog, profileDocument, 'network');
+      } catch (error) {
+        useFallback('Configuração inválida: ' + (error.message || error));
+      }
+    }
+
+    function useFallback(reason) {
+      var cached = readCache();
+
+      if (completed) {
+        return;
+      }
+      if (cached) {
         try {
-          onSuccess({
-            channels: validateCatalog(catalog, profiles),
-            profiles: profiles
-          });
-        } catch (error) {
-          onError('Catálogo de canais inválido: ' + (error.message || error));
+          deliver(cached.catalog, cached.profiles, 'cache', reason);
+          return;
+        } catch (cacheError) {
+          clearCache();
         }
-      }, onError);
-    }, onError);
+      }
+      if (self.fallbackDocuments.catalog && self.fallbackDocuments.profiles) {
+        try {
+          deliver(self.fallbackDocuments.catalog, self.fallbackDocuments.profiles, 'embedded', reason);
+          return;
+        } catch (fallbackError) {
+          reason += ' Catálogo incorporado inválido: ' + (fallbackError.message || fallbackError) + '.';
+        }
+      }
+      completed = true;
+      onError(reason + ' O catálogo de emergência também não está disponível.');
+    }
+
+    function deliverNetworkWhenReady() {
+      if (!completed && catalogDocument && profileDocument) {
+        succeed(catalogDocument, profileDocument);
+      }
+    }
+
+    loadJson(this.profilesUrl, this.requestFactory, function onProfilesLoaded(document) {
+      profileDocument = document;
+      deliverNetworkWhenReady();
+    }, useFallback);
+    loadJson(this.catalogUrl, this.requestFactory, function onCatalogLoaded(document) {
+      catalogDocument = document;
+      deliverNetworkWhenReady();
+    }, useFallback);
   };
 
   function loadJson(url, requestFactory, onSuccess, onError) {
     var request = requestFactory();
     var completed = false;
+    var timeoutId;
 
     function fail(message) {
       if (completed) {
         return;
       }
       completed = true;
+      window.clearTimeout(timeoutId);
+      try { request.abort(); } catch (error) {}
       onError(message);
     }
 
@@ -98,6 +157,7 @@
       }
 
       completed = true;
+      window.clearTimeout(timeoutId);
       onSuccess(data);
     };
 
@@ -105,8 +165,52 @@
       fail('Não foi possível carregar "' + url + '".');
     };
 
-    request.open('GET', url, true);
-    request.send();
+    request.ontimeout = function onRequestTimeout() {
+      fail('O carregamento de "' + url + '" excedeu o tempo limite.');
+    };
+
+    timeoutId = window.setTimeout(function onFallbackTimeout() {
+      fail('O carregamento de "' + url + '" excedeu o tempo limite.');
+    }, DEFAULT_REQUEST_TIMEOUT_MS);
+
+    try {
+      request.open('GET', url, true);
+      request.timeout = DEFAULT_REQUEST_TIMEOUT_MS;
+      request.send();
+    } catch (error) {
+      fail('Não foi possível abrir "' + url + '".');
+    }
+  }
+
+  function cloneDocument(document) {
+    return JSON.parse(JSON.stringify(document));
+  }
+
+  function readCache() {
+    var value;
+
+    try {
+      value = window.localStorage ? window.localStorage.getItem(CACHE_KEY) : null;
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeCache(catalog, profiles) {
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem(CACHE_KEY, JSON.stringify({ catalog: catalog, profiles: profiles }));
+      }
+    } catch (error) {}
+  }
+
+  function clearCache() {
+    try {
+      if (window.localStorage) {
+        window.localStorage.removeItem(CACHE_KEY);
+      }
+    } catch (error) {}
   }
 
   function validateProfiles(document) {

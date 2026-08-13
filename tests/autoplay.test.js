@@ -34,6 +34,7 @@ function createRuntime() {
   };
   var windowObject = {
     TblackTV: {
+      config: {},
       core: {},
       services: {},
       adapters: {},
@@ -549,6 +550,139 @@ test('PlaybackService exposes interaction events and reopens an opaque source wi
   assert.strictEqual(service.isInteractionWindowActive(), true);
   assert.strictEqual(service.endInteractionWindow('navigation'), true);
   assert.strictEqual(service.isInteractionWindowActive(), false);
+});
+
+test('embedded catalog stays synchronized with the editable JSON files', function () {
+  var runtime = createRuntime();
+  var embeddedCatalog;
+  var embeddedProfiles;
+  var catalog = JSON.parse(fs.readFileSync(path.join(projectRoot, 'app/config/channels.json'), 'utf8'));
+  var profiles = JSON.parse(fs.readFileSync(path.join(projectRoot, 'app/config/player-profiles.json'), 'utf8'));
+
+  loadScript(runtime.context, 'app/js/config/EmbeddedCatalog.js');
+  embeddedCatalog = JSON.parse(JSON.stringify(runtime.window.TblackTV.config.embeddedCatalog));
+  embeddedProfiles = JSON.parse(JSON.stringify(runtime.window.TblackTV.config.embeddedProfiles));
+
+  assert.deepStrictEqual(embeddedCatalog, catalog);
+  assert.deepStrictEqual(embeddedProfiles, profiles);
+});
+
+test('CatalogService uses the embedded catalog when a DNS request hangs', function () {
+  var runtime = createRuntime();
+  var request;
+  var result = null;
+  var failure = null;
+  var Service;
+  var service;
+
+  loadScript(runtime.context, 'app/js/config/EmbeddedCatalog.js');
+  loadScript(runtime.context, 'app/js/services/CatalogService.js');
+  request = {
+    readyState: 1,
+    status: 0,
+    aborted: false,
+    open: function open() {},
+    send: function send() {},
+    abort: function abort() { this.aborted = true; }
+  };
+  Service = runtime.window.TblackTV.services.CatalogService;
+  service = new Service('channels.json', 'profiles.json', function requestFactory() {
+    return request;
+  }, {
+    catalog: runtime.window.TblackTV.config.embeddedCatalog,
+    profiles: runtime.window.TblackTV.config.embeddedProfiles
+  });
+
+  service.load(function onSuccess(payload) { result = payload; }, function onError(message) { failure = message; });
+  assert.strictEqual(result, null);
+  runtime.runTimersThrough(3499);
+  assert.strictEqual(result, null);
+  runtime.runTimersThrough(3500);
+
+  assert.strictEqual(failure, null);
+  assert.strictEqual(result.origin, 'embedded');
+  assert.strictEqual(result.channels.length, 7);
+  assert.strictEqual(request.aborted, true);
+});
+
+test('synchronous player failures become playback errors without escaping the service', function () {
+  var runtime = createRuntime();
+  var events = [];
+  var factory = {
+    create: function create() {
+      return {
+        load: function load() { throw new Error('player exploded'); },
+        release: function release() {},
+        canActivateFromUserGesture: function canActivate() { return false; },
+        canToggle: function canToggle() { return false; },
+        getName: function getName() { return 'broken'; }
+      };
+    }
+  };
+  var resolver = {
+    resolve: function resolve(source, handlers) {
+      handlers.onSuccess([source]);
+      return function cancel() {};
+    }
+  };
+  var Service;
+  var service;
+
+  loadScript(runtime.context, 'app/js/services/PlaybackService.js');
+  Service = runtime.window.TblackTV.services.PlaybackService;
+  service = new Service(factory, resolver, {
+    emit: function emit(name, payload) { events.push({ name: name, payload: payload }); }
+  });
+
+  assert.doesNotThrow(function playBrokenSource() {
+    service.playChannel({ sources: [{ id: 'broken', type: 'video', url: 'broken:' }] }, 0);
+  });
+  assert.strictEqual(events.filter(function isError(event) { return event.name === 'playback:error'; }).length, 1);
+});
+
+test('TV styles avoid unsupported inset and flex gap declarations', function () {
+  var cssFiles = ['app/css/layout.css', 'app/css/components.css', 'app/css/player.css'];
+  var css = cssFiles.map(function readCss(relativePath) {
+    return fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+  }).join('\n');
+
+  assert.strictEqual(/(^|[;{]\s*)inset\s*:/m.test(css), false);
+  assert.strictEqual(/(^|[;{]\s*)gap\s*:/m.test(css), false);
+});
+
+test('AVPlay uses the real player surface instead of a fixed 1920x1080 rectangle', function () {
+  var runtime = createRuntime();
+  var displayRect = null;
+  var Adapter;
+  var adapter;
+
+  runtime.window.innerWidth = 1280;
+  runtime.window.innerHeight = 720;
+  runtime.window.webapis = {
+    avplay: {
+      open: function open() {},
+      setDisplayRect: function setDisplayRect(x, y, width, height) {
+        displayRect = [x, y, width, height];
+      },
+      setDisplayMethod: function setDisplayMethod() {},
+      setStreamingProperty: function setStreamingProperty() {},
+      setListener: function setListener() {},
+      prepareAsync: function prepareAsync(onSuccess) { onSuccess(); },
+      play: function play() {},
+      getState: function getState() { return 'NONE'; }
+    }
+  };
+
+  loadScript(runtime.context, 'app/js/services/adapters/AvPlayAdapter.js');
+  Adapter = runtime.window.TblackTV.adapters.AvPlayAdapter;
+  adapter = new Adapter({
+    getBoundingClientRect: function getBoundingClientRect() {
+      return { left: 0, top: 0, width: 1280, height: 720 };
+    }
+  });
+  adapter.load({ url: 'https://media.example/live.m3u8' }, {});
+
+  assert.deepStrictEqual(displayRect, [0, 0, 1280, 720]);
 });
 
 function runAll() {

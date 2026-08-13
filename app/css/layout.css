@@ -22,7 +22,10 @@ html, body {
 .screen--home::before {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   pointer-events: none;
   opacity: .22;
   background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
@@ -41,7 +44,8 @@ html, body {
   justify-content: space-between;
 }
 
-.brand { display: flex; align-items: center; gap: 18px; }
+.brand { display: flex; align-items: center; }
+.brand > * + * { margin-left: 18px; }
 .brand__mark {
   width: 62px; height: 62px; border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
@@ -52,13 +56,15 @@ html, body {
 .brand__title { font-size: 28px; line-height: 1.05; letter-spacing: -.5px; }
 .brand__subtitle { margin-top: 6px; color: var(--muted); font-size: 16px; }
 
-.topbar__status { display: flex; align-items: center; gap: 28px; }
+.topbar__status { display: flex; align-items: center; }
+.topbar__status > * + * { margin-left: 28px; }
 .status-pill {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center;
   padding: 11px 16px; border-radius: 999px;
   background: rgba(255,255,255,.06); color: #dce5f3; font-size: 16px;
 }
-.status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px rgba(69,212,131,.12); }
+.status-dot { width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px rgba(69,212,131,.12); }
+.status-pill--warning .status-dot { background: #f2b84b; box-shadow: 0 0 0 5px rgba(242,184,75,.12); }
 .clock { min-width: 86px; text-align: right; font-size: 24px; font-weight: 700; letter-spacing: .4px; }
 
 .hero { margin-top: 36px; }
@@ -74,9 +80,11 @@ html, body {
 .channel-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 26px;
   align-items: stretch;
+  margin-right: -26px;
+  margin-bottom: -26px;
 }
+.channel-card { margin-right: 26px; margin-bottom: 26px; }
 
 .channel-grid--error {
   display: block;
@@ -88,9 +96,10 @@ html, body {
 .helpbar {
   position: absolute;
   left: 76px; right: 76px; bottom: 40px;
-  display: flex; align-items: center; gap: 34px;
+  display: flex; align-items: center;
   color: var(--muted); font-size: 16px;
 }
+.helpbar > * + * { margin-left: 34px; }
 
 kbd {
   display: inline-flex; align-items: center; justify-content: center;

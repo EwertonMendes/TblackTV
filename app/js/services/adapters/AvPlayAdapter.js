@@ -14,6 +14,7 @@
   AvPlayAdapter.prototype.load = function load(source, callbacks) {
     var self = this;
     var url = source.url;
+    var displayRect;
 
     this.callbacks = callbacks || {};
     this.prepared = false;
@@ -21,7 +22,8 @@
 
     try {
       window.webapis.avplay.open(url);
-      window.webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
+      displayRect = getDisplayRect(this.objectElement);
+      window.webapis.avplay.setDisplayRect(displayRect.x, displayRect.y, displayRect.width, displayRect.height);
       window.webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
 
       try {
@@ -131,6 +133,26 @@
       onevent: function onEvent() {},
       onsubtitlechange: function onSubtitleChange() {},
       ondrmevent: function onDrmEvent() {}
+    };
+  }
+
+  function getDisplayRect(element) {
+    var rect;
+    var width;
+    var height;
+
+    try {
+      rect = element.getBoundingClientRect();
+    } catch (error) {
+      rect = null;
+    }
+    width = rect && rect.width ? rect.width : (window.innerWidth || 1920);
+    height = rect && rect.height ? rect.height : (window.innerHeight || 1080);
+    return {
+      x: Math.max(0, Math.round(rect && rect.left ? rect.left : 0)),
+      y: Math.max(0, Math.round(rect && rect.top ? rect.top : 0)),
+      width: Math.max(1, Math.round(width)),
+      height: Math.max(1, Math.round(height))
     };
   }
 

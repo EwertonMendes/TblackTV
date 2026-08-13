@@ -26,7 +26,7 @@
         </div>
 
         <div class="topbar__status">
-          <span class="status-pill"><span class="status-dot"></span> Online</span>
+          <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
           <time id="clock" class="clock">--:--</time>
         </div>
       </header>
@@ -121,6 +121,7 @@
   </div>
 
   <script src="js/bootstrap.js"></script>
+  <script src="js/config/EmbeddedCatalog.js"></script>
   <script src="js/core/EventBus.js"></script>
   <script src="js/core/AppState.js"></script>
   <script src="js/core/SpatialNavigation.js"></script>
@@ -132,6 +133,7 @@
   <script src="js/services/PlayerFactory.js"></script>
   <script src="js/services/PlaybackService.js"></script>
   <script src="js/ui/ChannelGridView.js"></script>
+  <script src="js/ui/ClockView.js"></script>
   <script src="js/ui/PlayerView.js"></script>
   <script src="js/controllers/AppController.js"></script>
   <script src="js/main.js"></script>

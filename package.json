@@ -6,6 +6,7 @@
   "appName": "TblackTV",
   "appPath": "app/index.html",
   "scripts": {
+    "sync-catalog": "node scripts/sync-embedded-catalog.js",
     "test": "node tests/autoplay.test.js"
   },
   "keys": [

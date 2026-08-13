@@ -13,7 +13,7 @@
 
 `AppController` coordena UI, estado e reprodução.
 
-`CatalogService` carrega e valida `app/config/player-profiles.json` e `app/config/channels.json` antes da inicialização da interface. Referências a perfis inexistentes impedem a inicialização com uma mensagem clara.
+`CatalogService` carrega e valida `app/config/player-profiles.json` e `app/config/channels.json` em paralelo. O relógio não depende desse carregamento. Cada requisição possui timeout de 3,5 segundos e a inicialização segue a cadeia `JSON atual → última cópia válida → EmbeddedCatalog`. Assim, DNS, CDN, CORS ou um JSON corrompido não deixam a Home sem canais ou controle.
 
 `PlaybackService` é independente da tecnologia de player. Para cada tentativa ele solicita ao `PlayerFactory` um adapter compatível com a fonte atual.
 
@@ -25,7 +25,7 @@
 2. `AvPlayAdapter`, para HLS, DASH e vídeo direto quando `webapis.avplay` existe;
 3. `Html5VideoAdapter`, como fallback para mídia direta.
 
-O catálogo JSON funciona como Repository estático. O `CatalogService` pode futuramente apontar para um endpoint remoto sem alterar views, controllers ou adapters.
+O catálogo JSON funciona como Repository estático. `EmbeddedCatalog.js` é sua réplica de emergência empacotada e sua igualdade é verificada nos testes. O `CatalogService` pode futuramente apontar para um endpoint remoto sem alterar views, controllers ou adapters.
 
 ## Fluxo de uma fonte
 
@@ -50,6 +50,8 @@ O `IframePlayerAdapter` reaplica um sandbox seguro antes de cada navegação. S�
 Provedores que recusam execução dentro de sandbox usam `securityMode: "interaction-shield"`. Nesse modo, o iframe só recebe eventos durante uma janela temporária iniciada pelo usuário. Timeout, perda de foco, mudança de visibilidade, navegação ou destruição retravam o iframe e removem timers e listeners. Durante a janela, não há como impedir tecnicamente um popup do provedor sem bloquear também o clique real no Play; por isso, integrações por `postMessage`, same-origin ou mídia direta continuam preferíveis.
 
 As superfícies do app e dos players usam `width` e `height` relativos ao viewport. A resolução de referência continua sendo 1920×1080, mas o player não ultrapassa a área útil quando o navegador possui barras ou usa uma janela menor.
+
+O CSS entregue à TV evita `inset` e flex `gap`, ausentes no Chromium 63 do Tizen 5. Posicionamento usa `top/right/bottom/left` e espaçamento usa margens. O AVPlay calcula seu `setDisplayRect` a partir da superfície real do player, com fallback para o viewport.
 
 ## Padrões aplicados
 

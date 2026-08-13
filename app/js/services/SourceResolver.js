@@ -60,8 +60,12 @@
       finish(callbacks.onError, 'A playlist M3U demorou demais para responder.');
     }, source.resolveTimeoutMs || DEFAULT_RESOLVE_TIMEOUT_MS);
 
-    request.open('GET', source.url, true);
-    request.send();
+    try {
+      request.open('GET', source.url, true);
+      request.send();
+    } catch (error) {
+      finish(callbacks.onError, 'Não foi possível abrir a playlist M3U. Verifique a URL e a rede.');
+    }
 
     return function cancelResolution() {
       if (completed) {

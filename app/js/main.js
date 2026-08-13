@@ -3,12 +3,32 @@
 
   function init() {
     var elements = collectElements();
+    var clockView = new namespace.ui.ClockView(elements.clock);
+    var fallbackDocuments = {
+      catalog: namespace.config.embeddedCatalog,
+      profiles: namespace.config.embeddedProfiles
+    };
 
-    new namespace.services.CatalogService('config/channels.json', 'config/player-profiles.json').load(
+    clockView.start();
+    setAppStatus(elements, 'Carregando canais', false);
+
+    new namespace.services.CatalogService(
+      'config/channels.json',
+      'config/player-profiles.json',
+      null,
+      fallbackDocuments
+    ).load(
       function onCatalogReady(catalog) {
         buildApplication(elements, catalog.channels, catalog.profiles);
+        if (catalog.origin === 'network') {
+          setAppStatus(elements, 'Online', false);
+        } else {
+          setAppStatus(elements, 'Catálogo local', true);
+          console.log('[Catalog] Fallback ativo:', catalog.warning);
+        }
       },
       function onCatalogError(message) {
+        setAppStatus(elements, 'Catálogo indisponível', true);
         showStartupError(elements, message);
       }
     );
@@ -41,12 +61,23 @@
     elements.channelGrid.classList.add('channel-grid--error');
   }
 
+  function setAppStatus(elements, text, isWarning) {
+    elements.appStatus.textContent = text;
+    if (isWarning) {
+      elements.appStatus.parentNode.classList.add('status-pill--warning');
+    } else {
+      elements.appStatus.parentNode.classList.remove('status-pill--warning');
+    }
+  }
+
   function collectElements() {
     return {
       homeScreen: document.getElementById('home-screen'),
       playerScreen: document.getElementById('player-screen'),
       channelGrid: document.getElementById('channel-grid'),
       channelCount: document.getElementById('channel-count'),
+      clock: document.getElementById('clock'),
+      appStatus: document.getElementById('app-status'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),
       iframePlayer: document.getElementById('iframe-player'),
