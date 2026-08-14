@@ -201,6 +201,8 @@
       url: normalizeProtocol(url),
       quality: metadata.quality,
       catalogOrigin: playlist.id,
+      sourcePriority: numericPlaylistPriority(playlist),
+      playlistOrder: index,
       timeoutMs: 20000
     };
     if (referrer) {
@@ -300,7 +302,19 @@
   }
 
   function compareSources(left, right) {
+    var priorityDifference = numericSourcePriority(right) - numericSourcePriority(left);
+    var playlistOrderDifference;
     var qualityDifference = numericQuality(right) - numericQuality(left);
+
+    if (priorityDifference) {
+      return priorityDifference;
+    }
+    if (numericSourcePriority(left) > 0 && left.catalogOrigin === right.catalogOrigin) {
+      playlistOrderDifference = numericPlaylistOrder(left) - numericPlaylistOrder(right);
+      if (playlistOrderDifference) {
+        return playlistOrderDifference;
+      }
+    }
     if (qualityDifference) {
       return qualityDifference;
     }
@@ -348,6 +362,9 @@
     if (/prime video|paramount/.test(value)) { return 'Streaming'; }
     if (/news|noticia|jovem pan|cnn/.test(value)) { return 'Notícias'; }
     if (/kids|cartoon|infantil|gloob/.test(value)) { return 'Infantil'; }
+    if (/discovery|animal planet|history|h2|hgtv/.test(value)) { return 'Documentários'; }
+    if (/hbo|telecine|cinemax|megapix|space|tnt|studio universal|universal channel|universal tv|axn|a e/.test(value)) { return 'Filmes e séries'; }
+    if (/band|globo|record|sbt|multishow|mtv|adult swim/.test(value)) { return 'Entretenimento'; }
     if (/camara|senado|assembleia|gov/.test(value)) { return 'Público'; }
     if (/gospel|igreja|relig|evangel/.test(value)) { return 'Religioso'; }
     if (/music|musica|radio/.test(value)) { return 'Música'; }
@@ -388,6 +405,18 @@
 
   function numericQuality(source) {
     return typeof source.quality === 'number' ? source.quality : parseInt(source.quality, 10) || 0;
+  }
+
+  function numericPlaylistPriority(playlist) {
+    return parseInt(playlist && playlist.sourcePriority, 10) || 0;
+  }
+
+  function numericSourcePriority(source) {
+    return parseInt(source && source.sourcePriority, 10) || 0;
+  }
+
+  function numericPlaylistOrder(source) {
+    return parseInt(source && source.playlistOrder, 10) || 0;
   }
 
   function getSourceType(url) {

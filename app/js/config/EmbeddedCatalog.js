@@ -24,11 +24,12 @@
         "timeoutMs": 15000
       },
       {
-        "id": "tblacktv-resolved",
-        "label": "TblackTV • canais resolvidos",
-        "url": "https://raw.githubusercontent.com/EwertonMendes/TblackTV-M3U-Resolver/refs/heads/master/public/playlist.m3u",
+        "id": "tblack-iptv",
+        "label": "Tblack IPTV",
+        "url": "https://ewertonmendes.github.io/tblack-iptv/playlist.m3u",
         "enabled": true,
-        "timeoutMs": 15000
+        "timeoutMs": 15000,
+        "sourcePriority": 1000
       }
     ],
     "channels": [

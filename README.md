@@ -5,7 +5,7 @@ Hub de canais ao vivo para Smart TVs Samsung antigas, com foco em Tizen 5.0 e na
 ## Instalação pelo GitHub
 
 ```text
-EwertonMendes/TblackTV@v0.4.1
+EwertonMendes/TblackTV@v0.4.2
 ```
 
 Use a tag imutável em vez de `@master` para evitar misturar arquivos de versões diferentes no cache do TizenBrew.
@@ -16,12 +16,12 @@ O catálogo local é exibido imediatamente e, em segundo plano, o app lê a list
 
 ```text
 https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u
-https://raw.githubusercontent.com/EwertonMendes/TblackTV-M3U-Resolver/refs/heads/master/public/playlist.m3u
+https://ewertonmendes.github.io/tblack-iptv/playlist.m3u
 ```
 
-A segunda lista é mantida pelo TblackTV M3U Resolver e substitui a cópia M3U que antes ficava dentro do app.
+A segunda lista é mantida no projeto Tblack IPTV. Seus canais são criados ou mesclados com canais de mesmo `tvg-id`/nome, e suas fontes sempre ficam antes das demais fontes do canal.
 
-Cada entrada da M3U vira um canal. Entradas com o mesmo `tvg-id`, ou com o mesmo nome normalizado quando não há identificador, são agrupadas como fontes alternativas. As fontes são ordenadas por resolução: 1080 antes de 720, depois 576, 480 e assim por diante. Em empate, a fonte oficial e HTTPS têm preferência.
+Cada entrada da M3U vira um canal. Entradas com o mesmo `tvg-id`, ou com o mesmo nome normalizado quando não há identificador, são agrupadas como fontes alternativas. A Tblack IPTV preserva sua ordem original e tem prioridade. Depois dela, as demais fontes são ordenadas por resolução: 1080 antes de 720, depois 576, 480 e assim por diante. Em empate, a fonte oficial e HTTPS têm preferência.
 
 A lista remota é atualizada em cada inicialização. Se GitHub, DNS ou CORS falharem, o app usa a última cópia salva na TV; se ainda não houver cache, os seis canais locais continuam funcionando.
 
@@ -57,11 +57,12 @@ Edite `app/config/channels.json` e acrescente um item em `remotePlaylists`:
   "label": "Minha lista",
   "url": "https://exemplo.com/canais-br.m3u",
   "enabled": true,
-  "timeoutMs": 15000
+  "timeoutMs": 15000,
+  "sourcePriority": 0
 }
 ```
 
-Use IDs únicos. Se a nova lista usar os mesmos `tvg-id`, as URLs serão acrescentadas ao canal existente. Sem `tvg-id`, o app tenta mesclar pelo nome sem acentos, diferenças de maiúsculas ou pontuação. URLs repetidas não são adicionadas duas vezes.
+Use IDs únicos. Se a nova lista usar os mesmos `tvg-id`, as URLs serão acrescentadas ao canal existente. Sem `tvg-id`, o app tenta mesclar pelo nome sem acentos, diferenças de maiúsculas ou pontuação. URLs repetidas não são adicionadas duas vezes. `sourcePriority` maior coloca as fontes daquela playlist antes das fontes de listas com prioridade menor.
 
 O parser entende HLS (`.m3u8` e manifests resolvidos em `file.txt`, `index.txt` ou `__index.txt`), DASH (`.mpd`) e vídeos diretos (`.mp4`, `.m4v` e `.webm`) no formato:
 

@@ -372,6 +372,77 @@ run('resolved playlists group providers and accept HLS text, DASH and video stre
   }).sort().join(','), 'dash,hls,video');
 });
 
+run('priority playlists merge channels and keep their original source order first', function () {
+  var context = runtime();
+  var Service;
+  var channels;
+  var espn;
+  var hbo;
+  var playlistContent = [
+    '#EXTM3U',
+    '#EXTINF:-1 tvg-id="espn",ESPN',
+    'https://priority.example/espn-primary/file.txt',
+    '#EXTINF:-1 tvg-id="espn-backup",ESPN',
+    'https://priority.example/espn-backup/file.txt',
+    '#EXTINF:-1 tvg-id="hbo",HBO',
+    'https://priority.example/hbo/file.txt'
+  ].join('\n');
+  var localChannels = [{
+    id: 'espn-local',
+    tvgId: 'ESPN.br@SD',
+    name: 'ESPN',
+    shortName: 'ESPN',
+    category: 'Esportes',
+    sources: [{
+      id: 'official-1080',
+      label: 'Fonte oficial 1080p',
+      type: 'hls',
+      url: 'https://official.example/espn.m3u8',
+      quality: 1080,
+      official: true
+    }]
+  }];
+
+  load(context, 'app/js/services/RemotePlaylistCatalogService.js');
+  Service = context.window.TblackTV.services.RemotePlaylistCatalogService;
+  new Service(function requestFactory() {
+    return {
+      readyState: 0,
+      status: 0,
+      responseText: '',
+      open: function open() {},
+      abort: function abort() {},
+      send: function send() {
+        this.readyState = 4;
+        this.status = 200;
+        this.responseText = playlistContent;
+        this.onreadystatechange();
+      }
+    };
+  }).load([{
+    id: 'tblack-iptv',
+    label: 'Tblack IPTV',
+    url: 'https://example.test/playlist.m3u',
+    enabled: true,
+    sourcePriority: 1000
+  }], localChannels, {
+    onSuccess: function onSuccess(result) { channels = result; }
+  });
+
+  espn = channels.filter(function byName(channel) { return channel.name === 'ESPN'; })[0];
+  hbo = channels.filter(function byName(channel) { return channel.name === 'HBO'; })[0];
+  assert.strictEqual(channels.length, 2);
+  assert.deepStrictEqual(Array.prototype.slice.call(espn.sources).map(function sourceUrl(source) {
+    return source.url;
+  }), [
+    'https://priority.example/espn-primary/file.txt',
+    'https://priority.example/espn-backup/file.txt',
+    'https://official.example/espn.m3u8'
+  ]);
+  assert.strictEqual(espn.sources[0].sourcePriority, 1000);
+  assert.strictEqual(hbo.category, 'Filmes e séries');
+});
+
 run('disguised HLS uses the MSE adapter before Samsung AVPlay', function () {
   var context = runtime();
   var Factory;
@@ -450,7 +521,13 @@ run('the MSE adapter loads and releases a disguised HLS manifest', function () {
 
 run('the active catalog contains only direct HLS or M3U sources', function () {
   var catalog = JSON.parse(fs.readFileSync(path.join(root, 'app/config/channels.json'), 'utf8'));
+  var priorityPlaylist = catalog.remotePlaylists.filter(function byId(playlist) {
+    return playlist.id === 'tblack-iptv';
+  })[0];
   var iframeCount = 0;
+
+  assert.strictEqual(priorityPlaylist.url, 'https://ewertonmendes.github.io/tblack-iptv/playlist.m3u');
+  assert.strictEqual(priorityPlaylist.sourcePriority, 1000);
 
   catalog.channels.forEach(function eachChannel(channel) {
     channel.sources.forEach(function eachSource(source) {
