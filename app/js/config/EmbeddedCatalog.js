@@ -22,6 +22,13 @@
         "url": "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u",
         "enabled": true,
         "timeoutMs": 15000
+      },
+      {
+        "id": "tblacktv-resolved",
+        "label": "TblackTV • canais resolvidos",
+        "url": "https://raw.githubusercontent.com/EwertonMendes/TblackTV-M3U-Resolver/refs/heads/master/public/playlist.m3u",
+        "enabled": true,
+        "timeoutMs": 15000
       }
     ],
     "channels": [

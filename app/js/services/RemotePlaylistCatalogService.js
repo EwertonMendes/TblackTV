@@ -118,6 +118,7 @@
     var userAgent = '';
     var index;
     var line;
+    var sourceType;
 
     for (index = 0; index < lines.length; index += 1) {
       line = lines[index].trim();
@@ -141,8 +142,9 @@
       if (line.charAt(0) === '#') {
         continue;
       }
-      if (metadata && isHlsUrl(line)) {
-        entries.push(createEntry(metadata, line, playlist, referrer, userAgent, entries.length));
+      sourceType = getSourceType(line);
+      if (metadata && sourceType) {
+        entries.push(createEntry(metadata, line, playlist, referrer, userAgent, entries.length, sourceType));
       }
       metadata = null;
       referrer = '';
@@ -150,7 +152,7 @@
     }
 
     if (!entries.length) {
-      throw new Error('A playlist não contém streams HLS compatíveis.');
+      throw new Error('A playlist não contém streams HLS, DASH ou vídeos compatíveis.');
     }
     return entries;
   }
@@ -190,11 +192,12 @@
     return match ? match[1].trim() : '';
   }
 
-  function createEntry(metadata, url, playlist, referrer, userAgent, index) {
+  function createEntry(metadata, url, playlist, referrer, userAgent, index, sourceType) {
+    var formatLabel = sourceType === 'dash' ? 'DASH' : (sourceType === 'video' ? 'Vídeo' : 'HLS');
     var source = {
       id: playlist.id + '-' + (index + 1),
-      label: playlist.label + ' • HLS' + (metadata.quality ? ' • ' + metadata.quality + 'p' : ''),
-      type: 'hls',
+      label: metadata.title + ' • ' + formatLabel + (metadata.quality ? ' • ' + metadata.quality + 'p' : ''),
+      type: sourceType,
       url: normalizeProtocol(url),
       quality: metadata.quality,
       catalogOrigin: playlist.id,
@@ -205,6 +208,11 @@
     }
     if (userAgent) {
       source.userAgent = userAgent;
+    }
+    if (sourceType === 'hls' && isDisguisedHlsUrl(url)) {
+      // These providers can serve MPEG transport stream bytes with image-like
+      // extensions/MIME types. MSE inspects the payload more reliably than AVPlay.
+      source.hlsPlayback = 'mse';
     }
     return {
       tvgId: metadata.tvgId,
@@ -322,6 +330,7 @@
   function cleanTitle(title) {
     return String(title)
       .replace(/\s*\(\d{3,4}[pi]\)/ig, '')
+      .replace(/\s*\((?:Arlequina|RDCanais(?:\s*\/\s*Paramount\+)?|MeuPlayer|RDSE|Rede Canais)\)\s*$/i, '')
       .replace(/\s*\[(?:Geo-blocked|Not 24\/7)\]/ig, '')
       .replace(/\s+/g, ' ')
       .trim();
@@ -335,7 +344,8 @@
 
   function inferCategory(name) {
     var value = normalizeText(name);
-    if (/sport|futebol|combate|n sports|ge fast/.test(value)) { return 'Esportes'; }
+    if (/sport|futebol|combate|n sports|ge fast|espn|premiere/.test(value)) { return 'Esportes'; }
+    if (/prime video|paramount/.test(value)) { return 'Streaming'; }
     if (/news|noticia|jovem pan|cnn/.test(value)) { return 'Notícias'; }
     if (/kids|cartoon|infantil|gloob/.test(value)) { return 'Infantil'; }
     if (/camara|senado|assembleia|gov/.test(value)) { return 'Público'; }
@@ -380,9 +390,25 @@
     return typeof source.quality === 'number' ? source.quality : parseInt(source.quality, 10) || 0;
   }
 
-  function isHlsUrl(url) {
+  function getSourceType(url) {
     var value = String(url || '').toLowerCase();
-    return /^https?:\/\//.test(value) && /\.m3u8(?:[?#]|$)/.test(value);
+    if (!/^https?:\/\//.test(value)) {
+      return '';
+    }
+    if (/\.m3u8(?:[?#]|$)/.test(value) || /\/(?:file|index|__index)\.txt(?:[?#]|$)/.test(value)) {
+      return 'hls';
+    }
+    if (/\.mpd(?:[?#]|$)/.test(value)) {
+      return 'dash';
+    }
+    if (/\.(?:mp4|m4v|webm)(?:[?#]|$)/.test(value)) {
+      return 'video';
+    }
+    return '';
+  }
+
+  function isDisguisedHlsUrl(url) {
+    return /\/(?:file|index|__index)\.txt(?:[?#]|$)/i.test(String(url || ''));
   }
 
   function isSecure(url) {

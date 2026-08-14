@@ -29,6 +29,7 @@
   flex: 0 0 60px;
   width: 60px;
   height: 82px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,10 +39,14 @@
 
 .side-menu__avatar img {
   display: block;
-  width: 57px;
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 78px;
   height: auto;
-  transform-origin: 50% 70%;
-  animation: logo-breathe 4600ms ease-in-out infinite;
+  max-width: none;
+  transform: translateX(-50%);
+  animation: none;
 }
 
 .side-menu__brand-copy {
@@ -206,17 +211,12 @@
 }
 .side-menu-scrim.is-visible { opacity: 1; visibility: visible; transition-delay: 0ms; }
 
-@keyframes logo-breathe {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-3px) scale(1.015); }
-}
-
 @media screen and (max-width: 1500px) {
   .side-menu { width: 76px; padding: 20px 12px; }
   .side-menu.is-expanded { width: 310px; }
   .side-menu__brand { height: 92px; }
   .side-menu__avatar { flex-basis: 50px; width: 50px; height: 68px; border-radius: 18px; }
-  .side-menu__avatar img { width: 47px; }
+  .side-menu__avatar img { top: -11px; width: 66px; }
   .side-menu__brand-copy { margin-left: 15px; }
   .side-menu__brand-copy strong { font-size: 22px; }
   .side-menu__brand-copy span { margin-top: 4px; font-size: 12px; }
@@ -232,8 +232,4 @@
   .side-search input { font-size: 15px; }
   .side-search p { font-size: 10px; }
   .side-menu__hint { left: 18px; bottom: 20px; font-size: 12px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .side-menu__avatar img { animation: none; }
 }

@@ -54,6 +54,7 @@
       sidebarView: sidebarView,
       favoritesService: favoritesService,
       searchInput: elements.searchInput,
+      homeFocusTarget: elements.homeScreen,
       menuItems: {
         channels: elements.menuChannels,
         search: elements.menuSearch,

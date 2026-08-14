@@ -28,6 +28,7 @@
     this.sidebarView = options.sidebarView;
     this.favoritesService = options.favoritesService;
     this.searchInput = options.searchInput;
+    this.homeFocusTarget = options.homeFocusTarget;
     this.menuItems = options.menuItems;
     this.boundKeyHandler = this.onKeyDown.bind(this);
     this.boundHardwareBackHandler = this.onHardwareBack.bind(this);
@@ -67,6 +68,15 @@
       self.state.setFavoritesOnly(false);
       self.state.setSearchQuery(self.searchInput.value);
       self.refreshHome();
+    });
+    this.searchInput.addEventListener('blur', function onSearchInputBlur() {
+      /* The Samsung IME can dismiss itself without forwarding its OK key to
+         the page. A real blur is therefore also treated as "apply search". */
+      window.setTimeout(function finishSearchAfterImeBlur() {
+        if (self.searchEditing && document.activeElement !== self.searchInput) {
+          self.stopSearchEditing(true);
+        }
+      }, 0);
     });
     for (itemName in this.menuItems) {
       if (this.menuItems.hasOwnProperty(itemName)) {
@@ -205,6 +215,10 @@
   AppController.prototype.onKeyDown = function onKeyDown(event) {
     var keyCode;
 
+    if (this.state.screen === 'home' && this.searchEditing &&
+        shouldLetSearchInputHandle(event, this.searchInput)) {
+      return;
+    }
     if (this.lastHandledEvent === event) {
       return;
     }
@@ -402,12 +416,22 @@
   };
 
   AppController.prototype.closeSidebar = function closeSidebar() {
+    var self = this;
+
     this.searchEditing = false;
     this.sidebarView.stopSearchEditing();
     this.sidebarView.setExpanded(false);
     this.sidebarView.clearFocus();
     this.homeFocusArea = 'grid';
     this.gridView.focus(this.state.focusedChannelIndex);
+    focusHome();
+    window.setTimeout(focusHome, 80);
+
+    function focusHome() {
+      if (self.state.screen === 'home' && self.homeFocusTarget) {
+        try { self.homeFocusTarget.focus(); } catch (error) {}
+      }
+    }
   };
 
   AppController.prototype.handleSearchEditingKey = function handleSearchEditingKey(keyCode, event) {
@@ -416,13 +440,12 @@
       this.stopSearchEditing(true);
     } else if (keyCode === KEY.BACK) {
       event.preventDefault();
-      if (this.searchInput.value) {
-        this.searchInput.value = '';
-        this.state.setSearchQuery('');
-        this.refreshHome();
-      } else {
-        this.stopSearchEditing(false);
+      if (!this.acceptBackAction()) {
+        return;
       }
+      /* Return closes the keyboard and keeps the query. Clearing the active
+         filter remains an explicit action through "Todos os canais". */
+      this.stopSearchEditing(true);
     }
   };
 
@@ -432,13 +455,13 @@
   };
 
   AppController.prototype.stopSearchEditing = function stopSearchEditing(returnToGrid) {
-    this.searchEditing = false;
-    this.sidebarView.stopSearchEditing();
     if (returnToGrid) {
       this.closeSidebar();
-    } else {
-      this.sidebarView.setFocusedItem('search');
+      return;
     }
+    this.searchEditing = false;
+    this.sidebarView.stopSearchEditing();
+    this.sidebarView.setFocusedItem('search');
   };
 
   AppController.prototype.toggleFocusedFavorite = function toggleFocusedFavorite() {
@@ -593,6 +616,19 @@
     if (key === 'ArrowDown') { return KEY.DOWN; }
     if (key === 'Backspace' || key === 'Escape') { return KEY.BACK; }
     return keyCode;
+  }
+
+  function shouldLetSearchInputHandle(event, searchInput) {
+    var key = event && event.key;
+    var keyCode = event && (event.keyCode || event.which || 0);
+
+    if (!event || event.target !== searchInput) {
+      return false;
+    }
+    /* Backspace/Delete edit the query. keyCode 229 represents an active IME
+       composition and must not be mistaken for a remote-control command. */
+    return keyCode === 8 || keyCode === 46 || keyCode === 229 ||
+      key === 'Backspace' || key === 'Delete' || !!event.isComposing;
   }
 
   function registerRemoteKeys() {

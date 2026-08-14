@@ -5,7 +5,7 @@ Hub de canais ao vivo para Smart TVs Samsung antigas, com foco em Tizen 5.0 e na
 ## Instalação pelo GitHub
 
 ```text
-EwertonMendes/TblackTV@v0.4.0
+EwertonMendes/TblackTV@v0.4.1
 ```
 
 Use a tag imutável em vez de `@master` para evitar misturar arquivos de versões diferentes no cache do TizenBrew.
@@ -16,13 +16,16 @@ O catálogo local é exibido imediatamente e, em segundo plano, o app lê a list
 
 ```text
 https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u
+https://raw.githubusercontent.com/EwertonMendes/TblackTV-M3U-Resolver/refs/heads/master/public/playlist.m3u
 ```
+
+A segunda lista é mantida pelo TblackTV M3U Resolver e substitui a cópia M3U que antes ficava dentro do app.
 
 Cada entrada da M3U vira um canal. Entradas com o mesmo `tvg-id`, ou com o mesmo nome normalizado quando não há identificador, são agrupadas como fontes alternativas. As fontes são ordenadas por resolução: 1080 antes de 720, depois 576, 480 e assim por diante. Em empate, a fonte oficial e HTTPS têm preferência.
 
 A lista remota é atualizada em cada inicialização. Se GitHub, DNS ou CORS falharem, o app usa a última cópia salva na TV; se ainda não houver cache, os seis canais locais continuam funcionando.
 
-Somente streams HLS HTTP/HTTPS da lista remota são importados. Iframes foram removidos do catálogo, embora o adapter continue no código para possível uso futuro.
+Streams HLS, DASH e vídeos diretos HTTP/HTTPS das listas remotas são importados. Iframes foram removidos do catálogo, embora o adapter continue no código para possível uso futuro. Manifests HLS publicados como `file.txt`, `index.txt` ou `__index.txt` usam automaticamente o modo MSE para tolerar segmentos com extensão ou MIME incorretos, um caso que costuma funcionar no VLC mas falhar no AVPlay.
 
 ## Controle
 
@@ -35,7 +38,7 @@ Na Home:
 - Play/Pause: favoritar ou desfavoritar o canal focado;
 - Return: sair do módulo.
 
-O menu lateral reúne catálogo completo, busca e favoritos. Na grade, Cima e Baixo nunca transferem o foco para o menu. Pressione OK em Buscar para abrir o teclado da TV; Return limpa a consulta e OK aplica o resultado.
+O menu lateral reúne catálogo completo, busca e favoritos. Na grade, Cima e Baixo nunca transferem o foco para o menu. Pressione OK em Buscar para abrir o teclado da TV; OK ou Return aplicam o filtro, fecham o teclado e devolvem a navegação à grade. Para limpar o filtro, apague o texto durante a edição ou selecione Todos os canais.
 
 No player:
 
@@ -60,7 +63,7 @@ Edite `app/config/channels.json` e acrescente um item em `remotePlaylists`:
 
 Use IDs únicos. Se a nova lista usar os mesmos `tvg-id`, as URLs serão acrescentadas ao canal existente. Sem `tvg-id`, o app tenta mesclar pelo nome sem acentos, diferenças de maiúsculas ou pontuação. URLs repetidas não são adicionadas duas vezes.
 
-O parser entende o formato:
+O parser entende HLS (`.m3u8` e manifests resolvidos em `file.txt`, `index.txt` ou `__index.txt`), DASH (`.mpd`) e vídeos diretos (`.mp4`, `.m4v` e `.webm`) no formato:
 
 ```text
 #EXTINF:-1 tvg-id="MeuCanal.br@SD",Meu Canal (1080p)

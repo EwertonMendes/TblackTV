@@ -45,10 +45,12 @@
   };
 
   SidebarView.prototype.stopSearchEditing = function stopSearchEditing() {
+    /* Blur before hiding the input. Some TV browsers otherwise keep the
+       hidden search control as document.activeElement. */
+    try { this.searchInput.blur(); } catch (error) {}
     this.menuElement.classList.remove('is-searching');
     this.searchPanel.classList.add('is-hidden');
     this.searchInput.setAttribute('tabindex', '-1');
-    try { this.searchInput.blur(); } catch (error) {}
   };
 
   SidebarView.prototype.updateState = function updateState(query, favoritesOnly) {
