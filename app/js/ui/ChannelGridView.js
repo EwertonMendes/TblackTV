@@ -34,7 +34,7 @@
 
     if (!this.channels.length) {
       this.gridElement.classList.add('channel-grid--empty');
-      this.gridElement.innerHTML = '<div class="empty-catalog"><strong>Nenhum canal encontrado</strong><span>Altere a busca ou desative o filtro de favoritos.</span></div>';
+      this.gridElement.innerHTML = '<div class="empty-catalog"><strong>Nenhum canal encontrado</strong><span>Use ← para atualizar canais, alterar a busca ou os favoritos.</span></div>';
       this.updateCount();
       return;
     }

@@ -4,32 +4,42 @@
   function init() {
     var elements = collectElements();
     var clockView = new namespace.ui.ClockView(elements.clock);
-    var fallbackDocuments = {
-      catalog: namespace.config.embeddedCatalog,
-      profiles: namespace.config.embeddedProfiles
-    };
+    var catalog = namespace.config.embeddedCatalog;
+    var controller;
+    var refreshing = false;
 
     clockView.start();
-    setAppStatus(elements, 'Preparando canais', false);
+    clearLegacyCatalogs();
+    controller = buildApplication(elements, [], {});
+    controller.onRefreshCatalog = refreshCatalog;
+    refreshCatalog();
 
-    window.setTimeout(function loadBundledCatalog() {
-      new namespace.services.CatalogService(
-      'config/channels.json',
-      'config/player-profiles.json',
-      null,
-      fallbackDocuments
-      ).loadEmbedded(
-      function onCatalogReady(catalog) {
-        var controller = buildApplication(elements, catalog.channels, catalog.profiles);
-        setAppStatus(elements, 'Atualizando catálogo', false);
-        loadRemotePlaylists(elements, controller, catalog.channels, fallbackDocuments.catalog.remotePlaylists || []);
-      },
-      function onCatalogError(message) {
-        setAppStatus(elements, 'Catálogo indisponível', true);
-        showStartupError(elements, message);
+    function refreshCatalog() {
+      if (refreshing) { return; }
+      refreshing = true;
+      elements.menuRefresh.setAttribute('aria-disabled', 'true');
+      elements.refreshLabel.textContent = 'Atualizando…';
+      setAppStatus(elements, 'Atualizando canais…', false);
+      loadRemotePlaylists(elements, controller, [], catalog.remotePlaylists, function onComplete() {
+        refreshing = false;
+        elements.menuRefresh.setAttribute('aria-disabled', 'false');
+        elements.refreshLabel.textContent = 'Atualizar canais';
+      });
+    }
+  }
+
+  function clearLegacyCatalogs() {
+    try {
+      var storage = window.localStorage;
+      var index;
+      var key;
+      for (index = storage.length - 1; index >= 0; index -= 1) {
+        key = storage.key(index);
+        if (key === 'tblacktv.catalog.v1' || key.indexOf('tblacktv.remote-playlist.') === 0) {
+          storage.removeItem(key);
+        }
       }
-      );
-    }, 80);
+    } catch (error) {}
   }
 
   function buildApplication(elements, channels, playerProfiles) {
@@ -58,7 +68,8 @@
       menuItems: {
         channels: elements.menuChannels,
         search: elements.menuSearch,
-        favorites: elements.menuFavorites
+        favorites: elements.menuFavorites,
+        refresh: elements.menuRefresh
       }
     });
 
@@ -66,7 +77,7 @@
     return controller;
   }
 
-  function loadRemotePlaylists(elements, controller, localChannels, playlists) {
+  function loadRemotePlaylists(elements, controller, localChannels, playlists, onComplete) {
     var service = new namespace.services.RemotePlaylistCatalogService();
 
     service.load(playlists, localChannels, {
@@ -76,18 +87,13 @@
       onSuccess: function onSuccess(channels, result) {
         controller.updateCatalog(channels);
         if (result.warnings.length) {
-          setAppStatus(elements, result.remoteCount ? 'Catálogo em cache' : 'Catálogo local', true);
+          setAppStatus(elements, 'Falha ao carregar. Menu ←: Atualizar canais', true);
         } else {
           setAppStatus(elements, 'Online • ' + channels.length + ' canais', false);
         }
+        onComplete();
       }
     });
-  }
-
-  function showStartupError(elements, message) {
-    elements.channelCount.textContent = 'Catálogo indisponível';
-    elements.channelGrid.textContent = message;
-    elements.channelGrid.classList.add('channel-grid--error');
   }
 
   function setAppStatus(elements, text, isWarning) {
@@ -116,6 +122,8 @@
       menuChannels: document.getElementById('menu-channels'),
       menuSearch: document.getElementById('menu-search'),
       menuFavorites: document.getElementById('menu-favorites'),
+      menuRefresh: document.getElementById('menu-refresh'),
+      refreshLabel: document.getElementById('refresh-label'),
       filterSummary: document.getElementById('filter-summary'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),

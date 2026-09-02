@@ -2,7 +2,6 @@
   'use strict';
 
   var DEFAULT_TIMEOUT_MS = 15000;
-  var CACHE_PREFIX = 'tblacktv.remote-playlist.';
 
   function RemotePlaylistCatalogService(requestFactory) {
     this.requestFactory = requestFactory || createRequest;
@@ -58,7 +57,6 @@
     var request = this.requestFactory();
     var timeoutId;
     var completed = false;
-    var cacheKey = CACHE_PREFIX + playlist.id;
 
     function finish(content, fromCache, errorMessage) {
       if (completed) {
@@ -70,12 +68,7 @@
     }
 
     function fallback(message) {
-      var cached = readCache(cacheKey);
-      if (cached) {
-        finish(cached, true, message);
-      } else {
-        finish('', false, message);
-      }
+      finish('', false, message);
     }
 
     request.onreadystatechange = function onReadyStateChange() {
@@ -83,7 +76,6 @@
         return;
       }
       if (isSuccessfulStatus(request.status) && request.responseText) {
-        writeCache(cacheKey, request.responseText);
         finish(request.responseText, false, '');
       } else {
         fallback(playlist.label + ' respondeu com HTTP ' + request.status + '.');
@@ -452,28 +444,12 @@
     return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'tblacktv=' + new Date().getTime();
   }
 
-  function readCache(key) {
-    try {
-      return window.localStorage ? window.localStorage.getItem(key) : '';
-    } catch (error) {
-      return '';
-    }
-  }
-
-  function writeCache(key, content) {
-    try {
-      if (window.localStorage) {
-        window.localStorage.setItem(key, content);
-      }
-    } catch (error) {}
-  }
-
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
   }
 
   function isSuccessfulStatus(status) {
-    return status === 0 || (status >= 200 && status < 300);
+    return status >= 200 && status < 300;
   }
 
   function createRequest() {

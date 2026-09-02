@@ -775,6 +775,10 @@ kbd {
             <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1 6.2-5.6-3-5.6 3 1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/></svg></span>
             <span class="side-menu__label">Meus favoritos</span>
           </button>
+          <button id="menu-refresh" class="side-menu__item" type="button" tabindex="-1" data-menu-item="refresh" aria-disabled="false">
+            <span class="side-menu__icon" aria-hidden="true">↻</span>
+            <span id="refresh-label" class="side-menu__label">Atualizar canais</span>
+          </button>
         </nav>
 
         <div id="side-search-panel" class="side-search is-hidden">
@@ -794,7 +798,7 @@ kbd {
         <header class="topbar">
           <div class="brand"><h1 class="brand__title">TblackTV</h1><span class="brand__divider"></span><p class="brand__subtitle">Canais ao vivo</p></div>
           <div class="topbar__status">
-            <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
+            <span class="status-pill"><span class="status-dot"></span><span id="app-status" role="status" aria-live="polite">Inicializando</span></span>
             <time id="clock" class="clock">--:--</time>
           </div>
         </header>
@@ -803,7 +807,7 @@ kbd {
           <div class="hero__copy">
             <p class="eyebrow">CANAIS GRATUITOS</p>
             <h2 class="hero__title">O que você quer assistir?</h2>
-            <p class="hero__description">Escolha um canal. Use ← na primeira coluna para abrir busca e favoritos.</p>
+            <p class="hero__description">Escolha um canal. Use ← na primeira coluna para abrir busca, favoritos e atualizar canais.</p>
           </div>
           <img class="hero__mascot" src="assets/tblack-mascot.png" alt="Mascote TblackTV">
         </section>
@@ -935,13 +939,6 @@ kbd {
     "schemaVersion": 1,
     "remotePlaylists": [
       {
-        "id": "iptv-org-br",
-        "label": "IPTV-org Brasil",
-        "url": "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u",
-        "enabled": true,
-        "timeoutMs": 15000
-      },
-      {
         "id": "tblack-iptv",
         "label": "Tblack IPTV",
         "url": "https://ewertonmendes.github.io/tblack-iptv/playlist.m3u",
@@ -950,127 +947,7 @@ kbd {
         "sourcePriority": 1000
       }
     ],
-    "channels": [
-      {
-        "id": "tv-brasil",
-        "tvgId": "TVBrasil.br@SD",
-        "name": "TV Brasil",
-        "shortName": "TV",
-        "category": "TV aberta",
-        "accent": "#2f73da",
-        "description": "Jornalismo, cultura, esportes e programação pública.",
-        "sources": [
-          {
-            "id": "ebc-hls",
-            "label": "EBC • HLS oficial • 720p",
-            "type": "hls",
-            "url": "https://tvbrasil-stream.ebc.com.br/index.m3u8",
-            "quality": 720,
-            "official": true,
-            "timeoutMs": 20000
-          },
-          {
-            "id": "local-m3u",
-            "label": "Playlist M3U local",
-            "type": "m3u",
-            "url": "config/playlists/tv-brasil.m3u",
-            "quality": 720,
-            "timeoutMs": 20000
-          }
-        ]
-      },
-      {
-        "id": "canal-gov",
-        "tvgId": "CanalGov.br@SD",
-        "name": "Canal Gov",
-        "shortName": "GOV",
-        "category": "Notícias",
-        "accent": "#158a64",
-        "description": "Notícias, eventos e transmissões do Governo Federal.",
-        "sources": [
-          {
-            "id": "ebc-hls",
-            "label": "EBC • HLS oficial",
-            "type": "hls",
-            "url": "https://canalgov-stream.ebc.com.br/index.m3u8",
-            "official": true
-          }
-        ]
-      },
-      {
-        "id": "canal-educacao",
-        "tvgId": "CanalEducacao.br@SD",
-        "name": "Canal Educação",
-        "shortName": "EDU",
-        "category": "Educação",
-        "accent": "#b44ed1",
-        "description": "Conteúdo educacional e produções da comunicação pública.",
-        "sources": [
-          {
-            "id": "ebc-hls",
-            "label": "EBC • HLS oficial",
-            "type": "hls",
-            "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8",
-            "official": true
-          }
-        ]
-      },
-      {
-        "id": "tv-cultura",
-        "tvgId": "TVCultura.br@SD",
-        "name": "TV Cultura",
-        "shortName": "CULT",
-        "category": "TV aberta",
-        "accent": "#2159a8",
-        "description": "Cultura, educação, jornalismo e programação infantil.",
-        "sources": [
-          {
-            "id": "tvcultura-hls",
-            "label": "TV Cultura • HLS oficial",
-            "type": "hls",
-            "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8",
-            "official": true
-          }
-        ]
-      },
-      {
-        "id": "tv-camara",
-        "tvgId": "TVCamara.br@SD",
-        "name": "TV Câmara",
-        "shortName": "CAM",
-        "category": "Legislativo",
-        "accent": "#007c73",
-        "description": "Sessões, debates e notícias da Câmara dos Deputados.",
-        "sources": [
-          {
-            "id": "camara-hls",
-            "label": "Câmara dos Deputados • HLS oficial • 1080p",
-            "type": "hls",
-            "url": "https://stream3.camara.gov.br/tv1/manifest.m3u8",
-            "quality": 1080,
-            "official": true
-          }
-        ]
-      },
-      {
-        "id": "tv-parana-turismo",
-        "tvgId": "TVParanaTurismo.br@SD",
-        "name": "TV Paraná Turismo",
-        "shortName": "PR",
-        "category": "TV pública",
-        "accent": "#d17818",
-        "description": "Turismo, cultura, notícias e programação do Paraná.",
-        "sources": [
-          {
-            "id": "parana-hls",
-            "label": "Governo do Paraná • HLS oficial",
-            "type": "hls",
-            "url": "https://aovivo.paranaeducativa.pr.gov.br/hls/tve.m3u8",
-            "official": true
-          }
-        ]
-      }
-    ]
+    "channels": []
   };
 }(window.TblackTV));
 </script>
@@ -2351,7 +2228,6 @@ kbd {
   'use strict';
 
   var DEFAULT_TIMEOUT_MS = 15000;
-  var CACHE_PREFIX = 'tblacktv.remote-playlist.';
 
   function RemotePlaylistCatalogService(requestFactory) {
     this.requestFactory = requestFactory || createRequest;
@@ -2407,7 +2283,6 @@ kbd {
     var request = this.requestFactory();
     var timeoutId;
     var completed = false;
-    var cacheKey = CACHE_PREFIX + playlist.id;
 
     function finish(content, fromCache, errorMessage) {
       if (completed) {
@@ -2419,12 +2294,7 @@ kbd {
     }
 
     function fallback(message) {
-      var cached = readCache(cacheKey);
-      if (cached) {
-        finish(cached, true, message);
-      } else {
-        finish('', false, message);
-      }
+      finish('', false, message);
     }
 
     request.onreadystatechange = function onReadyStateChange() {
@@ -2432,7 +2302,6 @@ kbd {
         return;
       }
       if (isSuccessfulStatus(request.status) && request.responseText) {
-        writeCache(cacheKey, request.responseText);
         finish(request.responseText, false, '');
       } else {
         fallback(playlist.label + ' respondeu com HTTP ' + request.status + '.');
@@ -2801,28 +2670,12 @@ kbd {
     return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'tblacktv=' + new Date().getTime();
   }
 
-  function readCache(key) {
-    try {
-      return window.localStorage ? window.localStorage.getItem(key) : '';
-    } catch (error) {
-      return '';
-    }
-  }
-
-  function writeCache(key, content) {
-    try {
-      if (window.localStorage) {
-        window.localStorage.setItem(key, content);
-      }
-    } catch (error) {}
-  }
-
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
   }
 
   function isSuccessfulStatus(status) {
-    return status === 0 || (status >= 200 && status < 300);
+    return status >= 200 && status < 300;
   }
 
   function createRequest() {
@@ -3632,7 +3485,7 @@ kbd {
 
     if (!this.channels.length) {
       this.gridElement.classList.add('channel-grid--empty');
-      this.gridElement.innerHTML = '<div class="empty-catalog"><strong>Nenhum canal encontrado</strong><span>Altere a busca ou desative o filtro de favoritos.</span></div>';
+      this.gridElement.innerHTML = '<div class="empty-catalog"><strong>Nenhum canal encontrado</strong><span>Use ← para atualizar canais, alterar a busca ou os favoritos.</span></div>';
       this.updateCount();
       return;
     }
@@ -3750,7 +3603,8 @@ kbd {
     this.items = {
       channels: elements.menuChannels,
       search: elements.menuSearch,
-      favorites: elements.menuFavorites
+      favorites: elements.menuFavorites,
+      refresh: elements.menuRefresh
     };
   }
 
@@ -4051,7 +3905,7 @@ kbd {
     this.lastSourceSwitchAt = 0;
     this.isCapturingPlayerFocus = false;
     this.homeFocusArea = 'grid';
-    this.sidebarItems = ['channels', 'search', 'favorites'];
+    this.sidebarItems = ['channels', 'search', 'favorites', 'refresh'];
     this.sidebarItemIndex = 0;
     this.searchEditing = false;
   }
@@ -4390,7 +4244,9 @@ kbd {
   };
 
   AppController.prototype.activateSidebarItem = function activateSidebarItem(itemName) {
-    if (itemName === 'search') {
+    if (itemName === 'refresh') {
+      if (this.onRefreshCatalog) { this.onRefreshCatalog(); }
+    } else if (itemName === 'search') {
       this.state.setFavoritesOnly(false);
       this.refreshHome();
       this.startSearchEditing();
@@ -4676,32 +4532,42 @@ kbd {
   function init() {
     var elements = collectElements();
     var clockView = new namespace.ui.ClockView(elements.clock);
-    var fallbackDocuments = {
-      catalog: namespace.config.embeddedCatalog,
-      profiles: namespace.config.embeddedProfiles
-    };
+    var catalog = namespace.config.embeddedCatalog;
+    var controller;
+    var refreshing = false;
 
     clockView.start();
-    setAppStatus(elements, 'Preparando canais', false);
+    clearLegacyCatalogs();
+    controller = buildApplication(elements, [], {});
+    controller.onRefreshCatalog = refreshCatalog;
+    refreshCatalog();
 
-    window.setTimeout(function loadBundledCatalog() {
-      new namespace.services.CatalogService(
-      'config/channels.json',
-      'config/player-profiles.json',
-      null,
-      fallbackDocuments
-      ).loadEmbedded(
-      function onCatalogReady(catalog) {
-        var controller = buildApplication(elements, catalog.channels, catalog.profiles);
-        setAppStatus(elements, 'Atualizando catálogo', false);
-        loadRemotePlaylists(elements, controller, catalog.channels, fallbackDocuments.catalog.remotePlaylists || []);
-      },
-      function onCatalogError(message) {
-        setAppStatus(elements, 'Catálogo indisponível', true);
-        showStartupError(elements, message);
+    function refreshCatalog() {
+      if (refreshing) { return; }
+      refreshing = true;
+      elements.menuRefresh.setAttribute('aria-disabled', 'true');
+      elements.refreshLabel.textContent = 'Atualizando…';
+      setAppStatus(elements, 'Atualizando canais…', false);
+      loadRemotePlaylists(elements, controller, [], catalog.remotePlaylists, function onComplete() {
+        refreshing = false;
+        elements.menuRefresh.setAttribute('aria-disabled', 'false');
+        elements.refreshLabel.textContent = 'Atualizar canais';
+      });
+    }
+  }
+
+  function clearLegacyCatalogs() {
+    try {
+      var storage = window.localStorage;
+      var index;
+      var key;
+      for (index = storage.length - 1; index >= 0; index -= 1) {
+        key = storage.key(index);
+        if (key === 'tblacktv.catalog.v1' || key.indexOf('tblacktv.remote-playlist.') === 0) {
+          storage.removeItem(key);
+        }
       }
-      );
-    }, 80);
+    } catch (error) {}
   }
 
   function buildApplication(elements, channels, playerProfiles) {
@@ -4730,7 +4596,8 @@ kbd {
       menuItems: {
         channels: elements.menuChannels,
         search: elements.menuSearch,
-        favorites: elements.menuFavorites
+        favorites: elements.menuFavorites,
+        refresh: elements.menuRefresh
       }
     });
 
@@ -4738,7 +4605,7 @@ kbd {
     return controller;
   }
 
-  function loadRemotePlaylists(elements, controller, localChannels, playlists) {
+  function loadRemotePlaylists(elements, controller, localChannels, playlists, onComplete) {
     var service = new namespace.services.RemotePlaylistCatalogService();
 
     service.load(playlists, localChannels, {
@@ -4748,18 +4615,13 @@ kbd {
       onSuccess: function onSuccess(channels, result) {
         controller.updateCatalog(channels);
         if (result.warnings.length) {
-          setAppStatus(elements, result.remoteCount ? 'Catálogo em cache' : 'Catálogo local', true);
+          setAppStatus(elements, 'Falha ao carregar. Menu ←: Atualizar canais', true);
         } else {
           setAppStatus(elements, 'Online • ' + channels.length + ' canais', false);
         }
+        onComplete();
       }
     });
-  }
-
-  function showStartupError(elements, message) {
-    elements.channelCount.textContent = 'Catálogo indisponível';
-    elements.channelGrid.textContent = message;
-    elements.channelGrid.classList.add('channel-grid--error');
   }
 
   function setAppStatus(elements, text, isWarning) {
@@ -4788,6 +4650,8 @@ kbd {
       menuChannels: document.getElementById('menu-channels'),
       menuSearch: document.getElementById('menu-search'),
       menuFavorites: document.getElementById('menu-favorites'),
+      menuRefresh: document.getElementById('menu-refresh'),
+      refreshLabel: document.getElementById('refresh-label'),
       filterSummary: document.getElementById('filter-summary'),
       avPlayer: document.getElementById('av-player'),
       html5Player: document.getElementById('html5-player'),

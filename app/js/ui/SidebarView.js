@@ -11,7 +11,8 @@
     this.items = {
       channels: elements.menuChannels,
       search: elements.menuSearch,
-      favorites: elements.menuFavorites
+      favorites: elements.menuFavorites,
+      refresh: elements.menuRefresh
     };
   }
 

@@ -11,12 +11,12 @@
   </style>
   <script type="text/javascript" defer src="$WEBAPIS/webapis/webapis.js"></script>
 
-  <link rel="stylesheet" href="css/reset.css?v=0.4.2">
-  <link rel="stylesheet" href="css/tokens.css?v=0.4.2">
-  <link rel="stylesheet" href="css/layout.css?v=0.4.2">
-  <link rel="stylesheet" href="css/components.css?v=0.4.2">
-  <link rel="stylesheet" href="css/sidebar.css?v=0.4.2">
-  <link rel="stylesheet" href="css/player.css?v=0.4.2">
+  <link rel="stylesheet" href="css/reset.css?v=0.4.3">
+  <link rel="stylesheet" href="css/tokens.css?v=0.4.3">
+  <link rel="stylesheet" href="css/layout.css?v=0.4.3">
+  <link rel="stylesheet" href="css/components.css?v=0.4.3">
+  <link rel="stylesheet" href="css/sidebar.css?v=0.4.3">
+  <link rel="stylesheet" href="css/player.css?v=0.4.3">
 </head>
 <body>
   <div id="app" class="app-shell">
@@ -41,6 +41,10 @@
             <span class="side-menu__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1 6.2-5.6-3-5.6 3 1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/></svg></span>
             <span class="side-menu__label">Meus favoritos</span>
           </button>
+          <button id="menu-refresh" class="side-menu__item" type="button" tabindex="-1" data-menu-item="refresh" aria-disabled="false">
+            <span class="side-menu__icon" aria-hidden="true">↻</span>
+            <span id="refresh-label" class="side-menu__label">Atualizar canais</span>
+          </button>
         </nav>
 
         <div id="side-search-panel" class="side-search is-hidden">
@@ -60,7 +64,7 @@
         <header class="topbar">
           <div class="brand"><h1 class="brand__title">TblackTV</h1><span class="brand__divider"></span><p class="brand__subtitle">Canais ao vivo</p></div>
           <div class="topbar__status">
-            <span class="status-pill"><span class="status-dot"></span><span id="app-status">Inicializando</span></span>
+            <span class="status-pill"><span class="status-dot"></span><span id="app-status" role="status" aria-live="polite">Inicializando</span></span>
             <time id="clock" class="clock">--:--</time>
           </div>
         </header>
@@ -69,7 +73,7 @@
           <div class="hero__copy">
             <p class="eyebrow">CANAIS GRATUITOS</p>
             <h2 class="hero__title">O que você quer assistir?</h2>
-            <p class="hero__description">Escolha um canal. Use ← na primeira coluna para abrir busca e favoritos.</p>
+            <p class="hero__description">Escolha um canal. Use ← na primeira coluna para abrir busca, favoritos e atualizar canais.</p>
           </div>
           <img class="hero__mascot" src="assets/tblack-mascot.png" alt="Mascote TblackTV">
         </section>
@@ -167,27 +171,27 @@
     </section>
   </div>
 
-  <script src="js/bootstrap.js?v=0.4.2"></script>
-  <script src="js/config/EmbeddedCatalog.js?v=0.4.2"></script>
-  <script src="js/core/EventBus.js?v=0.4.2"></script>
-  <script src="js/core/AppState.js?v=0.4.2"></script>
-  <script src="js/core/SpatialNavigation.js?v=0.4.2"></script>
-  <script src="js/vendor/hls.light.min.js?v=0.4.2"></script>
-  <script src="js/services/adapters/AvPlayAdapter.js?v=0.4.2"></script>
-  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.4.2"></script>
-  <script src="js/services/adapters/HlsJsAdapter.js?v=0.4.2"></script>
-  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.4.2"></script>
-  <script src="js/services/CatalogService.js?v=0.4.2"></script>
-  <script src="js/services/RemotePlaylistCatalogService.js?v=0.4.2"></script>
-  <script src="js/services/FavoritesService.js?v=0.4.2"></script>
-  <script src="js/services/SourceResolver.js?v=0.4.2"></script>
-  <script src="js/services/PlayerFactory.js?v=0.4.2"></script>
-  <script src="js/services/PlaybackService.js?v=0.4.2"></script>
-  <script src="js/ui/ChannelGridView.js?v=0.4.2"></script>
-  <script src="js/ui/SidebarView.js?v=0.4.2"></script>
-  <script src="js/ui/ClockView.js?v=0.4.2"></script>
-  <script src="js/ui/PlayerView.js?v=0.4.2"></script>
-  <script src="js/controllers/AppController.js?v=0.4.2"></script>
-  <script src="js/main.js?v=0.4.2"></script>
+  <script src="js/bootstrap.js?v=0.4.3"></script>
+  <script src="js/config/EmbeddedCatalog.js?v=0.4.3"></script>
+  <script src="js/core/EventBus.js?v=0.4.3"></script>
+  <script src="js/core/AppState.js?v=0.4.3"></script>
+  <script src="js/core/SpatialNavigation.js?v=0.4.3"></script>
+  <script src="js/vendor/hls.light.min.js?v=0.4.3"></script>
+  <script src="js/services/adapters/AvPlayAdapter.js?v=0.4.3"></script>
+  <script src="js/services/adapters/Html5VideoAdapter.js?v=0.4.3"></script>
+  <script src="js/services/adapters/HlsJsAdapter.js?v=0.4.3"></script>
+  <script src="js/services/adapters/IframePlayerAdapter.js?v=0.4.3"></script>
+  <script src="js/services/CatalogService.js?v=0.4.3"></script>
+  <script src="js/services/RemotePlaylistCatalogService.js?v=0.4.3"></script>
+  <script src="js/services/FavoritesService.js?v=0.4.3"></script>
+  <script src="js/services/SourceResolver.js?v=0.4.3"></script>
+  <script src="js/services/PlayerFactory.js?v=0.4.3"></script>
+  <script src="js/services/PlaybackService.js?v=0.4.3"></script>
+  <script src="js/ui/ChannelGridView.js?v=0.4.3"></script>
+  <script src="js/ui/SidebarView.js?v=0.4.3"></script>
+  <script src="js/ui/ClockView.js?v=0.4.3"></script>
+  <script src="js/ui/PlayerView.js?v=0.4.3"></script>
+  <script src="js/controllers/AppController.js?v=0.4.3"></script>
+  <script src="js/main.js?v=0.4.3"></script>
 </body>
 </html>

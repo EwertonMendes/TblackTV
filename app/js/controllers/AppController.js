@@ -38,7 +38,7 @@
     this.lastSourceSwitchAt = 0;
     this.isCapturingPlayerFocus = false;
     this.homeFocusArea = 'grid';
-    this.sidebarItems = ['channels', 'search', 'favorites'];
+    this.sidebarItems = ['channels', 'search', 'favorites', 'refresh'];
     this.sidebarItemIndex = 0;
     this.searchEditing = false;
   }
@@ -377,7 +377,9 @@
   };
 
   AppController.prototype.activateSidebarItem = function activateSidebarItem(itemName) {
-    if (itemName === 'search') {
+    if (itemName === 'refresh') {
+      if (this.onRefreshCatalog) { this.onRefreshCatalog(); }
+    } else if (itemName === 'search') {
       this.state.setFavoritesOnly(false);
       this.refreshHome();
       this.startSearchEditing();

@@ -5,27 +5,24 @@ Hub de canais ao vivo para Smart TVs Samsung antigas, com foco em Tizen 5.0 e na
 ## Instalação pelo GitHub
 
 ```text
-EwertonMendes/TblackTV@v0.4.2
+EwertonMendes/TblackTV@v0.4.3
 ```
 
 Use a tag imutável em vez de `@master` para evitar misturar arquivos de versões diferentes no cache do TizenBrew.
 
 ## Catálogo online
 
-O catálogo local é exibido imediatamente e, em segundo plano, o app lê a lista brasileira do IPTV-org diretamente do GitHub:
+O app começa com a grade vazia e baixa os canais exclusivamente deste endereço em cada abertura:
 
-```text
-https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u
 https://ewertonmendes.github.io/tblack-iptv/playlist.m3u
-```
 
-A segunda lista é mantida no projeto Tblack IPTV. Seus canais são criados ou mesclados com canais de mesmo `tvg-id`/nome, e suas fontes sempre ficam antes das demais fontes do canal.
+Não há canais incorporados, outras listas ou cache persistente de canais. Na inicialização, as cópias antigas de catálogos são removidas da TV; os favoritos são preservados.
 
-Cada entrada da M3U vira um canal. Entradas com o mesmo `tvg-id`, ou com o mesmo nome normalizado quando não há identificador, são agrupadas como fontes alternativas. A Tblack IPTV preserva sua ordem original e tem prioridade. Depois dela, as demais fontes são ordenadas por resolução: 1080 antes de 720, depois 576, 480 e assim por diante. Em empate, a fonte oficial e HTTPS têm preferência.
+Para atualizar sem sair do app, pressione **←** na primeira coluna, selecione **Atualizar canais** no menu e pressione **OK**. O botão mostra o carregamento e evita requisições simultâneas. Cada atualização bem-sucedida substitui todo o catálogo, incluindo a remoção de canais que saíram da playlist. As requisições incluem um parâmetro para evitar o cache HTTP.
 
-A lista remota é atualizada em cada inicialização. Se GitHub, DNS ou CORS falharem, o app usa a última cópia salva na TV; se ainda não houver cache, os seis canais locais continuam funcionando.
+Se a rede falhar ou a lista não contiver streams compatíveis, a grade fica vazia e uma mensagem orienta a tentar novamente pelo menu. Nenhuma lista antiga é restaurada.
 
-Streams HLS, DASH e vídeos diretos HTTP/HTTPS das listas remotas são importados. Iframes foram removidos do catálogo, embora o adapter continue no código para possível uso futuro. Manifests HLS publicados como `file.txt`, `index.txt` ou `__index.txt` usam automaticamente o modo MSE para tolerar segmentos com extensão ou MIME incorretos, um caso que costuma funcionar no VLC mas falhar no AVPlay.
+Entradas com o mesmo identificador ou nome são agrupadas como fontes alternativas. São aceitos HLS, DASH e vídeos diretos. Manifests HLS em file.txt, index.txt ou __index.txt usam MSE, mantendo a compatibilidade existente do player.
 
 ## Controle
 
@@ -38,7 +35,7 @@ Na Home:
 - Play/Pause: favoritar ou desfavoritar o canal focado;
 - Return: sair do módulo.
 
-O menu lateral reúne catálogo completo, busca e favoritos. Na grade, Cima e Baixo nunca transferem o foco para o menu. Pressione OK em Buscar para abrir o teclado da TV; OK ou Return aplicam o filtro, fecham o teclado e devolvem a navegação à grade. Para limpar o filtro, apague o texto durante a edição ou selecione Todos os canais.
+O menu lateral reúne catálogo completo, busca, favoritos e Atualizar canais. Na grade, Cima e Baixo nunca transferem o foco para o menu. Pressione OK em Buscar para abrir o teclado da TV; OK ou Return aplicam o filtro, fecham o teclado e devolvem a navegação à grade. Para limpar o filtro, apague o texto durante a edição ou selecione Todos os canais.
 
 No player:
 
@@ -46,59 +43,6 @@ No player:
 - Channel +/−: próximo/anterior canal;
 - OK ou Play/Pause: pausar/continuar;
 - Return: voltar à Home.
-
-## Adicionando outra lista M3U
-
-Edite `app/config/channels.json` e acrescente um item em `remotePlaylists`:
-
-```json
-{
-  "id": "minha-lista-br",
-  "label": "Minha lista",
-  "url": "https://exemplo.com/canais-br.m3u",
-  "enabled": true,
-  "timeoutMs": 15000,
-  "sourcePriority": 0
-}
-```
-
-Use IDs únicos. Se a nova lista usar os mesmos `tvg-id`, as URLs serão acrescentadas ao canal existente. Sem `tvg-id`, o app tenta mesclar pelo nome sem acentos, diferenças de maiúsculas ou pontuação. URLs repetidas não são adicionadas duas vezes. `sourcePriority` maior coloca as fontes daquela playlist antes das fontes de listas com prioridade menor.
-
-O parser entende HLS (`.m3u8` e manifests resolvidos em `file.txt`, `index.txt` ou `__index.txt`), DASH (`.mpd`) e vídeos diretos (`.mp4`, `.m4v` e `.webm`) no formato:
-
-```text
-#EXTINF:-1 tvg-id="MeuCanal.br@SD",Meu Canal (1080p)
-https://exemplo.com/meu-canal/index.m3u8
-```
-
-## Adicionando um canal local
-
-Adicione um objeto em `channels`:
-
-```json
-{
-  "id": "meu-canal",
-  "tvgId": "MeuCanal.br@SD",
-  "name": "Meu Canal",
-  "shortName": "MC",
-  "category": "TV aberta",
-  "accent": "#7c5cff",
-  "description": "Descrição curta",
-  "sources": [
-    {
-      "id": "principal",
-      "label": "Fonte principal • 1080p",
-      "type": "hls",
-      "url": "https://exemplo.com/live/index.m3u8",
-      "quality": 1080,
-      "official": true,
-      "timeoutMs": 20000
-    }
-  ]
-}
-```
-
-O `tvgId` permite mesclar esse canal com as listas remotas. Fontes locais aceitas no catálogo atual são `hls` e `m3u`.
 
 ## Organização e performance
 
@@ -114,4 +58,4 @@ Depois de alterar a configuração:
 npm run build-tv-entry
 ```
 
-O build sincroniza `EmbeddedCatalog.js` e gera o HTML autocontido indicado por `appPath` no `package.json`.
+O build sincroniza somente a configuração e os perfis em `EmbeddedCatalog.js` (sem canais) e gera o HTML autocontido indicado por `appPath` no `package.json`.
