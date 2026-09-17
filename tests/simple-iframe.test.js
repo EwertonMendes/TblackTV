@@ -322,7 +322,7 @@ run('Return leaves the active search intact and Backspace edits natively', funct
   assert.strictEqual(exits, 0);
 });
 
-run('resolved playlists group providers and accept HLS text, DASH and video streams', function () {
+run('resolved playlists accept arbitrary txt HLS endpoints, DASH and video streams', function () {
   var context = runtime();
   var Service;
   var channels;
@@ -333,7 +333,9 @@ run('resolved playlists group providers and accept HLS text, DASH and video stre
     '#EXTINF:-1 tvg-id="sportv-rdcanais",Sportv (RDCanais)',
     'https://cdn.example/live/channel.mpd',
     '#EXTINF:-1 tvg-id="sportv-meuplayer",Sportv (MeuPlayer)',
-    'https://cdn.example/live/preview.mp4'
+    'https://cdn.example/live/preview.mp4',
+    '#EXTINF:-1 tvg-id="sportv-rdse",Sportv (RDSE)',
+    'https://cdn.example/ss/sportv.txt'
   ].join('\n');
 
   load(context, 'app/js/services/RemotePlaylistCatalogService.js');
@@ -369,7 +371,10 @@ run('resolved playlists group providers and accept HLS text, DASH and video stre
   })[0].hlsPlayback, 'mse');
   assert.strictEqual(channels[0].sources.map(function sourceType(source) {
     return source.type;
-  }).sort().join(','), 'dash,hls,video');
+  }).sort().join(','), 'dash,hls,hls,video');
+  assert.strictEqual(channels[0].sources.filter(function genericTxt(source) {
+    return /\/ss\/sportv\.txt$/.test(source.url);
+  })[0].hlsPlayback, 'mse');
 });
 
 run('priority playlists merge channels and keep their original source order first', function () {
