@@ -5,10 +5,10 @@ Hub de canais ao vivo para Smart TVs Samsung antigas, com foco em Tizen 5.0 e na
 ## Instalação pelo GitHub
 
 ```text
-EwertonMendes/TblackTV@v0.4.3
+EwertonMendes/TblackTV@v0.4.4
 ```
 
-Use a tag imutável em vez de `@master` para evitar misturar arquivos de versões diferentes no cache do TizenBrew.
+Use o módulo versionado acima em vez de `@master` para evitar misturar arquivos de versões diferentes no cache do TizenBrew.
 
 ## Catálogo online
 
