@@ -204,8 +204,8 @@
       source.userAgent = userAgent;
     }
     if (sourceType === 'hls' && isDisguisedHlsUrl(url)) {
-      // These providers can serve MPEG transport stream bytes with image-like
-      // extensions/MIME types. MSE inspects the payload more reliably than AVPlay.
+      // Some providers expose HLS through arbitrary .txt endpoints/MIME types.
+      // MSE inspects the payload more reliably than AVPlay on older Samsung TVs.
       source.hlsPlayback = 'mse';
     }
     return {
@@ -416,7 +416,7 @@
     if (!/^https?:\/\//.test(value)) {
       return '';
     }
-    if (/\.m3u8(?:[?#]|$)/.test(value) || /\/(?:file|index|__index)\.txt(?:[?#]|$)/.test(value)) {
+    if (/\.m3u8(?:[?#]|$)/.test(value) || /\.txt(?:[?#]|$)/.test(value)) {
       return 'hls';
     }
     if (/\.mpd(?:[?#]|$)/.test(value)) {
@@ -429,7 +429,7 @@
   }
 
   function isDisguisedHlsUrl(url) {
-    return /\/(?:file|index|__index)\.txt(?:[?#]|$)/i.test(String(url || ''));
+    return /\.txt(?:[?#]|$)/i.test(String(url || ''));
   }
 
   function isSecure(url) {
