@@ -22,7 +22,7 @@ Para atualizar sem sair do app, pressione **←** na primeira coluna, selecione 
 
 Se a rede falhar ou a lista não contiver streams compatíveis, a grade fica vazia e uma mensagem orienta a tentar novamente pelo menu. Nenhuma lista antiga é restaurada.
 
-Entradas com o mesmo identificador ou nome são agrupadas como fontes alternativas. São aceitos HLS, DASH e vídeos diretos. Manifests HLS em file.txt, index.txt ou __index.txt usam MSE, mantendo a compatibilidade existente do player.
+Entradas com o mesmo identificador ou nome são agrupadas como fontes alternativas. São aceitos HLS, DASH e vídeos diretos. URLs HLS publicadas com qualquer nome terminado em `.txt` também são importadas e usam MSE, cobrindo provedores que escondem o stream atrás de endpoints como `espn.txt` ou `animalplanet.txt`.
 
 ## Controle
 
