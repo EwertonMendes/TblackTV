@@ -322,7 +322,7 @@ run('Return leaves the active search intact and Backspace edits natively', funct
   assert.strictEqual(exits, 0);
 });
 
-run('resolved playlists accept arbitrary txt HLS endpoints, DASH and video streams', function () {
+run('resolved playlists accept extensionless and txt HLS endpoints, DASH and video streams', function () {
   var context = runtime();
   var Service;
   var channels;
@@ -335,7 +335,9 @@ run('resolved playlists accept arbitrary txt HLS endpoints, DASH and video strea
     '#EXTINF:-1 tvg-id="sportv-meuplayer",Sportv (MeuPlayer)',
     'https://cdn.example/live/preview.mp4',
     '#EXTINF:-1 tvg-id="sportv-rdse",Sportv (RDSE)',
-    'https://cdn.example/ss/sportv.txt'
+    'https://cdn.example/ss/sportv.txt',
+    '#EXTINF:-1 tvg-id="sportv-token",Sportv (MeuPlayer)',
+    'https://cdn.example/live/channel?token=abc123'
   ].join('\n');
 
   load(context, 'app/js/services/RemotePlaylistCatalogService.js');
@@ -371,9 +373,12 @@ run('resolved playlists accept arbitrary txt HLS endpoints, DASH and video strea
   })[0].hlsPlayback, 'mse');
   assert.strictEqual(channels[0].sources.map(function sourceType(source) {
     return source.type;
-  }).sort().join(','), 'dash,hls,hls,video');
+  }).sort().join(','), 'dash,hls,hls,hls,video');
   assert.strictEqual(channels[0].sources.filter(function genericTxt(source) {
     return /\/ss\/sportv\.txt$/.test(source.url);
+  })[0].hlsPlayback, 'mse');
+  assert.strictEqual(channels[0].sources.filter(function signedEndpoint(source) {
+    return /\/live\/channel\?token=abc123$/.test(source.url);
   })[0].hlsPlayback, 'mse');
 });
 
