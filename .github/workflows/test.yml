@@ -1,0 +1,36 @@
+name: Test TblackTV
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run regression tests
+        run: npm test
+
+      - name: Verify generated TizenBrew bundle is synchronized
+        run: |
+          cp "$(node -p "require('./package.json').appPath")" /tmp/tblacktv-bundle-before.html
+          npm run build-tv-entry
+          cmp --silent /tmp/tblacktv-bundle-before.html "$(node -p "require('./package.json').appPath")"
