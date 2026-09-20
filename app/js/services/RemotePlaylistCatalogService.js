@@ -2,6 +2,7 @@
   'use strict';
 
   var DEFAULT_TIMEOUT_MS = 15000;
+  var CACHE_BUST_SEQUENCE = 0;
 
   function RemotePlaylistCatalogService(requestFactory) {
     this.requestFactory = requestFactory || createRequest;
@@ -416,20 +417,22 @@
     if (!/^https?:\/\//.test(value)) {
       return '';
     }
-    if (/\.m3u8(?:[?#]|$)/.test(value) || /\.txt(?:[?#]|$)/.test(value)) {
-      return 'hls';
-    }
     if (/\.mpd(?:[?#]|$)/.test(value)) {
       return 'dash';
     }
     if (/\.(?:mp4|m4v|webm)(?:[?#]|$)/.test(value)) {
       return 'video';
     }
-    return '';
+
+    // IPTV providers frequently expose HLS through .txt, .php, signed URLs
+    // or endpoints with no useful extension. In an M3U document, a valid
+    // HTTP(S) media entry should not disappear just because its path changed.
+    return 'hls';
   }
 
   function isDisguisedHlsUrl(url) {
-    return /\.txt(?:[?#]|$)/i.test(String(url || ''));
+    var value = String(url || '').toLowerCase();
+    return /^https?:\/\//.test(value) && !/\.m3u8(?:[?#]|$)/.test(value);
   }
 
   function isSecure(url) {
@@ -441,7 +444,9 @@
   }
 
   function withCacheBuster(url) {
-    return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'tblacktv=' + new Date().getTime();
+    CACHE_BUST_SEQUENCE += 1;
+    return url + (url.indexOf('?') >= 0 ? '&' : '?') +
+      'tblacktv=' + new Date().getTime() + '-' + CACHE_BUST_SEQUENCE;
   }
 
   function clone(value) {

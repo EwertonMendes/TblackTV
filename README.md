@@ -22,7 +22,7 @@ Para atualizar sem sair do app, pressione **←** na primeira coluna, selecione 
 
 Se a rede falhar ou a lista não contiver streams compatíveis, a grade fica vazia e uma mensagem orienta a tentar novamente pelo menu. Nenhuma lista antiga é restaurada.
 
-Entradas com o mesmo identificador ou nome são agrupadas como fontes alternativas. São aceitos HLS, DASH e vídeos diretos. URLs HLS publicadas com qualquer nome terminado em `.txt` também são importadas e usam MSE, cobrindo provedores que escondem o stream atrás de endpoints como `espn.txt` ou `animalplanet.txt`.
+Entradas com o mesmo identificador ou nome são agrupadas como fontes alternativas. São aceitos HLS, DASH e vídeos diretos. Dentro da M3U, qualquer URL HTTP(S) válida que não seja reconhecida explicitamente como DASH ou vídeo direto é tratada como HLS e usa o modo MSE quando não termina em `.m3u8`. Isso cobre `.txt`, `.php`, URLs assinadas e endpoints sem extensão sem fazer canais desaparecerem quando o provedor muda o formato da URL.
 
 ## Controle
 

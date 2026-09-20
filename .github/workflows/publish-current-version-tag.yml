@@ -1,0 +1,45 @@
+name: Publish current TizenBrew version tag
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - package.json
+      - app/**
+      - README.md
+      - .github/workflows/publish-current-version-tag.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish-tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out master
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish immutable version tag when missing
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(node -p "require('./package.json').version")"
+          tag="v${version}"
+
+          git fetch --tags --force
+
+          if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+            existing="$(git rev-list -n 1 "${tag}")"
+            echo "${tag} already exists at ${existing}; immutable release tags are never moved."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${tag}" "${GITHUB_SHA}" -m "Release ${tag}"
+          git push origin "refs/tags/${tag}"

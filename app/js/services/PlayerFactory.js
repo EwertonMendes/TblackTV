@@ -31,7 +31,7 @@
 
   function requiresHlsCompatibility(source) {
     return source.type === 'hls' && (source.hlsPlayback === 'mse' ||
-      /\/(?:file|index|__index)\.txt(?:[?#]|$)/i.test(String(source.url || '')));
+      !/\.m3u8(?:[?#]|$)/i.test(String(source.url || '')));
   }
 
   namespace.services.PlayerFactory = PlayerFactory;
